@@ -16,35 +16,59 @@ import Select from "react-select";
 import { options2 } from "../../data/TypePlay";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { Authorization } from "../../../auth/Data";
 
 const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
   const [typePlayCheck, setTypePlayCheck] = useState(1);
 
   const [sendData, setSendData] = useState({});
   const [dataHome, setDataHome] = useState([]);
+  const [dataTypeWong, setDataTypeWong] = useState([]);
 
   const fetchHomeShare = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_APP_API}/homesh`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("Token")}`,
-        },
-      });
+      const res = await axios.get(
+        `${import.meta.env.VITE_APP_API}/home_share`,
+        {
+          headers: {
+            Authorization: Authorization,
+          },
+        }
+      );
 
       const rename = res.data.map((item, index) => ({
         value: item.id,
-        label: item.sh_name,
+        label: item.name,
       }));
       setDataHome(rename);
 
       console.log(res.data);
-
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleChange = (e) => {
+  const fetchTypeWong = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_APP_API}/type_wong`, {
+        headers: {
+          Authorization: Authorization,
+        },
+      });
+
+      const rename = res.data.map((item, index) => ({
+        value: item.id,
+        label: item.name,
+      }));
+      setDataTypeWong(rename);
+
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleChange = (e, handleChange) => {
     setSendData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
@@ -54,63 +78,72 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const dataToSendAPI = {
-      user_id: localStorage.getItem("id"),
-      share_id: sendData.shaer_id,
-      p_share_name: sendData.p_share_name,
-      p_share_type: sendData.p_share_type,
-      p_share_interest: sendData.p_share_interest,
-      p_share_send_per: sendData.p_share_send_per,
-      p_share_maintain: sendData.p_share_maintain,
-      p_share_req: sendData.p_share_req,
-      p_share_paid: sendData.p_share_paid,
-      p_share_hand: sendData.p_share_hand,
+      home_share_id: sendData.home_share_id || "",
+      type_wong_id: sendData.type_wong_id || "",
+      name: sendData.name || "",
+      interest: sendData.interest || "",
+      installment: sendData.installment || "",
+      price: sendData.price || "",
+      pay_for_wong: sendData.pay_for_wong || "",
+      count: sendData.count || "",
+      note: sendData.note || "",
     };
-
-
 
     console.log(dataToSendAPI);
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_APP_API}/share/addshare`,
+        `${import.meta.env.VITE_APP_API}/wong_share`,
         dataToSendAPI,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
-      console.log(res.data);
-      setSendData({})
-      fetchData();
-      toast.success("บันทึกสำเร็จ ");
-      handleOpen();
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        setSendData({});
+        fetchData();
+        handleOpen();
+      } else {
+        toast.error(res.data.message);
+      }
     } catch (error) {
       console.log(error);
+      toast.error(error.response.data.message);
     }
   };
 
   const handleEdit = async () => {
+
+
     const sendDataToApi = {
       id: sendData.id,
-      // user_id: localStorage.getItem("id"),
-      share_id: sendData.shaer_id,
-      p_share_name: sendData.p_share_name,
-      p_share_type: sendData.p_share_type,
-      p_share_interest: sendData.p_share_interest,
-      p_share_send_per: sendData.p_share_send_per,
-      p_share_paid: sendData.p_share_paid,
-      p_share_maintain: sendData.p_share_maintain,
-      p_share_hand: sendData.p_share_hand,
-      p_share_req: sendData.p_share_req,
+      home_share_id: sendData.home_share_id || "",
+      type_wong_id: sendData.type_wong_id || "",
+      name: sendData.name || "",
+      interest: sendData.interest || "",
+      installment: sendData.installment || "",
+      price: sendData.price || "",
+      pay_for_wong: sendData.pay_for_wong || "",
+      count: sendData.count || "",
+      note: sendData.note || "",
     };
+
     console.log(sendDataToApi);
+
+    
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_APP_API}/share/edit`,
-        sendDataToApi
+        `${import.meta.env.VITE_APP_API}/wong_share`, sendDataToApi , {
+          headers:{
+            Authorization : Authorization
+          }
+        }
+        
       );
       console.log(res.data);
-      toast.success('บันทึกสำเร็จ')
+      toast.success("บันทึกสำเร็จ");
       fetchData();
       handleOpen();
       setSendData({});
@@ -132,6 +165,7 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
 
   useEffect(() => {
     fetchHomeShare();
+    fetchTypeWong();
     addDataToEdit();
     // console.log(dataToModal);
   }, [dataToModal]);
@@ -139,21 +173,38 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
   return (
     <Dialog open={open} size="lg" handler={handleOpen}>
       <DialogHeader className="bg-gray-200 flex gap-2 rounded-lg text-lg">
-        <HiOutlineChatAlt2 /> {id ? "แก้ไขวงค์แชร์" : "สร้างวงค์แชร์"}
+        <HiOutlineChatAlt2 /> {id ? "แก้ไขวงแชร์" : "สร้างวงแชร์"}
       </DialogHeader>
       <DialogBody className=" py-10 h-96 overflow-scroll md:h-full md:overflow-auto ">
-        ID : {dataToModal?.share_id || ""}
+
+      {/* SEND {JSON.stringify(sendData)}<br />
+        DATA{JSON.stringify(dataToModal)}  */}
+
         <form onSubmit={(e) => handleSubmit(e)}>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
             <Select
+            isDisabled={sendData?.id}
+            styles={{
+              control: (baseStyles, state) => ({
+                ...baseStyles,
+                background:'#F7F9D7'
+              }),
+            }}
               options={dataHome}
               className="w-full"
               placeholder="เลือกบ้านแชร์"
-              defaultValue={dataToModal?.id ? dataHome.find(option => option.value == dataToModal?.share_id) : ""}
+              
+              defaultValue={
+                dataToModal?.id
+                  ? dataHome.find(
+                      (option) => option.value == dataToModal?.home_share_id
+                    )
+                  : ""
+              }
               onChange={(e) =>
                 setSendData((prev) => ({
                   ...prev,
-                  shaer_id: e.value,
+                  home_share_id: e.value,
                 }))
               }
             />
@@ -161,19 +212,32 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
               color="purple"
               label="ชื่อวงค์แชร์"
               required
-              name="p_share_name"
+              name="name"
               onChange={(e) => handleChange(e)}
-              value={sendData?.p_share_name || ""}
+              value={sendData?.name || ""}
             />
             <Select
-              options={options2}
+            isDisabled={sendData?.id}
+                styles={{
+                  control: (baseStyles, state) => ({
+                    ...baseStyles,
+                    background:'#F7F9D7'
+                  }),
+                }}
+              options={dataTypeWong}
               className="w-full"
               placeholder="รูปแบบวงค์แชร์"
-              defaultValue={dataToModal?.id ? options2.find(option => option.value == dataToModal?.p_share_type) : ""}
+              defaultValue={
+                dataToModal?.id
+                  ? options2.find(
+                      (option) => option.value == dataToModal?.type_wong_id
+                    )
+                  : ""
+              }
               onChange={(e) =>
                 setSendData((prev) => ({
                   ...prev,
-                  p_share_type: e.value,
+                  type_wong_id: e.value,
                 }))
               }
             />
@@ -183,30 +247,29 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
             <Input
               color="purple"
               label="ส่งต่องวด"
-              name="p_share_send_per"
-              value={sendData?.p_share_send_per || ""}
+              name="installment"
+              // value={sendData?.installment || ""}
+              value={sendData?.type_wong_id == 3 ? "" :  sendData?.installment || ""}
               onChange={(e) => handleChange(e)}
               required
-              disabled={sendData?.p_share_type == 3}
+              disabled={sendData?.type_wong_id == 3 }
             />
 
             <Input
               color="purple"
               label="จำนวนเงินต้น"
-              name="p_share_paid"
+              name="price"
               onChange={(e) => handleChange(e)}
-              value={sendData?.p_share_paid || ""}
-
+              value={sendData?.price || ""}
             />
 
             <Input
               color="purple"
               label="จำนวนมือ"
               required
-              name="p_share_hand"
+              name="count"
               onChange={(e) => handleChange(e)}
-              value={sendData?.p_share_hand || ""}
-
+              value={sendData?.count || ""}
             />
           </div>
 
@@ -214,24 +277,28 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
             <Input
               color="purple"
               label="ค่าดูแลวง "
-              name="p_share_maintain"
+              name="pay_for_wong"
               onChange={(e) => handleChange(e)}
-              value={sendData?.p_share_maintain || ""}
-
+              value={sendData?.pay_for_wong || ""}
             />
             <Input
               color="purple"
               label="ดอกเบี้ย"
               disabled={
-                sendData?.p_share_type == 1 ||
-                sendData?.p_share_type == 3 ||
-                sendData?.p_share_type == 4 ||
-                sendData?.p_share_type == 5
+                sendData?.type_wong_id == 1 ||
+                sendData?.type_wong_id == 3 ||
+                sendData?.type_wong_id == 4 ||
+                sendData?.type_wong_id == 5
               }
-              name="p_share_interest"
+              name="interest"
               onChange={(e) => handleChange(e)}
-              value={sendData?.p_share_interest || ""}
-
+              value={sendData?.interest || ""}
+              // value={
+              //   sendData?.type_wong_id == 1 ? "" : 
+              //   sendData?.type_wong_id == 3 ? "" : 
+              //   sendData?.type_wong_id == 4 ? "" : 
+              //   sendData?.type_wong_id == 5 ? "" :  sendData?.interest
+              // }
             />
           </div>
 
@@ -239,10 +306,9 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
             <Input
               color="purple"
               label="หมายเหตุ"
-              name="p_share_req"
+              name="note"
               onChange={(e) => handleChange(e)}
-              value={sendData?.p_share_req || ""}
-
+              value={sendData?.note || ""}
             />
           </div>
 

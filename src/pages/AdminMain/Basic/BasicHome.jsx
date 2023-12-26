@@ -34,6 +34,7 @@ import {
   calculatePageIndices,
   calculatePagination,
 } from "../../../components/pagination/PaginationUtils";
+import { Authorization } from "../../../auth/Data";
 
 const TABLE_HEAD = [
   "ลำดับ",
@@ -41,79 +42,6 @@ const TABLE_HEAD = [
   "ชื่อบ้านแชร์",
   "สถานะ",
   "แก้ไข/ลบ",
-];
-
-const TABLE_ROWS = [
-  {
-    img: "/img/logos/logo-spotify.svg",
-    name: "Spotify",
-    amount: "$2,500",
-    date: "Wed 3:00pm",
-    status: "นาย",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-amazon.svg",
-    name: "Amazon",
-    amount: "$5,000",
-    date: "Wed 1:00pm",
-    status: "paid",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-pinterest.svg",
-    name: "Pinterest",
-    amount: "$3,400",
-    date: "Mon 7:40pm",
-    status: "pending",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-google.svg",
-    name: "Google",
-    amount: "$1,000",
-    date: "Wed 5:00pm",
-    status: "paid",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
 ];
 
 const BasicHome = () => {
@@ -140,10 +68,10 @@ const BasicHome = () => {
   const fetchData = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/homesh/home-search?name=${search}`,
+        `${import.meta.env.VITE_APP_API}/home_share?search=${search}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
@@ -175,26 +103,26 @@ const BasicHome = () => {
     console.log(id);
     try {
       const res = await axios.delete(
-        `${import.meta.env.VITE_APP_API}/homesh/delete/${id}`,
+        `${import.meta.env.VITE_APP_API}/home_share/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
-      console.log(res);
-      toast.success("ลบข้อมูลสำเร็จ");
-      fetchData();
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        fetchData();
+      }
     } catch (error) {
       console.log(error);
       toast.error("ลบข้อมูลสำเร็จ");
     }
   };
 
-  const handleOpenEdit = (id, sh_name) => {
+  const handleOpenEdit = (id, name) => {
     handleOpen(id);
-    setDataTomodal({ sh_name: sh_name });
-    console.log(sh_name);
+    setDataTomodal({ name });
   };
 
   useEffect(() => {
@@ -213,13 +141,11 @@ const BasicHome = () => {
 
       <div className="flex flex-col md:flex-row   items-center  md:justify-between gap-4">
         <div className="flex gap-2 items-center">
-    
           <HiOutlineHome
-          size={35}
-          className="bg-purple-700/5 rounded-full px-1 py-1.5 text-purple-300"
-        />
+            size={35}
+            className="bg-purple-700/5 rounded-full px-1 py-1.5 text-purple-300"
+          />
           <span className="text-xl text-black font-bold">
-
             จัดการข้อมูลบ้านแชร์
           </span>
         </div>
@@ -294,7 +220,7 @@ const BasicHome = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {item?.sh_code}
+                        {item?.code}
                       </Typography>
                     </td>
 
@@ -304,7 +230,7 @@ const BasicHome = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {item?.sh_name}
+                        {item?.name}
                       </Typography>
                     </td>
 
@@ -324,7 +250,7 @@ const BasicHome = () => {
                           size={20}
                           color="black"
                           className=" cursor-pointer"
-                          onClick={() => handleOpenEdit(item.id, item.sh_name)}
+                          onClick={() => handleOpenEdit(item.id, item.name)}
                         />
 
                         <HiTrash

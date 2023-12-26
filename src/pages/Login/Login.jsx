@@ -74,50 +74,88 @@ const Login = () => {
         `${import.meta.env.VITE_APP_API}/login`,
         dataLogin
       );
-      console.log(res.data);
+      console.log(res);
 
-      if (res.data.error) {
-        toast.error(res.data.error);
-      } else {
-        toast.success(res.data.result);
-
+      if (res.status === 200) {
+        toast.success(res.data.message);
         const token = res.data.token;
         const decoded = jwtDecode(token);
         console.log(decoded);
-        // updateToken(token)
-        localStorage.setItem("Token", token);
-        localStorage.setItem("id", decoded.id);
-        localStorage.setItem("name", decoded.f_name + " " + decoded.l_nane);
-        // updateValue("share_w_id", decoded?.share_w_id)
-        // แบ่ง navigate
-        if (decoded.level === "0") {
-          // status - 0
-          localStorage.setItem("status", "เจ้าของระบบ");
-          localStorage.setItem("Type", "main-admin");
-        } else if (decoded.level === "1") {
-          // status - 1
-          localStorage.setItem("status", "ผู้ดูแลระบบ");
-          localStorage.setItem("Type", "admin");
-        } else if (decoded.level === "2") {
-          // status - 2
-          localStorage.setItem("status", "ลูกค้า");
-          localStorage.setItem("Type", "user");
-        } else if (decoded.level === "3") {
-          // status - 3
-          fetchDataHome(decoded.share_w_id, decoded.level);
-          localStorage.setItem("Type", "home");
-        } else if (decoded.level === "4") {
-          // status - 4
-          fetchDataHome(decoded.share_w_id, decoded.level);
-          localStorage.setItem("Type", "member");
+        localStorage.setItem("app_share_token", token);
+        localStorage.setItem("name", decoded.name);
+
+        let typePage = "";
+        let statusPage = "";
+
+        if (decoded.role === 0) {
+          typePage = "main-admin";
+          statusPage = "เจ้าของระบบ";
+        } else if (decoded.role === 1) {
+          typePage = "admin";
+          statusPage = "ผู้ดูแลระบบ";
+        } else if (decoded.role === 2) {
+          typePage = "user";
+          statusPage = "ลูกค้า";
+        } else if (decoded.role === 3) {
+          typePage = "home";
+          statusPage = "ยังไม่ทำ";
+        } else if (decoded.role === 4) {
+          typePage = "member";
+          statusPage = "ยังไม่ทำ";
         }
+
+        localStorage.setItem("Type", typePage);
+        localStorage.setItem("status", statusPage);
+
         setTimeout(() => {
           window.location.reload();
         }, 1500);
+      } else {
+        toast.error(res.data.message);
       }
+
+      // if (res.data.error) {
+      //   toast.error(res.data.error);
+      // } else {
+      //   toast.success(res.data.result);
+
+      //   const token = res.data.token;
+      //   const decoded = jwtDecode(token);
+      //   console.log(decoded);
+      //   // updateToken(token)
+      //   localStorage.setItem("Token", token);
+      //   localStorage.setItem("id", decoded.id);
+      //   localStorage.setItem("name", decoded.f_name + " " + decoded.l_nane);
+      //   // updateValue("share_w_id", decoded?.share_w_id)
+      //   // แบ่ง navigate
+      //   if (decoded.level === "0") {
+      //     // status - 0
+      //     localStorage.setItem("status", "เจ้าของระบบ");
+      //     localStorage.setItem("Type", "main-admin");
+      //   } else if (decoded.level === "1") {
+      //     // status - 1
+      //     localStorage.setItem("status", "ผู้ดูแลระบบ");
+      //     localStorage.setItem("Type", "admin");
+      //   } else if (decoded.level === "2") {
+      //     // status - 2
+      //     localStorage.setItem("status", "ลูกค้า");
+      //     localStorage.setItem("Type", "user");
+      //   } else if (decoded.level === "3") {
+      //     // status - 3
+      //     fetchDataHome(decoded.share_w_id, decoded.level);
+      //     localStorage.setItem("Type", "home");
+      //   } else if (decoded.level === "4") {
+      //     // status - 4
+      //     fetchDataHome(decoded.share_w_id, decoded.level);
+      //     localStorage.setItem("Type", "member");
+      //   }
+      //   setTimeout(() => {
+      //     window.location.reload();
+      //   }, 1500);
+      // }
     } catch (error) {
       console.log(error);
-      toast.error(error);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -161,16 +199,16 @@ const Login = () => {
             </h2>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-2 mt-5">
-            <div className="bg-white rounded-lg">
-                  <Input
-                    name="username"
-                    label="username"
-                    color="purple"
-                    type="text"
-                    onChange={(e) => handleChange(e)}
-                  />
-                </div>
-   
+              <div className="bg-white rounded-lg">
+                <Input
+                  name="username"
+                  label="username"
+                  color="purple"
+                  type="text"
+                  onChange={(e) => handleChange(e)}
+                />
+              </div>
+
               <div className="relative">
                 <div className="bg-white rounded-lg">
                   <Input
@@ -181,7 +219,7 @@ const Login = () => {
                     onChange={(e) => handleChange(e)}
                   />
                 </div>
-        
+
                 {/* <AiOutlineEye
                   className="absolute top-1/2 right-3 -translate-y-1/2  "
                   size={20}

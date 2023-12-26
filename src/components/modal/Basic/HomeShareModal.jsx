@@ -10,73 +10,77 @@ import {
 import { HiOutlineHome } from "react-icons/hi";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { Authorization } from "../../../auth/Data";
 
 const HomeShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
   const [sendData, setSendData] = useState({});
 
   const handleChange = (e) => {
     const text = e.target.value;
-    setSendData({ sh_name: e.target.value });
+    setSendData({ name: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = {
-      sh_name: sendData.sh_name || "",
-    };
-
-    console.log(data);
+    const data = { name: sendData.name || "" };
 
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_APP_API}/homesh/adddata`,
+        `${import.meta.env.VITE_APP_API}/home_share`,
         data,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
 
-      console.log(res.data);
-      toast.success("บันทึกสำเร็จ");
-      setSendData({});
-      handleOpen();
-      fetchData();
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        setSendData({});
+        handleOpen();
+        fetchData();
+      } else {
+        toast.success(res.data.message);
+      }
     } catch (error) {
       console.log(error);
-      toast.error("บันทึกไม่สำเร็จ");
+      toast.error(error.response.data.message);
     }
   };
 
   const handleEdit = async () => {
     const data = {
       id: id,
-      sh_name: sendData.sh_name,
+      name: sendData.name,
     };
 
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_APP_API}/homesh/edit`,
+        `${import.meta.env.VITE_APP_API}/home_share`,
         data,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
-      toast.success("บันทึกสำเร็จ");
-      handleOpen();
-      fetchData();
+
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        handleOpen();
+        fetchData();
+      }
     } catch (error) {
       console.log(error);
+      toast.error("ทำรายการไม่สำเร็จ");
     }
   };
 
   useEffect(() => {
     setSendData((prev) => ({
       ...prev,
-      sh_name: dataToModal?.sh_name || "",
+      name: dataToModal?.name || "",
     }));
   }, [dataToModal]);
 
@@ -94,7 +98,7 @@ const HomeShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
               label="ชื่อบ้านแชร์ "
               required
               onChange={(e) => handleChange(e)}
-              value={sendData?.sh_name || ""}
+              value={sendData?.name || ""}
               type="text"
             />
           </div>

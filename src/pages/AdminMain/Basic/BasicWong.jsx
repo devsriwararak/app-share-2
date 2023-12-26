@@ -34,9 +34,11 @@ import {
   calculatePagination,
 } from "../../../components/pagination/PaginationUtils";
 import Pagination from "../../../components/pagination/Pagination";
+import { Authorization } from "../../../auth/Data";
 
 const TABLE_HEAD = [
   "ลำดับ",
+  "รหัสวงแชร์",
   "ชื่อวงแชร์",
   "รูปแบบวงแชร์",
   "จำนวนมือ",
@@ -44,78 +46,7 @@ const TABLE_HEAD = [
   "แก้ไข/ลบ",
 ];
 
-const TABLE_ROWS = [
-  {
-    img: "/img/logos/logo-spotify.svg",
-    name: "Spotify",
-    amount: "$2,500",
-    date: "Wed 3:00pm",
-    status: "นาย",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-amazon.svg",
-    name: "Amazon",
-    amount: "$5,000",
-    date: "Wed 1:00pm",
-    status: "paid",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-pinterest.svg",
-    name: "Pinterest",
-    amount: "$3,400",
-    date: "Mon 7:40pm",
-    status: "pending",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-google.svg",
-    name: "Google",
-    amount: "$1,000",
-    date: "Wed 5:00pm",
-    status: "paid",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-];
+
 
 const BasicWong = () => {
   const [id, setId] = useState(null);
@@ -144,10 +75,10 @@ const BasicWong = () => {
   const fetchData = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/share/share-search?name=${search}`,
+        `${import.meta.env.VITE_APP_API}/wong_share?search=${search}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization
           },
         }
       );
@@ -178,10 +109,10 @@ const BasicWong = () => {
   const deleteRow = async (id) => {
     try {
       const res = await axios.delete(
-        `${import.meta.env.VITE_APP_API}/share/delete/${id}`,
+        `${import.meta.env.VITE_APP_API}/wong_share/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization
           },
         }
       );
@@ -221,7 +152,6 @@ const BasicWong = () => {
       <ViewWongShare
         handleOpen={handleOpenView}
         open={openView}
-        id={id}
         dataToModal={dataToModal}
       />
 
@@ -305,7 +235,7 @@ const BasicWong = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {item.p_share_name}
+                        {item.code}
                       </Typography>
                     </td>
 
@@ -315,7 +245,7 @@ const BasicWong = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {item.p_share_maintain}
+                        {item.name}
                       </Typography>
                     </td>
 
@@ -325,7 +255,7 @@ const BasicWong = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {item.p_share_hand}
+                        {item.type_wong_name}
                       </Typography>
                     </td>
 
@@ -335,7 +265,17 @@ const BasicWong = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        0000
+                         {item.count}
+                      </Typography>
+                    </td>
+
+                    <td className={classes}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                         {item.price}
                       </Typography>
                     </td>
 

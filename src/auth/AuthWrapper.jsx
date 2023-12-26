@@ -13,7 +13,7 @@ export const AuthContent = createContext();
 
 const AuthWrapper = () => {
   const [user, setUser] = useState({ name: "", isAuthenticated: false });
-  const [token, setToken] = useState(localStorage.getItem("Token"));
+  const [token, setToken] = useState(localStorage.getItem("app_share_token"));
   // const [token, setToken]=useState("")
   const [dataLogin , setDataLogin] = useState({})
 

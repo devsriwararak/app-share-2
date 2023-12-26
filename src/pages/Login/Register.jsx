@@ -23,21 +23,19 @@ const Register = () => {
         `${import.meta.env.VITE_APP_API}/register`,
         sendData
       );
-      console.log(res.data);
-      setSendData({});
-
-      if (res.data.result ="เพิ่มข้อมูลสำเร็จ") {
-        toast.success("สมัครสมาชิกสำเร็จ");
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        setSendData({});
+          setTimeout(() => {
+            navigate("/login");
+          }, 2000);
       } else {
-        toast.error("สมัครสมาชิกไม่สำเร็จ !");
-
+        toast.success(res.data.message);
       }
+
     } catch (error) {
       console.log(error);
-      toast.error("สมัครสมาชิกไม่สำเร็จ !");
+      toast.error(error.response.data.message);
     }
   };
   return (
@@ -132,7 +130,7 @@ const Register = () => {
                 </div> */}
                 <div className="bg-white rounded-lg">
                   <Input
-                    name="lnane"
+                    name="lname"
                     label="สกุล"
                     color="purple"
                     type="text"
