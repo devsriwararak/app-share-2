@@ -120,9 +120,9 @@ const BasicHome = () => {
     }
   };
 
-  const handleOpenEdit = (id, name) => {
+  const handleOpenEdit = (id, item) => {
     handleOpen(id);
-    setDataTomodal({ name });
+    setDataTomodal(item);
   };
 
   useEffect(() => {
@@ -250,7 +250,7 @@ const BasicHome = () => {
                           size={20}
                           color="black"
                           className=" cursor-pointer"
-                          onClick={() => handleOpenEdit(item.id, item.name)}
+                          onClick={() => handleOpenEdit(item.id, item)}
                         />
 
                         <HiTrash

@@ -15,13 +15,14 @@ import { HiDatabase, HiPencilAlt, HiTrash } from "react-icons/hi";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { Authorization } from "../../../auth/Data.js";
 
 const HomeShare = () => {
-  const options = [
-    { value: "chocolate", label: "Chocolate" },
-    { value: "strawberry", label: "Strawberry" },
-    { value: "vanilla", label: "Vanilla" },
-  ];
+  // const options = [
+  //   { value: "chocolate", label: "Chocolate" },
+  //   { value: "strawberry", label: "Strawberry" },
+  //   { value: "vanilla", label: "Vanilla" },
+  // ];
 
   const TABLE_HEAD = ["ลำดับ", "รหัส", "ชื่อ", "username", "แก้ไข/ลบ"];
 
@@ -55,9 +56,14 @@ const HomeShare = () => {
   const fetchDataHome = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/h-search?name=${search1}`
+        `${import.meta.env.VITE_APP_API}/home_account?search=${search1}`,
+        {
+          headers: {
+            Authorization: Authorization,
+          },
+        }
       );
-      // console.log(res.data);
+      console.log(res);
       setDataHome(res.data);
     } catch (error) {
       console.log(error);
@@ -77,9 +83,9 @@ const HomeShare = () => {
     }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id, home_share_id) => {
     Swal.fire({
-      title: `ต้องการลบ ID : ${id}`,
+      title: `ต้องการลบ ID : ${id} `,
       text: "คุณต้องการที่จะลบข้อมูลนี้ จริงหรือไม่ ?",
       icon: "warning",
       showCancelButton: true,
@@ -89,24 +95,33 @@ const HomeShare = () => {
       cancelButtonText: "ยกเลิก",
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteRow(id);
+        deleteRow(id, home_share_id);
       }
     });
   };
 
-  const deleteRow = async (id) => {
+  const deleteRow = async (id, home_share_id) => {
     try {
+      // const data = {
+      //   id,
+      //   home_share_id
+      // }
       const res = await axios.delete(
-        `${import.meta.env.VITE_APP_API}/delete/${id}`,
+        `${import.meta.env.VITE_APP_API}/home_account/${id}/${home_share_id}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
-      toast.success("ลบข้อมูลสำเร็จ");
-      fetchDataHome();
-      fetchDataMember();
+      console.log(res.data);
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        fetchDataHome();
+        fetchDataMember();
+      } else {
+        toast.success(res.data.message);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -238,7 +253,7 @@ const HomeShare = () => {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {item?.f_name || ""}
+                            {item?.fname || ""}
                           </Typography>
                         </td>
 
@@ -264,7 +279,9 @@ const HomeShare = () => {
                               size={20}
                               color="red"
                               className="cursor-pointer "
-                              onClick={() => handleDelete(item.id)}
+                              onClick={() =>
+                                handleDelete(item.id, item.home_share_id)
+                              }
                             />
                           </div>
                         </td>

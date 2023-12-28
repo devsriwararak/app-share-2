@@ -22,8 +22,13 @@ import { HiOutlineUserAdd, HiPencilAlt, HiTrash } from "react-icons/hi";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { calculatePageIndices, calculatePagination } from "../../components/pagination/PaginationUtils";
+import {
+  calculatePageIndices,
+  calculatePagination,
+} from "../../components/pagination/PaginationUtils";
 import Pagination from "../../components/pagination/Pagination";
+import { Authorization } from "../../auth/Data.js";
+
 
 const TABLE_HEAD = [
   "ลำดับ",
@@ -31,80 +36,7 @@ const TABLE_HEAD = [
   "ชือ-สกุล",
   "เบอร์โทร",
   "Username",
-  "แก้ไข/ลบ",
-];
-
-const TABLE_ROWS = [
-  {
-    img: "/img/logos/logo-spotify.svg",
-    name: "Spotify",
-    amount: "$2,500",
-    date: "Wed 3:00pm",
-    status: "นาย",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-amazon.svg",
-    name: "Amazon",
-    amount: "$5,000",
-    date: "Wed 1:00pm",
-    status: "paid",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-pinterest.svg",
-    name: "Pinterest",
-    amount: "$3,400",
-    date: "Mon 7:40pm",
-    status: "pending",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-google.svg",
-    name: "Google",
-    amount: "$1,000",
-    date: "Wed 5:00pm",
-    status: "paid",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
+  "แก้ไข",
 ];
 
 const CrudAdmin = () => {
@@ -113,6 +45,7 @@ const CrudAdmin = () => {
 
   const [data, setData] = useState([]);
   const [dataToModal, setDataToModal] = useState({});
+  const [search , setSearch] = useState("")
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -121,13 +54,18 @@ const CrudAdmin = () => {
   const getPaginatedData = () => {
     return calculatePagination(currentPage, itemsPerPage, data);
   };
-  const { firstIndex, lastIndex } = calculatePageIndices(currentPage, itemsPerPage);
+  const { firstIndex, lastIndex } = calculatePageIndices(
+    currentPage,
+    itemsPerPage
+  );
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/am-search?name=`
-      );
+      const res = await axios.get(`${import.meta.env.VITE_APP_API}/admin?search=${search}`, {
+        headers:{
+          Authorization : Authorization
+        }
+      });
       console.log(res.data);
       setData(res.data);
     } catch (error) {
@@ -160,7 +98,7 @@ const CrudAdmin = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [search]);
 
   return (
     <div className="">
@@ -168,15 +106,15 @@ const CrudAdmin = () => {
         handleOpen={handleOpen}
         open={open}
         dataToModal={dataToModal}
+        fetchData={fetchData}
       />
 
       <div className="flex flex-col md:flex-row    items-center justify-between gap-4">
         <div className="flex gap-2 items-center">
- 
           <HiOutlineUserAdd
-          size={35}
-          className="bg-purple-700/5 rounded-full px-1 py-1.5 text-purple-300"
-        />
+            size={35}
+            className="bg-purple-700/5 rounded-full px-1 py-1.5 text-purple-300"
+          />
           <span className="text-xl text-black font-bold">
             จัดการข้อมูล ADMIN
           </span>
@@ -184,7 +122,7 @@ const CrudAdmin = () => {
 
         <div className="flex gap-2 flex-col items-center   md:flex-row">
           <div className="w-72 bg-slate-50 rounded-md bg-gray-50  ">
-            <Input variant="outlined" label="ค้นหาชื่อ / รหัส" />
+            <Input variant="outlined" label="ค้นหาชื่อ / รหัส" onChange={(e)=>setSearch(e.target.value)}  />
           </div>
         </div>
       </div>
@@ -244,7 +182,7 @@ const CrudAdmin = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {item.f_name || ""} {item.l_nane || ""}
+                        {item.fname || ""} {item.lname || ""}
                       </Typography>
                     </td>
 
@@ -254,7 +192,7 @@ const CrudAdmin = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {item.username || ""}
+                        {item.tell || ""}
                       </Typography>
                     </td>
 
@@ -285,7 +223,7 @@ const CrudAdmin = () => {
           </table>
         </CardBody>
         <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Pagination
+          <Pagination
             itemsPerPage={itemsPerPage}
             totalItems={data.length}
             paginate={paginate}
@@ -300,61 +238,70 @@ const CrudAdmin = () => {
 
 export default CrudAdmin;
 
-const ModalAdmin = ({ handleOpen, open, dataToModal }) => {
-  const [sendData, setSendData] = useState({})
-  const [message , setMessage] = useState("")
+const ModalAdmin = ({ handleOpen, open, dataToModal , fetchData}) => {
+  const [sendData, setSendData] = useState({});
+  const [message, setMessage] = useState("");
 
-  const handleChange = (e)=>{
-    setSendData((prev)=>({
+  const handleChange = (e) => {
+    setSendData((prev) => ({
       ...prev,
-      [e.target.name] : e.target.value
-    }))
-  }
+      [e.target.name]: e.target.value,
+    }));
+  };
 
-  const handleUpdate = async ()=>{
+  const handleUpdate = async () => {
     const data = {
-      id : dataToModal.id || "" ,
-      username : sendData.username || "",
-      password : sendData.password || "",
-      f_name : sendData.f_name || "",
-      l_nane : sendData.l_nane || "",
-      tel : sendData.tel,
-      level: 'admin'
-    }
+      id: dataToModal.id || "",
+      username: sendData.username || "",
+      password: sendData.password || "",
+      fname: sendData.fname || "",
+      lname: sendData.lname || "",
+      tell: sendData.tell,
+
+    };
 
     console.log(data);
     try {
-      const res = await axios.put(`${import.meta.env.VITE_APP_API}/edit`,data , {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("Token")}`,
+      const res = await axios.put(
+        `${import.meta.env.VITE_APP_API}/admin`,
+        data,
+        {
+          headers: {
+            Authorization: Authorization
+          },
         }
-      })
+      );
       console.log(res.data);
-      if(res.data.error){
-        toast.error('ไม่สามารถดำเนินการได้')
-        setMessage('มีผู้ใช้งานนี้ในระบบแล้ว กรุณาลองใหม่อีกครั้ง !')
 
-      }else {
-        toast.success('บันทึกสำเร็จ')
-        handleOpen()
-        setMessage('')
+         toast.success("บันทึกสำเร็จ");
+         fetchData()
+        handleOpen();
+        setMessage("");
+      
 
-      }
+      // if (res.data.error) {
+      //   toast.error("ไม่สามารถดำเนินการได้");
+      //   setMessage("มีผู้ใช้งานนี้ในระบบแล้ว กรุณาลองใหม่อีกครั้ง !");
+      // } else {
+      //   toast.success("บันทึกสำเร็จ");
+      //   handleOpen();
+      //   setMessage("");
+      // }
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  
   useEffect(() => {
     setSendData((prev) => ({
       ...prev,
       id: dataToModal?.id || "",
+      code: dataToModal?.code || "",
       username: dataToModal?.username || "",
       password: dataToModal?.password || "",
-      f_name: dataToModal?.f_name || "",
-      l_nane: dataToModal?.l_nane || "",
-      tel: dataToModal?.tel || "",
+      fname: dataToModal?.fname || "",
+      lname: dataToModal?.lname || "",
+      tell: dataToModal?.tell || "",
     }));
   }, [dataToModal]);
 
@@ -370,32 +317,61 @@ const ModalAdmin = ({ handleOpen, open, dataToModal }) => {
             <Input label="รหัส" value={sendData?.code} disabled />
           </div>
           <div className="w-full">
-            <Input name="tel" label="เบอร์โทรท์" onChange={(e)=>handleChange(e)} color="purple"value={sendData?.tel || ""} />
+            <Input
+              name="tell"
+              label="เบอร์โทรท์"
+              onChange={(e) => handleChange(e)}
+              color="purple"
+              value={sendData?.tell || ""}
+            />
           </div>
         </div>
 
         <div className="flex flex-col md:flex-row gap-4 mt-4">
           <div className="w-full">
-            <Input name="f_name" label="ชื่อ" color="purple" value={sendData?.f_name || "" } onChange={(e)=>handleChange(e)}  />
+            <Input
+              name="fname"
+              label="ชื่อ"
+              color="purple"
+              value={sendData?.fname || ""}
+              onChange={(e) => handleChange(e)}
+            />
           </div>
           <div className="w-full">
-            <Input name="l_nane" label="สกุล" color="purple" value={sendData?.l_nane || "" } onChange={(e)=>handleChange(e)} />
+            <Input
+              name="lname"
+              label="สกุล"
+              color="purple"
+              value={sendData?.lname || ""}
+              onChange={(e) => handleChange(e)}
+            />
           </div>
         </div>
 
         <div className="flex flex-col md:flex-row gap-4 mt-4">
           <div className="w-full">
-            <Input name="username" label="username" color="purple" value={sendData?.username || ""} onChange={(e)=>handleChange(e)}   />
+            <Input
+              name="username"
+              label="username"
+              color="purple"
+              value={sendData?.username || ""}
+              onChange={(e) => handleChange(e)}
+            />
           </div>
           <div className="w-full">
-            <Input name="password" type="password" label="password" color="purple" value={sendData?.password || ""} onChange={(e)=>handleChange(e)}   />
+            <Input
+              name="password"
+              type="password"
+              label="password"
+              color="purple"
+              value={sendData?.password || ""}
+              onChange={(e) => handleChange(e)}
+            />
           </div>
         </div>
-
       </DialogBody>
       <DialogFooter>
-
-      <h4 className="text-lg mx-4 text-red-500">{message}</h4>
+        <h4 className="text-lg mx-4 text-red-500">{message}</h4>
 
         <Button
           variant="filled"
