@@ -11,6 +11,7 @@ import {
 import { HiOutlineUserGroup } from "react-icons/hi";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { Authorization } from "../../../auth/Data";
 
 const AddMember = ({ handleOpen, open, fetchData, dataToModal }) => {
   const [sendData, setSendData] = useState({});
@@ -28,26 +29,25 @@ const AddMember = ({ handleOpen, open, fetchData, dataToModal }) => {
     const data = {
       username: sendData.username || "",
       password: sendData.password || "",
-      f_name: sendData.f_name || "",
-      l_nane: sendData.l_nane || "",
+      fname: sendData.fname || "",
+      lname: sendData.lname || "",
       address: sendData.address || "",
-      tel: sendData.tel || "",
-      line: sendData.line || "",
-      share_w_id : localStorage.getItem('share_w_id') || ""
+      tell: sendData.tell || "",
+      home_share_id: localStorage.getItem("home_share_id") || "",
     };
     console.log(data);
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_APP_API}/register-m`,
+        `${import.meta.env.VITE_APP_API}/member/home`,
         data,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
       console.log(res.data);
-      if (res.data.result == "เพิ่มข้อมูลสำเร็จ") {
+      if (res.status === 200) {
         fetchData();
         toast.success("บันทึกสำเร็จ");
         handleOpen();
@@ -63,60 +63,61 @@ const AddMember = ({ handleOpen, open, fetchData, dataToModal }) => {
     }
   };
 
-  
-  const handleUpdate = async ()=>{
+  const handleUpdate = async () => {
     const data = {
-      id : sendData.id || "" ,
-      username : sendData.username || "",
-      password : sendData.password || "",
-      f_name : sendData.f_name || "",
-      l_nane : sendData.l_nane || "",
-      tel : sendData.tel || "",
-      line : sendData.line || "",
-      address : sendData.address || ""
-  
-    }
+      id: sendData.id || "",
+      username: sendData.username || "",
+      password: sendData.password || "",
+      fname: sendData.fname || "",
+      lname: sendData.lname || "",
+      tell: sendData.tell || "",
+      address: sendData.address || "",
+    };
 
     console.log(data);
     try {
-      const res = await axios.put(`${import.meta.env.VITE_APP_API}/edit`,data , {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("Token")}`,
+      const res = await axios.put(
+        `${import.meta.env.VITE_APP_API}/member/home`,
+        data,
+        {
+          headers: {
+            Authorization: Authorization,
+          },
         }
-      })
+      );
       console.log(res.data);
-      if(res.data.error){
-        toast.error('ไม่สามารถดำเนินการได้')
-        setMessage('มีผู้ใช้งานนี้ในระบบแล้ว กรุณาลองใหม่อีกครั้ง !')
-       
-      }else {
-        toast.success('บันทึกสำเร็จ')
-        handleOpen()
-        setMessage('')
-        fetchData()
-
+      if (res.status === 200) {
+        toast.success("บันทึกสำเร็จ");
+        handleOpen();
+        setMessage("");
+        fetchData();
+      } else {
+        toast.error("ไม่สามารถดำเนินการได้");
+        setMessage("มีผู้ใช้งานนี้ในระบบแล้ว กรุณาลองใหม่อีกครั้ง !");
       }
+
+   
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
     setSendData((prev) => ({
       ...prev,
-      id: dataToModal?.user_id || "",
+      id: dataToModal?.id || "",
       username: dataToModal?.username || "",
       password: dataToModal?.password || "",
-      f_name: dataToModal?.f_name || "",
-      l_nane: dataToModal?.l_nane || "",
-      tel: dataToModal?.tel || "",
-      line: dataToModal?.line || "",
+      fname: dataToModal?.fname || "",
+      lname: dataToModal?.lname || "",
+      tell: dataToModal?.tell || "",
+      // line: dataToModal?.line || "",
       address: dataToModal?.address || "",
     }));
   }, [dataToModal]);
 
   return (
-    <Dialog open={open} size="md" handler={handleOpen}>
+    <Dialog open={open} size="sm" handler={handleOpen}>
       <DialogHeader className="bg-gray-200 rounded-lg flex gap-4 text-lg">
         <HiOutlineUserGroup size={24} color="black" /> สร้างพนักงานใหม่
       </DialogHeader>
@@ -128,18 +129,18 @@ const AddMember = ({ handleOpen, open, fetchData, dataToModal }) => {
             <Input
               label="ชื่อ"
               color="purple"
-              name="f_name"
+              name="fname"
               onChange={(e) => handleChange(e)}
-              value={sendData?.f_name || ""}
+              value={sendData?.fname || ""}
               required
               autoComplete="off"
             />
             <Input
               label="สกุล"
               color="purple"
-              name="l_nane"
+              name="lname"
               onChange={(e) => handleChange(e)}
-              value={sendData?.l_nane || ""}
+              value={sendData?.lname || ""}
               required
               autoComplete="off"
             />
@@ -174,16 +175,9 @@ const AddMember = ({ handleOpen, open, fetchData, dataToModal }) => {
             <Input
               label="เบอร์โทรศัพท์"
               color="purple"
-              name="tel"
+              name="tell"
               onChange={(e) => handleChange(e)}
-              value={sendData?.tel || ""}
-            />
-            <Input
-              label="LINE ID (ถ้ามี)"
-              color="purple"
-              name="line"
-              onChange={(e) => handleChange(e)}
-              value={sendData?.line || ""}
+              value={sendData?.tell || ""}
             />
           </div>
 
@@ -211,7 +205,7 @@ const AddMember = ({ handleOpen, open, fetchData, dataToModal }) => {
             {sendData?.id ? (
               <Button
                 variant="filled"
-               onClick={handleUpdate}
+                onClick={handleUpdate}
                 size="sm"
                 color="purple"
                 className=" text-sm"

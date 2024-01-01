@@ -101,7 +101,7 @@ const UserData = ({ dataToModal }) => {
           วันที่กิจกรรม
         </CardHeader>
 
-        <CardBody>1111</CardBody>
+        <CardBody>ดำเนินการใน งวดที่ 3/3</CardBody>
       </Card>
 
       <Card className="w-full mt-8 md:mt-0">
@@ -109,7 +109,7 @@ const UserData = ({ dataToModal }) => {
           วันที่จบวงแชร์
         </CardHeader>
 
-        <CardBody>1111</CardBody>
+        <CardBody>ดำเนินการใน งวดที่ 3/3</CardBody>
       </Card>
     </>
   );

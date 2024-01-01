@@ -83,6 +83,7 @@ const Login = () => {
         console.log(decoded);
         localStorage.setItem("app_share_token", token);
         localStorage.setItem("name", decoded.name);
+        localStorage.setItem('home_share_id' , decoded?.home_share_id || "" )
 
         let typePage = "";
         let statusPage = "";

@@ -31,80 +31,15 @@ import {
   calculatePagination,
 } from "../../components/pagination/PaginationUtils";
 import MyWongShare from "../../components/modal/HomeShare/MyWongShare";
+import { Authorization } from "../../auth/Data";
 
-const TABLE_HEAD = ["ลำดับ", "ชื่อวงแชร์", "รูปแบบ", "จำนวนมือ","้เงินต้น", "แก้ไข/ลบ"];
-
-const TABLE_ROWS = [
-  {
-    img: "/img/logos/logo-spotify.svg",
-    name: "Spotify",
-    amount: "$2,500",
-    date: "Wed 3:00pm",
-    status: "นาย",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-amazon.svg",
-    name: "Amazon",
-    amount: "$5,000",
-    date: "Wed 1:00pm",
-    status: "paid",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-pinterest.svg",
-    name: "Pinterest",
-    amount: "$3,400",
-    date: "Mon 7:40pm",
-    status: "pending",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-google.svg",
-    name: "Google",
-    amount: "$1,000",
-    date: "Wed 5:00pm",
-    status: "paid",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
+const TABLE_HEAD = [
+  "ลำดับ",
+  "ชื่อวงแชร์",
+  "รูปแบบ",
+  "จำนวนมือ",
+  "้เงินต้น",
+  "แก้ไข/ลบ",
 ];
 
 const HomeWongShare = () => {
@@ -117,7 +52,9 @@ const HomeWongShare = () => {
 
   // State
   const [data, setData] = useState([]);
-  const [dataToModal , setDataToModal] = useState({})
+  const [dataToModal, setDataToModal] = useState({});
+  const home_share_id = localStorage.getItem('home_share_id')
+  const [search , setSearch] = useState("")
 
   // Pagination
 
@@ -135,14 +72,14 @@ const HomeWongShare = () => {
   const fetchData = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/share/share-search?name=`,
+        `${import.meta.env.VITE_APP_API}/wong_share/home/${home_share_id}?search=${search}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
-      console.log(res.data);
+      // console.log(res.data);
       setData(res.data);
     } catch (error) {
       console.log(error);
@@ -161,7 +98,7 @@ const HomeWongShare = () => {
       cancelButtonText: "ยกเลิก",
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteRow(id)
+        deleteRow(id);
       }
     });
   };
@@ -169,41 +106,45 @@ const HomeWongShare = () => {
   const deleteRow = async (id) => {
     try {
       const res = await axios.delete(
-        `${import.meta.env.VITE_APP_API}/share/delete/${id}`,
+        `${import.meta.env.VITE_APP_API}/wong_share/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization
           },
         }
       );
       toast.success("ลบข้อมูลสำเร็จ");
-      fetchData()
+      fetchData();
       console.log(res.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-
-  const handleChange = (item)=>{
-    handleOpen(1)
+  const handleChange = (item) => {
+    handleOpen(1);
     console.log(item);
-    setDataToModal(item)
-  }
+    setDataToModal(item);
+  };
 
   const handleViewModal = (item) => {
     handleOpenView(3);
     setDataToModal(item);
   };
 
-
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [search]);
 
   return (
     <div className="">
-      <MyWongShare handleOpen={handleOpen} open={open} id={id} fetchNewDat={fetchData} dataToModal={dataToModal} />
+      <MyWongShare
+        handleOpen={handleOpen}
+        open={open}
+        id={id}
+        fetchNewDat={fetchData}
+        dataToModal={dataToModal}
+      />
       {/* <WongShareModal handleOpen={handleOpen} open={open} id={id} /> */}
       {/* <ViewWongShare handleOpen={handleOpenView} open={openView} id={id} /> */}
       <ViewWongShare
@@ -215,19 +156,20 @@ const HomeWongShare = () => {
 
       <div className="flex flex-col md:flex-row   items-center  md:justify-between gap-4">
         <div className="flex gap-2 items-center">
-        <HiOutlineChatAlt2
+          <HiOutlineChatAlt2
             size={35}
             className="bg-purple-700/5 rounded-full px-1 py-1.5 text-purple-300"
           />
           <span className="text-xl text-black font-bold">
             {" "}
-            จัดการข้อมูลวงค์แชร์
+            จัดการข้อมูลวงค์แชร์ 
           </span>
         </div>
 
+
         <div className="flex gap-2 flex-col items-center   md:flex-row">
           <div className="w-72 bg-slate-50 rounded-md  bg-gray-50  ">
-            <Input variant="outlined" label="ค้นหาวงค์แชร์" color="purple" />
+            <Input variant="outlined" label="ค้นหาวงค์แชร์" color="purple" onChange={(e)=>setSearch(e.target.value)} />
           </div>
           <div className="">
             <Button
@@ -267,7 +209,7 @@ const HomeWongShare = () => {
             </thead>
             <tbody>
               {getPaginatedData().map((item, index) => {
-                const isLast = index === TABLE_ROWS.length - 1;
+                const isLast = index === getPaginatedData().length - 1;
                 const classes = isLast
                   ? "p-2"
                   : "p-2 border-b border-blue-gray-50 ";
@@ -289,7 +231,7 @@ const HomeWongShare = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {item.p_share_name}
+                        {item.name}
                       </Typography>
                     </td>
                     <td className={classes}>
@@ -298,7 +240,7 @@ const HomeWongShare = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {item.p_share_type}
+                        {item.type_wong_name}
                       </Typography>
                     </td>
                     <td className={classes}>
@@ -307,7 +249,7 @@ const HomeWongShare = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {item.p_share_hand}
+                        {item.count}
                       </Typography>
                     </td>
                     <td className={classes}>
@@ -316,7 +258,7 @@ const HomeWongShare = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {item.p_share_paid}
+                        {item.price}
                       </Typography>
                     </td>
                     <td className={classes}>
@@ -325,13 +267,13 @@ const HomeWongShare = () => {
                           size={20}
                           color="black"
                           className="cursor-pointer  "
-                          onClick={() =>handleViewModal(item)}
+                          onClick={() => handleViewModal(item)}
                         />
                         <HiPencilAlt
                           size={20}
                           color="black"
                           className="cursor-pointer  "
-                          onClick={() =>handleChange(item)}
+                          onClick={() => handleChange(item)}
                         />
                         <HiTrash
                           size={20}
@@ -348,7 +290,6 @@ const HomeWongShare = () => {
           </table>
         </CardBody>
         <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-          
           <Pagination
             itemsPerPage={itemsPerPage}
             totalItems={data.length}
@@ -356,7 +297,6 @@ const HomeWongShare = () => {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
           />
-          
         </CardFooter>
       </Card>
     </div>

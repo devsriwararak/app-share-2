@@ -1,11 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import DashboardStartGrid from "./DashboardStartGrid";
 import TransactionChart from "./TransactionChart";
 import BuyerProfileChart from "./BuyerProfileChart";
 import moment from "moment";
+import axios from "axios";
 
 const Dashboard = () => {
+  // const fetchData = async () => {
+  //   try {
+  //     const res = await axios(`http://192.168.1.21:8000/inovicesh/invoices-c-search?search=`, {
+  //       headers:{
+  //         Authorization : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMSIsImxldmVsIjoiMiIsImlkIjoxMSwiY29tcGFueSI6Ilx1MGUxYVx1MGUyM1x1MGUzNFx1MGUyOVx1MGUzMVx1MGUxN3VzZXIgXHUwZTE3XHUwZTE0XHUwZTJhXHUwZTJkXHUwZTFhMDEiLCJ0YXhfcGVyc29uYWwiOiIxMjM0NTY3ODkiLCJhZGRyZXNzIjoiXHUwZTAyXHUwZTJkXHUwZTE5XHUwZTQxXHUwZTAxXHUwZTQ4XHUwZTE5IiwidGVsIjoiMDg1MDAzMjY0OSIsImV4cCI6MTcwNTkwMTg1MH0.EQJ19wDuCM2Z7w-BahUGhXPzFzUlSpABE3whdPM2Vvk"
+  //       }
+  //     })
+  //     console.log(res.data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
   return (
     <>
       <div className="  ">

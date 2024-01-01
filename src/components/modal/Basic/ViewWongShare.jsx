@@ -12,22 +12,6 @@ import {
 import { HiOutlineDesktopComputer } from "react-icons/hi";
 
 const ViewWongShare = ({ open, handleOpen, dataToModal }) => {
-  const options = [
-    { value: "chocolate", label: "Chocolate" },
-    { value: "strawberry", label: "Strawberry" },
-    { value: "vanilla", label: "Vanilla" },
-  ];
-  const options2 = [
-    { value: "บิดดอกตาม", label: "บิดดอกตาม" },
-    { value: "ดอกตาม", label: "ดอกตาม" },
-    { value: "ขั้นบันได", label: "ขั้นบันได" },
-    { value: "บิดลดต้น (ลดต้นงวดถัดไป)", label: "บิดลดต้น (ลดต้นงวดถัดไป)" },
-    { value: "บิดลดต้น (ลดต้นงวดที่บิด)", label: "บิดลดต้น (ลดต้นงวดที่บิด)" },
-  ];
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
 
   return (
     <Dialog open={open} size="md" handler={handleOpen}>
@@ -38,13 +22,17 @@ const ViewWongShare = ({ open, handleOpen, dataToModal }) => {
         <div className="flex flex-col md:flex-row gap-4 -mt-4">
           <Card className="w-full shadow-xl ring-2 ring-gray-800/5">
             <CardBody>
-              <h2 className="text-lg font-semibold text-purple-900">ข้อมูลวงแชร์</h2>
-              <div className="mt-3">
-                <b className=" font-semibold text-gray-800 ">บ้านแชร์ : </b>
-                <span className="text-gray-700">
-                  {dataToModal?.home_share_name}
-                </span>
-              </div>
+              <h2 className="text-lg font-semibold text-purple-900">
+                ข้อมูลวงแชร์
+              </h2>
+              {dataToModal?.home_share_name && (
+                <div className="mt-3">
+                  <b className=" font-semibold text-gray-800 ">บ้านแชร์ : </b>
+                  <span className="text-gray-700">
+                    {dataToModal?.home_share_name}
+                  </span>
+                </div>
+              )}
 
               <div className="mt-1">
                 <b className=" font-semibold text-gray-800">รหัสวงแชร์ : </b>
@@ -84,24 +72,26 @@ const ViewWongShare = ({ open, handleOpen, dataToModal }) => {
 
               <div className="mt-3">
                 <b className=" font-semibold text-gray-800">ดอกเบี้ย : </b>
-                <span className="text-gray-700">{dataToModal?.interest} บาท</span>
+                <span className="text-gray-700">
+                  {dataToModal?.interest?.toLocaleString()} บาท
+                </span>
               </div>
               <div className="mt-1">
                 <b className=" font-semibold text-gray-800">ส่งต่องวด : </b>
                 <span className="text-gray-700">
-                  {dataToModal?.installment} บาท
+                  {dataToModal?.installment?.toLocaleString()} บาท
                 </span>
               </div>
               <div className="mt-1">
                 <b className=" font-semibold text-gray-800">จำนวนเงินต้น : </b>
-                <span className="text-gray-700">{dataToModal?.price} บาท</span>
+                <span className="text-gray-700">{dataToModal?.price?.toLocaleString()} บาท</span>
               </div>
 
               <div className="mt-1">
-                <b className=" font-semibold text-gray-800">ค่าดูแลวง :  </b>
+                <b className=" font-semibold text-gray-800">ค่าดูแลวง : </b>
                 <span className="text-gray-700">
-                  {dataToModal?.pay_for_wong} บาท
-                </span> 
+                  {dataToModal?.pay_for_wong?.toLocaleString()} บาท
+                </span>
               </div>
               <div className="mt-1">
                 <b className=" font-semibold text-gray-800">จำนวนมือ : </b>

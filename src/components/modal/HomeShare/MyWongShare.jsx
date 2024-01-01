@@ -13,31 +13,30 @@ import {
   HiOutlinePlusCircle,
 } from "react-icons/hi";
 import Select from "react-select";
-import { options2 } from "../../data/TypePlay";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { Authorization } from "../../../auth/Data";
 
 const MyWongShare = ({ open, handleOpen, id, fetchNewDat, dataToModal }) => {
   const [typePlayCheck, setTypePlayCheck] = useState(1);
 
   const [sendData, setSendData] = useState({});
-  const [dataHome, setDataHome] = useState([]);
+  const [dataTypeShare, setDataTypeHome] = useState([]);
 
-  const fetchHomeShare = async () => {
+  const fetchTypeShare = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_APP_API}/homesh`, {
+      const res = await axios.get(`${import.meta.env.VITE_APP_API}/type_wong`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("Token")}`,
+          Authorization: Authorization
         },
       });
 
       const rename = res.data.map((item, index) => ({
         value: item.id,
-        label: item.sh_name,
+        label: item.name,
       }));
-      setDataHome(rename);
+      setDataTypeHome(rename);
 
-      console.log(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -52,27 +51,25 @@ const MyWongShare = ({ open, handleOpen, id, fetchNewDat, dataToModal }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const dataToSendAPI = {
-      share_id: localStorage.getItem("share_w_id"),
-      user_id: localStorage.getItem("id"),
-      p_share_name: sendData.p_share_name || "",
-      p_share_type: sendData.p_share_type || "",
-      p_share_interest: sendData.p_share_interest || "",
-      p_share_send_per: sendData.p_share_send_per || "",
-      p_share_paid: sendData.p_share_paid || "",
-      p_share_maintain: sendData.p_share_maintain || "",
-      p_share_hand: sendData.p_share_hand || "",
-      p_share_req: sendData.p_share_req || "",
-    };
 
-    console.log(dataToSendAPI);
+    const data = {
+      home_share_id : localStorage.getItem('home_share_id') ,
+      name :sendData.name || "", 
+      type_wong_id :sendData.type_wong_id || "", 
+      installment :sendData.installment || "", 
+      price :sendData.price || "",  
+      count :sendData.count || "", 
+      pay_for_wong :sendData.pay_for_wong || "", 
+      interest :sendData.interest || "", 
+      note :sendData.note || ""
+    }
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_APP_API}/share/addshare`,
-        dataToSendAPI,
+        `${import.meta.env.VITE_APP_API}/wong_share/home`,
+        data,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization
           },
         }
       );
@@ -87,27 +84,25 @@ const MyWongShare = ({ open, handleOpen, id, fetchNewDat, dataToModal }) => {
   };
 
   const handleEdit = async () => {
-    const sendDataToApi = {
-      id: sendData.id,
-      // user_id: localStorage.getItem("id"),
-      share_id: localStorage.getItem("share_w_id"),
-      p_share_name: sendData.p_share_name || "",
-      p_share_type: sendData.p_share_type || "",
-      p_share_interest: sendData.p_share_interest || "",
-      p_share_send_per: sendData.p_share_send_per || "",
-      p_share_paid: sendData.p_share_paid || "",
-      p_share_maintain: sendData.p_share_maintain || "",
-      p_share_hand: sendData.p_share_hand || "",
-      p_share_req: sendData.p_share_req || "",
-    };
-    console.log(sendDataToApi);
+    const data = {
+      id: sendData.id ,
+      home_share_id : localStorage.getItem('home_share_id') ,
+      name :sendData.name || "", 
+      type_wong_id :sendData.type_wong_id || "", 
+      installment :sendData.installment || "", 
+      price :sendData.price || "",  
+      count :sendData.count || "", 
+      pay_for_wong :sendData.pay_for_wong || "", 
+      interest :sendData.interest || "", 
+      note :sendData.note || ""
+    }
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_APP_API}/share/edit`,
-        sendDataToApi,
+        `${import.meta.env.VITE_APP_API}/wong_share/home`,
+        data,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization
           },
         }
       );
@@ -133,9 +128,8 @@ const MyWongShare = ({ open, handleOpen, id, fetchNewDat, dataToModal }) => {
   };
 
   useEffect(() => {
-    fetchHomeShare();
+    fetchTypeShare()
     addDataToEdit();
-    // console.log(dataToModal);
   }, [dataToModal]);
 
   return (
@@ -145,31 +139,35 @@ const MyWongShare = ({ open, handleOpen, id, fetchNewDat, dataToModal }) => {
         {dataToModal.id ? "แก้ไขวงค์แชร์ของฉัน" : "สร้างวงค์แชร์ของฉัน"}
       </DialogHeader>
       <DialogBody className=" py-10 h-96 overflow-scroll md:h-full md:overflow-auto ">
+
+        {/* {JSON.stringify(sendData)} */}
+
         <form onSubmit={(e) => handleSubmit(e)}>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
             <Input
               color="purple"
               label="ชื่อวงค์แชร์"
               required
-              name="p_share_name"
+              name="name"
               onChange={(e) => handleChange(e)}
-              value={sendData?.p_share_name || ""}
+              value={sendData?.name || ""}
             />
             <Select
-              options={options2}
+              options={dataTypeShare}
               className="w-full"
               placeholder="รูปแบบวงค์แชร์"
+              required
               defaultValue={
                 dataToModal?.id
-                  ? options2.find(
-                      (option) => option.value == dataToModal?.p_share_type
+                  ? dataTypeShare.find(
+                      (option) => option.value == dataToModal?.type_wong_id
                     )
                   : ""
               }
               onChange={(e) =>
                 setSendData((prev) => ({
                   ...prev,
-                  p_share_type: e.value,
+                  type_wong_id: e.value,
                 }))
               }
             />
@@ -179,28 +177,28 @@ const MyWongShare = ({ open, handleOpen, id, fetchNewDat, dataToModal }) => {
             <Input
               color="purple"
               label="ส่งต่องวด"
-              name="p_share_send_per"
-              value={sendData?.p_share_send_per || ""}
+              name="installment"
+              value={sendData?.installment || ""}
               onChange={(e) => handleChange(e)}
               required
-              disabled={sendData?.p_share_type == 3}
+              disabled={sendData?.type_wong_id == 3}
             />
 
             <Input
               color="purple"
               label="จำนวนเงินต้น"
-              name="p_share_paid"
+              name="price"
               onChange={(e) => handleChange(e)}
-              value={sendData?.p_share_paid || ""}
+              value={sendData?.price || ""}
             />
 
             <Input
               color="purple"
               label="จำนวนมือ"
               required
-              name="p_share_hand"
+              name="count"
               onChange={(e) => handleChange(e)}
-              value={sendData?.p_share_hand || ""}
+              value={sendData?.count || ""}
             />
           </div>
 
@@ -208,22 +206,22 @@ const MyWongShare = ({ open, handleOpen, id, fetchNewDat, dataToModal }) => {
             <Input
               color="purple"
               label="ค่าดูแลวง "
-              name="p_share_maintain"
+              name="pay_for_wong"
               onChange={(e) => handleChange(e)}
-              value={sendData?.p_share_maintain || ""}
+              value={sendData?.pay_for_wong || ""}
             />
             <Input
               color="purple"
               label="ดอกเบี้ย"
               disabled={
-                sendData?.p_share_type == 1 ||
-                sendData?.p_share_type == 3 ||
-                sendData?.p_share_type == 4 ||
-                sendData?.p_share_type == 5
+                sendData?.type_wong_id == 1 ||
+                sendData?.type_wong_id == 3 ||
+                sendData?.type_wong_id == 4 ||
+                sendData?.type_wong_id == 5
               }
-              name="p_share_interest"
+              name="interest"
               onChange={(e) => handleChange(e)}
-              value={sendData?.p_share_interest || ""}
+              value={sendData?.interest || ""}
             />
           </div>
 
@@ -231,9 +229,9 @@ const MyWongShare = ({ open, handleOpen, id, fetchNewDat, dataToModal }) => {
             <Input
               color="purple"
               label="หมายเหตุ"
-              name="p_share_req"
+              name="note"
               onChange={(e) => handleChange(e)}
-              value={sendData?.p_share_req || ""}
+              value={sendData?.note || ""}
             />
           </div>
 

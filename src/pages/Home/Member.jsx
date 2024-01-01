@@ -29,53 +29,10 @@ import axios from "axios";
 import ViewMember from "../../components/modal/Member/ViewMember";
 import { calculatePageIndices, calculatePagination } from "../../components/pagination/PaginationUtils";
 import Pagination from "../../components/pagination/Pagination";
+import { Authorization } from "../../auth/Data";
 
 const TABLE_HEAD = ["ลำดับ", "รหัส", "ชื่อพนักงาน", "Username", "แก้ไข/ลบ"];
 
-const TABLE_ROWS = [
-  {
-    amount: 1,
-    date: "HM00001",
-    status: "นาย",
-    account: "member001",
-  },
-  {
-    amount: 2,
-    date: "HM00002",
-    status: "paid",
-    account: "member002",
-  },
-  {
-    amount: 3,
-    date: "HM00003",
-    status: "pending",
-    account: "member003",
-  },
-  {
-    amount: 4,
-    date: "HM00004",
-    status: "paid",
-    account: "member004",
-  },
-  {
-    amount: 5,
-    date: "HM00005",
-    status: "cancelled",
-    account: "member005",
-  },
-  {
-    amount: 6,
-    date: "HM00006",
-    status: "cancelled",
-    account: "member006",
-  },
-  {
-    amount: 7,
-    date: "HM00007",
-    status: "cancelled",
-    account: "member007",
-  },
-];
 
 const Member = () => {
   const [id, setId] = useState(null);
@@ -85,9 +42,12 @@ const Member = () => {
   const handleOpen = (number) => (setOpen(!open), setId(number));
   const handleOpenView = (number) => (setOpenView(!openView), setId(number));
 
+  // states
   const [data, setData] = useState([]);
   const [dataToModal , setDataToModal] = useState({})
   const [search, setSearch] = useState("")
+  const home_share_id = localStorage.getItem('home_share_id')
+
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -102,10 +62,10 @@ const Member = () => {
   const fetchData = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/sharehouse/mem-search?name=${search}`,
+        `${import.meta.env.VITE_APP_API}/member/home/${home_share_id}?search=${search}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization
           },
         }
       );
@@ -135,10 +95,10 @@ const Member = () => {
   const deleteRow = async (id) => {
     try {
       const res = await axios.delete(
-        `${import.meta.env.VITE_APP_API}/delete/${id}`,
+        `${import.meta.env.VITE_APP_API}/member/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization
           },
         }
       );
@@ -256,7 +216,7 @@ const Member = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {item.f_name}
+                        {item.fname}  {item.lname}
                       </Typography>
                     </td>
 
@@ -292,7 +252,7 @@ const Member = () => {
                           size={20}
                           color="red"
                           className="cursor-pointer  "
-                          onClick={() => handleDelete(item.user_id)}
+                          onClick={() => handleDelete(item.id)}
                         />
                       </div>
                     </td>

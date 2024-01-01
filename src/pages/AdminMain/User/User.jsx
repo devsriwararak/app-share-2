@@ -27,15 +27,9 @@ import {
 } from "../../../components/pagination/PaginationUtils";
 import Pagination from "../../../components/pagination/Pagination";
 import UserData from "./UserData";
+import classNames from "classnames";
 
-const TABLE_HEAD = [
-  "ลำดับ",
-  "รหัส",
-  "ชื่อ-สกุล",
-  "เบอร์โทร",
-  "Username",
-  "แก้ไข/ลบ",
-];
+
 
 const User = () => {
   const [open, setOpen] = useState(false);
@@ -45,6 +39,7 @@ const User = () => {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
   const [dataToModal, setDataToModal] = useState({});
+  const [indexStatus , setIndexStatus] = useState(null)
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -161,13 +156,13 @@ const User = () => {
               </p>
               <Button
                 variant="outlined"
-                className="w-3/5 flex items-center gap-2 text-sm "
+                className="w-3/5 flex items-center gap-1 text-sm "
                 size="sm"
                 color="purple"
                 onClick={() => (handleOpen(), setDataToModal({}))}
               >
                 <HiOutlinePlusSm size={20} />
-                เพิ่มลูกค้าใหม่
+                เพิ่มลูกค้า
               </Button>
             </div>
 
@@ -183,7 +178,8 @@ const User = () => {
               {data.map((item, index) => (
                 <li
                   key={item.id}
-                  className="flex  justify-between hover:bg-gray-200 py-1.5 px-2 cursor-pointer"
+                  className={classNames(indexStatus == index && "bg-gray-200"  ,"flex  justify-between hover:bg-gray-200 py-1.5 px-2 cursor-pointer")}
+                  onClick={()=>setIndexStatus(index)}
                 >
                   <p
                     className="text-sm"
