@@ -98,10 +98,10 @@ const Login = () => {
           statusPage = "ลูกค้า";
         } else if (decoded.role === 3) {
           typePage = "home";
-          statusPage = "ยังไม่ทำ";
+          statusPage = decoded?.home_share_name || ""
         } else if (decoded.role === 4) {
           typePage = "member";
-          statusPage = "ยังไม่ทำ";
+          statusPage = decoded?.home_share_name || ""
         }
 
         localStorage.setItem("Type", typePage);

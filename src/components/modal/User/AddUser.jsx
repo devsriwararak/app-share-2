@@ -13,6 +13,7 @@ import Select from "react-select";
 import { BankList } from "../../data/BankList";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Authorization } from "../../../auth/Data";
 
 const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
   const [sendData, setSendData] = useState({});
@@ -28,26 +29,26 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
-      username: sendData.username,
-      password: sendData.password,
-      f_name: sendData.f_name,
-      l_nane: sendData.l_nane,
-      address: sendData.address,
-      tel: sendData.tel,
+      username: sendData?.username || "",
+      password: sendData?.password || "",
+      fname: sendData?.fname || "",
+      lname: sendData?.lname || "",
+      address: sendData?.address || "",
+      tell: sendData?.tell || "",
     };
-    console.log(data);
+    // console.log(data);
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_APP_API}/register`,
         data,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
       console.log(res.data);
-      if (res.data.result == "เพิ่มข้อมูลสำเร็จ") {
+      if (res.status === 200) {
         fetchData();
         toast.success("บันทึกสำเร็จ");
         handleOpen();
@@ -64,35 +65,36 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
 
   const handleUpdate = async () => {
     const data = {
-      id: sendData.id || "",
-      username: sendData.username || "",
-      password: sendData.password || "",
-      f_name: sendData.f_name || "",
-      l_nane: sendData.l_nane || "",
-      address: sendData.address || "",
-      tel: sendData.tel || "",
+      id: sendData?.id,
+      username: sendData?.username || "",
+      password: sendData?.password || "",
+      fname: sendData?.fname || "",
+      lname: sendData?.lname || "",
+      address: sendData?.address || "",
+      tell: sendData?.tell || "",
     };
     console.log(data);
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_APP_API}/edit`,
+        `${import.meta.env.VITE_APP_API}/users`,
         data,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
       console.log(res.data);
-      if (res.data.error) {
-        toast.error("ไม่สามารถดำเนินการได้");
-        setMessage("มีผู้ใช้งานนี้ในระบบแล้ว กรุณาลองใหม่อีกครั้ง !");
-      } else {
-        toast.success("บันทึกข้อมูลสำเร็จ");
+      if (res.status === 200) {
+        toast.success(res.data.message);
         handleOpen();
         setMessage("");
-        fetchData()
+        fetchData();
+      } else {
+        toast.error("ไม่สามารถดำเนินการได้");
+        setMessage("มีผู้ใช้งานนี้ในระบบแล้ว กรุณาลองใหม่อีกครั้ง !");
       }
+ 
     } catch (error) {
       console.log(error);
       toast.error("ไม่สามารถดำเนินการได้");
@@ -100,7 +102,7 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
   };
 
   useEffect(() => {
-    setMessage("")
+    setMessage("");
     setSendData(
       (prev) => (
         {
@@ -141,6 +143,7 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
               error
               required
               className="w-full"
+              type="password"
               name="password"
               onChange={(e) => handleChange(e)}
               value={sendData?.password || ""}
@@ -152,20 +155,18 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
               color="purple"
               label="ชื่อ"
               className="w-full"
-              name="f_name"
+              name="fname"
               onChange={(e) => handleChange(e)}
-              value={sendData?.f_name || ""}
-
+              value={sendData?.fname || ""}
               required
             />
             <Input
               color="purple"
               label="สกุล"
               className="w-full"
-              name="l_nane"
+              name="lname"
               onChange={(e) => handleChange(e)}
-              value={sendData?.l_nane || ""}
-
+              value={sendData?.lname || ""}
               required
             />
           </div>
@@ -174,10 +175,9 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
             <Input
               color="purple"
               label="เบอร์โทร"
-              name="tel"
+              name="tell"
               onChange={(e) => handleChange(e)}
-              value={sendData?.tel || ""}
-
+              value={sendData?.tell || ""}
             />
           </div>
 
@@ -189,7 +189,6 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
               name="address"
               onChange={(e) => handleChange(e)}
               value={sendData?.address || ""}
-
             />
           </div>
 

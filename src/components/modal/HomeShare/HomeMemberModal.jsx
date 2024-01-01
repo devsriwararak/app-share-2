@@ -12,42 +12,19 @@ import { HiOutlineHome, HiOutlineUserAdd } from "react-icons/hi";
 import Select from "react-select";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Authorization } from "../../../auth/Data";
 
-const options = [
-  { value: "", label: "เลือกธนาคารที่ต้องการ" },
-  { value: "strawberry", label: "Strawberry" },
-  { value: "vanilla", label: "Vanilla" },
-];
 
 const HomeMemberModal = ({
   open,
   handleOpen,
-  fetchDataMember,
+  fetchMemberByHomeShareId,
   dataToModal,
 }) => {
   const [dataHomeSelect, setDataHomeSelect] = useState([]);
   const [sendData, setSendData] = useState({});
   const [message, setMessage] = useState("");
 
-  const fetchHome = async () => {
-    try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/homesh/home-search?name=`, {
-          headers:{
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
-          }
-        }
-      );
-      const addData = res.data.map((item) => ({
-        value: item.id,
-        label: item.sh_name,
-      }));
-
-      setDataHomeSelect(addData);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const handleChange = (e) => {
     setSendData((prev) => ({
@@ -59,29 +36,28 @@ const HomeMemberModal = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
+      home_share_id: sendData.home_share_id,
       username: sendData.username,
-      share_w_id: sendData.share_w_id,
       password: sendData.password,
-      f_name: sendData.f_name,
-      l_nane: sendData.l_nane,
-      address: sendData.address,
-      tel: sendData.tel,
-      line : sendData.line
+      fname: sendData.fname || "",
+      lname: sendData.lname || "",
+      address: sendData.address || "",
+      tell: sendData.tell || "",
+      // line: sendData.line || "",
     };
-    console.log(data);
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_APP_API}/register-m`,
+        `${import.meta.env.VITE_APP_API}/member`,
         data,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
-      console.log(res.data);
-      if (res.data.result == "เพิ่มข้อมูลสำเร็จ") {
-        fetchDataMember();
+      // console.log(res.data);
+      if (res.status === 200) {
+        fetchMemberByHomeShareId(sendData.home_share_id);
         toast.success("บันทึกสำเร็จ");
         handleOpen();
         setSendData({});
@@ -92,41 +68,42 @@ const HomeMemberModal = ({
       }
     } catch (error) {
       console.log(error);
+      toast.error(error.response.data.message);
     }
   };
 
   const handleUpdate = async () => {
     const data = {
       id: sendData.id || "",
-      username: sendData.username || "",
-      share_w_id: sendData.share_w_id || "",
-      password: sendData.password || "",
-      f_name: sendData.f_name || "",
-      l_nane: sendData.l_nane || "",
+      home_share_id: sendData.home_share_id,
+      username: sendData.username,
+      password: sendData.password,
+      fname: sendData.fname || "",
+      lname: sendData.lname || "",
       address: sendData.address || "",
-      tel: sendData.tel || "",
-      line: sendData.line || "",
+      tell: sendData.tell || "",
     };
-    console.log(data);
+    // console.log(data);
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_APP_API}/edit`,
+        `${import.meta.env.VITE_APP_API}/member`,
         data,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization
           },
         }
       );
-      console.log(res.data);
-      if (res.data.error) {
-        toast.error("ไม่สามารถดำเนินการได้");
-        setMessage("มีผู้ใช้งานนี้ในระบบแล้ว กรุณาลองใหม่อีกครั้ง !");
-      } else {
-        toast.success("บันทึกข้อมูลสำเร็จ");
+      // console.log(res.data);
+      if (res.status === 200) {
+        fetchMemberByHomeShareId(sendData.home_share_id);
+        toast.success("บันทึกสำเร็จ");
         handleOpen();
+        setSendData({});
         setMessage("");
-        fetchDataMember()
+      } else {
+        toast.error("ไม่สามารถลงทะเบียนได้");
+        setMessage("มีผู้ใช้งานนี้ในระบบแล้ว กรุณาลองใหม่อีกครั้ง !");
       }
     } catch (error) {
       console.log(error);
@@ -135,8 +112,7 @@ const HomeMemberModal = ({
   };
 
   useEffect(() => {
-    setMessage("")
-    fetchHome();
+    setMessage("");
     setSendData(
       (prev) => (
         {
@@ -148,37 +124,30 @@ const HomeMemberModal = ({
   }, [dataToModal]);
 
   return (
-    <Dialog open={open} size="sm" handler={handleOpen}>
+    <Dialog open={open} size="md" handler={handleOpen}>
       <DialogHeader className="bg-gray-200 flex gap-2 rounded-lg text-lg">
         {" "}
         <HiOutlineUserAdd />
         {dataToModal?.id
-          ? "แก้ไขพนักงานประจำบ้านแชร์" + " " + dataToModal.code
-          : "สร้างพนักงานประจำบ้านแชร์"}
+          ? "แก้ไขพนักงาน ประจำบ้านแชร์" + " " + dataToModal.code
+          : "สร้างพนักงาน ประจำบ้านแชร์"}
       </DialogHeader>
       <DialogBody className=" py-5 h-96 overflow-y-scroll md:h-full md:overflow-auto   ">
-        {/* {JSON.stringify(sendData)} */}
 
+        {/* {JSON.stringify(sendData)} */}
         <form onSubmit={handleSubmit}>
-          <div className="flex flex-col md:flex-row gap-2 justify-center">
-            <Select
-              options={dataHomeSelect}
+          <div className="flex flex-col md:flex-row gap-4 ">
+            <b className="text-black w-full">
+              บ้านแชร์ : {sendData?.home_share_name}{" "}
+            </b>
+
+            <Input
+              color="purple"
+              label="เบอร์โทร"
+              name="tell"
+              onChange={(e) => handleChange(e)}
               className="w-full"
-              placeholder="เลือกบ้านแชร์"
-              required
-              onChange={(e) =>
-                setSendData((prev) => ({
-                  ...prev,
-                  share_w_id: e.value,
-                }))
-              }
-              defaultValue={
-                dataToModal?.id
-                  ? dataHomeSelect.find(
-                      (option) => option.value == dataToModal?.share_w_id
-                    )
-                  : ""
-              }
+              value={sendData?.tell || ""}
             />
           </div>
 
@@ -196,6 +165,7 @@ const HomeMemberModal = ({
               color="red"
               label="password"
               name="password"
+              type="password"
               onChange={(e) => handleChange(e)}
               error
               required
@@ -207,40 +177,23 @@ const HomeMemberModal = ({
             <Input
               color="purple"
               label="ชื่อ"
-              name="f_name"
+              name="fname"
               onChange={(e) => handleChange(e)}
               className="w-full"
               required
-              value={sendData?.f_name || ""}
+              value={sendData?.fname || ""}
             />
             <Input
               color="purple"
               label="สกุล"
-              name="l_nane"
+              name="lname"
               onChange={(e) => handleChange(e)}
               className="w-full"
               required
-              value={sendData?.l_nane || ""}
+              value={sendData?.lname || ""}
             />
           </div>
 
-          <div className="flex flex-col md:flex-row gap-2  justify-center mt-3">
-            <Input
-              color="purple"
-              label="เบอร์โทร"
-              name="tel"
-              onChange={(e) => handleChange(e)}
-              className="w-full"
-              value={sendData?.tel || ""}
-            />
-           <Input
-            color="purple"
-            label="Line ID (ถ้ามี)"
-            name="line"
-            onChange={(e) => handleChange(e)}
-            value={sendData?.line || ""}
-          />
-          </div>
 
           <div className="flex flex-col md:flex-row gap-2  justify-center mt-3">
             <Textarea

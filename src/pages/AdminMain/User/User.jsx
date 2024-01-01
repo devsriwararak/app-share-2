@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Authorization } from "../../../auth/Data.js";
 
 import {
   Card,
@@ -60,7 +61,12 @@ const User = () => {
   const fetchData = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/u-search?name=${search}`
+        `${import.meta.env.VITE_APP_API}/users?search=${search}`,
+        {
+          headers: {
+            Authorization: Authorization,
+          },
+        }
       );
       console.log(res.data);
       setData(res.data);
@@ -89,15 +95,17 @@ const User = () => {
   const deleteRow = async (id) => {
     try {
       const res = await axios.delete(
-        `${import.meta.env.VITE_APP_API}/delete/${id}`,
+        `${import.meta.env.VITE_APP_API}/users/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
-      toast.success("ลบข้อมูลสำเร็จ");
-      fetchData();
+      if (res.status === 200) {
+        toast.success("ลบข้อมูลสำเร็จ");
+        fetchData();
+      }
     } catch (error) {
       console.log(error);
     }
@@ -109,9 +117,9 @@ const User = () => {
     handleOpen();
   };
 
-  const handelSendToUserData = (item)=>{
+  const handelSendToUserData = (item) => {
     setDataToModal(item);
-  }
+  };
 
   useEffect(() => {
     fetchData();
@@ -130,7 +138,6 @@ const User = () => {
 
       <div className="flex flex-col md:flex-row    items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-     
           <HiOutlineShoppingCart
             size={35}
             className="bg-purple-700/5 rounded-full px-1 py-1.5 text-purple-300"
@@ -150,7 +157,7 @@ const User = () => {
           <CardBody>
             <div className="flex flex-col md:flex-row justify-between items-center">
               <p className="w-2/5">
-                <b>จำนวน (20)</b>
+                <b>จำนวน ({data.length})</b>
               </p>
               <Button
                 variant="outlined"
@@ -174,10 +181,16 @@ const User = () => {
 
             <ul className="mt-4 overflow-y-scroll">
               {data.map((item, index) => (
-                <li key={item.id} className="flex  justify-between hover:bg-gray-200 py-1.5 px-2 cursor-pointer">
-                  <p onClick={()=>handelSendToUserData(item)}>{`${item.code} (${item.f_name})`}</p>
+                <li
+                  key={item.id}
+                  className="flex  justify-between hover:bg-gray-200 py-1.5 px-2 cursor-pointer"
+                >
+                  <p
+                    className="text-sm"
+                    onClick={() => handelSendToUserData(item)}
+                  >{`${item.code} (${item.fname})`}</p>
 
-                  <div className="flex flex-row gap-2">
+                  <div className="flex flex-row gap-1">
                     <HiPencilAlt
                       size={20}
                       color="black"
@@ -198,11 +211,9 @@ const User = () => {
         </Card>
 
         <div className="w-full md:w-3/4 flex flex-col md:flex-row gap-2">
-          <UserData  dataToModal={dataToModal}/>
+          <UserData dataToModal={dataToModal} />
         </div>
       </div>
-
-
     </div>
   );
 };
