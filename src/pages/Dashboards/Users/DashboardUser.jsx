@@ -21,7 +21,7 @@ const DashboardUser = () => {
             size={40}
             className="bg-purple-700/5 rounded-full px-1 py-1.5 text-purple-300"
           />{" "}
-          สรุปรายรับ/รายจ่าย (ประจำวัน) งวด 3/3{" "}
+          สรุปรายรับ/รายจ่าย (ประจำวัน) งวด 3/3.{" "}
         </h1>
         <div className="w-full  md:w-1/3">
           <Input type="date" />
