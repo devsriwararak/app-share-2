@@ -8,7 +8,7 @@ import {
   Card,
   Typography,
 } from "@material-tailwind/react";
-import moment from "moment";
+// import moment from "moment";
 
 const TABLE_HEAD = ["ลำดับ", "ชื่อวงแชร์", "จำนวนเงิน"];
 
@@ -28,7 +28,9 @@ const TABLE_ROWS = [
 ];
 
 const ModalDetaUser = ({ open, handleOpen, dataToModal }) => {
-  const formattedDate = moment().format("DD-MM-YYYY");
+  // const formattedDate = moment().format("DD-MM-YYYY");
+  const formattedDate = "11/11/2567"
+
 
   useEffect(() => {
     console.log(dataToModal);

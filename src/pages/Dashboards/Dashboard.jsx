@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import DashboardStartGrid from "./DashboardStartGrid";
 import TransactionChart from "./TransactionChart";
 import BuyerProfileChart from "./BuyerProfileChart";
-// import moment from "moment";
 import axios from "axios";
 
 const Dashboard = () => {
@@ -70,7 +69,8 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <small className="text-black flex justify-end text-sm"> ข้อมูล ณ วันที่ {moment().format('DD-M-YYYY') }</small> */}
+        
+        */}
       </div>
     </>
   );

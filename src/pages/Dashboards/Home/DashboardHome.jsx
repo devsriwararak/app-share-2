@@ -1,5 +1,5 @@
 import { Input, Progress } from "@material-tailwind/react";
-import moment from "moment";
+// import moment from "moment";
 import React from "react";
 import {
   HiOutlineCurrencyDollar,
@@ -75,7 +75,7 @@ const DashboardHome = () => {
 
       <small className="text-gray-700 flex justify-end text-xs mx-6">
         {" "}
-        ข้อมูล ณ วันที่ {moment().format("DD-M-YYYY")}
+        ข้อมูล ณ วันที่ 11/11/2567
       </small>
 
       <h2 className="text-black text-xl mx-6 flex flex-row gap-3 items-center">
