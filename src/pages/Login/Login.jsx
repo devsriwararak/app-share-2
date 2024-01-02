@@ -110,7 +110,7 @@ const Login = () => {
 
         setTimeout(() => {
           window.location.reload();
-        }, 1500);
+        }, 1000);
       } else {
         toast.error(res.data.message);
       }
