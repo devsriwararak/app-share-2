@@ -18,41 +18,10 @@ import {
 } from "react-icons/hi";
 import Select from "react-select";
 import { toast } from "react-toastify";
+import { Authorization } from "../../auth/Data";
 
 const TABLE_HEAD = ["ลำดับ", "บ้านแร์", "วงค์แชร์", "สถานะ"];
 
-const TABLE_ROWS = [
-  {
-    name: "John Michael",
-    job: "Manager",
-    date: "23/04/18",
-    status: "รอดำเนินการ",
-  },
-  {
-    name: "Alexa Liras",
-    job: "Developer",
-    date: "23/04/18",
-    status: "รอดำเนินการ",
-  },
-  {
-    name: "Laurent Perrier",
-    job: "Executive",
-    date: "19/09/17",
-    status: "ปฏิเสธ",
-  },
-  {
-    name: "Michael Levi",
-    job: "Developer",
-    date: "24/12/08",
-    status: "เข้าร่วม",
-  },
-  {
-    name: "Richard Gran",
-    job: "Manager",
-    date: "04/10/21",
-    status: "เข้าร่วม",
-  },
-];
 
 const AddToWongShare = () => {
   // State
@@ -62,6 +31,8 @@ const AddToWongShare = () => {
   const [dataHomeShare, setDataHomeShare] = useState([]);
   const [dataWongShare, setDataWongShare] = useState([]);
   const [dataForSelect, setDataForSelect] = useState({});
+  const user_id = localStorage.getItem("id")
+  const [search, setSearch] = useState("")
 
   const handleChange_1 = (e) => {
     const text = e.value;
@@ -75,8 +46,8 @@ const AddToWongShare = () => {
 
       setDataForSelect((prev) => ({
         ...prev,
-        share_name: e.label,
-        share_id: e.value,
+        home_name: e.label,
+        home_id: e.value,
       }));
     }
   };
@@ -87,61 +58,63 @@ const AddToWongShare = () => {
 
     setDataForSelect((prev) => ({
       ...prev,
-      p_share_name: newData.p_share_name,
-      p_share_type: newData.p_share_type,
-      p_share_paid: newData.p_share_paid,
-      p_share_maintain: newData.p_share_maintain,
-      p_share_hand: newData.p_share_hand,
-      p_share_req: newData.p_share_req,
-      share_v_id: newData.id,
+      wong_name: newData.name,
+      type_wong_name: newData.type_wong_name,
+      price: newData.price,
+      pay_for_wong: newData.pay_for_wong,
+      count: newData.count,
+      note: newData.note,
+      wong_id: newData.id,
     }));
   };
 
   const handleAddWong = async () => {
     const data = {
-      share_id: dataForSelect.share_id,
-      user_id: localStorage.getItem("id"),
-      share_v_id: dataForSelect.share_v_id,
+      home_id: dataForSelect.home_id,
+      user_id: user_id,
+      wong_id: dataForSelect.wong_id,
+      status: 0,
     };
 
     console.log(data);
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_APP_API}/sharehouse/userselect`,
+        `${import.meta.env.VITE_APP_API}/users/wong_share`,
         data,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
-      console.log(res.data);
-      if (res.data.error) {
-        toast.error("ทำรายการไม่สำเร็จ !");
-        setDataForSelect({});
-      } else {
+
+      if (res.status === 200) {
         toast.success("ทำรายการสำเร็จ");
         fetchDataMyWongShare();
+        setBtnDisable(true)
+      } else {
+        toast.error("ทำรายการไม่สำเร็จ !");
       }
     } catch (error) {
       console.log(error);
+      toast.error("ทำรายการไม่สำเร็จ !");
     }
   };
 
   const fetchDataHomeShare = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/homesh/home-search?name=`,
+        `${import.meta.env.VITE_APP_API}/home_share`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
       // console.log(res.data);
       const addData = res.data.map((item) => ({
         value: item.id,
-        label: item.sh_name,
+        label: item.name,
       }));
       setDataHomeShare(addData);
     } catch (error) {
@@ -152,10 +125,10 @@ const AddToWongShare = () => {
   const fetchDataWongShareForHome = async (id) => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/share/share-search?name=${id}`,
+        `${import.meta.env.VITE_APP_API}/wong_share/home/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
@@ -163,7 +136,7 @@ const AddToWongShare = () => {
       setDataAllWongShare(res.data);
       const addData = res.data.map((item) => ({
         value: item.id,
-        label: item.p_share_name,
+        label: item.name,
       }));
       setDataWongShare(addData);
     } catch (error) {
@@ -174,14 +147,13 @@ const AddToWongShare = () => {
   const fetchDataMyWongShare = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/sharehouse/search-user?search_term=`,
+        `${import.meta.env.VITE_APP_API}/users/wong_share/${user_id}?search=${search}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization
           },
         }
       );
-      console.log(res.data);
       setData(res.data);
     } catch (error) {
       console.log(error);
@@ -191,7 +163,7 @@ const AddToWongShare = () => {
   useEffect(() => {
     fetchDataHomeShare();
     fetchDataMyWongShare();
-  }, []);
+  }, [search]);
 
   return (
     <div className="flex flex-col md:flex-row gap-2 ">
@@ -205,11 +177,15 @@ const AddToWongShare = () => {
               />
               ขอเข้าวงค์แชร์
             </h2>
+            {/* <p className="text-black bg-red-500"> ss : {JSON.stringify(dataHomeShare)}</p>
+            <p className="text-black bg-green-500"> ss : {JSON.stringify(dataAllWongShare)}</p> */}
+
             <div className="grid grid-rows-1 md:grid-cols-2 gap-4 mt-5">
               <Select
                 options={dataHomeShare}
                 placeholder="เลือกบ้านแชร์"
                 onChange={(e) => handleChange_1(e)}
+                
               />
               <Select
                 isDisabled={btnDisable}
@@ -221,37 +197,33 @@ const AddToWongShare = () => {
 
             <div className="grid grid-rows-1 md:grid-cols-2 gap-4 mt-8">
               <div>
-                <b>ชื่อบ้านแชร์ : </b>{" "}
-                <span> {dataForSelect?.share_name || ""} </span>
+                <b>ชื่อบ้านแชร์ : </b> <p> {dataForSelect?.home_name || ""} </p>
               </div>
               <div>
-                <b>ชื่อวงค์แชร์ : </b>{" "}
-                <span> {dataForSelect.p_share_name} </span>
+                <b>ชื่อวงค์แชร์ : </b> <p> {dataForSelect.wong_name} </p>
               </div>
             </div>
 
             <div className="grid grid-rows-1 md:grid-cols-2 gap-4 mt-4">
               <div>
-                <b>รูปแบบวงค์แชร์ : </b>{" "}
-                <span>{dataForSelect.p_share_type}</span>
+                <b>รูปแบบวงค์แชร์ : </b> <p>{dataForSelect.type_wong_name}</p>
               </div>
               <div>
-                <b>จำนวนเงินต้น : </b> <span>{dataForSelect.p_share_paid}</span>
+                <b>จำนวนเงินต้น : </b> <p>{dataForSelect.price}</p>
               </div>
             </div>
 
             <div className="grid grid-rows-1 md:grid-cols-2 gap-4 mt-4">
               <div>
-                <b>ค่าดูแลวงค์ : </b>{" "}
-                <span>{dataForSelect.p_share_maintain}</span>
+                <b>ค่าดูแลวงค์ : </b> <p>{dataForSelect.pay_for_wong}</p>
               </div>
               <div>
-                <b>จำนวนมือ : </b> <span>{dataForSelect.p_share_hand}</span>
+                <b>จำนวนมือ : </b> <p>{dataForSelect.count}</p>
               </div>
             </div>
 
             <div className="mt-4">
-              <b>หมายเหตุ : </b> <span>{dataForSelect.p_share_req}</span>
+              <b>หมายเหตุ : </b> <p>{dataForSelect.note}</p>
             </div>
 
             <div className="flex justify-end mt-5 gap-2">
@@ -259,7 +231,7 @@ const AddToWongShare = () => {
                 color="purple"
                 variant="filled"
                 onClick={handleAddWong}
-                disabled={!dataForSelect?.p_share_name}
+                disabled={!dataForSelect?.wong_name}
                 size="sm"
                 className=" text-sm"
               >
@@ -277,16 +249,17 @@ const AddToWongShare = () => {
           <CardBody>
             <div className="flex flex-col md:flex-row justify-between ">
               <h2 className="text-lg font-bold text-black flex items-center gap-2 w-full ">
-              <HiOutlineShare
-                size={35}
-                className="bg-purple-700/5 rounded-full px-1 py-1.5 text-purple-300"
-              />
+                <HiOutlineShare
+                  size={35}
+                  className="bg-purple-700/5 rounded-full px-1 py-1.5 text-purple-300"
+                />
                 วงค์แชร์ของฉัน
               </h2>
               <Input
-                label="ค้นหารหัส หรือ วงค์แชร์"
+                label="ค้นหาวงค์แชร์"
                 color="purple"
                 className="w-full "
+                onChange={(e)=>setSearch(e.target.value)}
               />
             </div>
 
@@ -332,7 +305,7 @@ const AddToWongShare = () => {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {item.sh_name || ""}
+                            {item.home_share_name || ""}
                           </Typography>
                         </td>
                         <td className="p-3">
@@ -341,21 +314,21 @@ const AddToWongShare = () => {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {item.p_share_name || ""}
+                            {item.wong_share_name || ""}
                           </Typography>
                         </td>
                         <td className="p-2">
-                          {item.is_apporvee === 0 && (
+                          {item.status === 0 && (
                             <p className="bg-yellow-300 bg-opacity-70 text-orange-700 rounded-lg">
                               รออนุมัติ
                             </p>
                           )}
-                          {item.is_apporvee === 1 && (
+                          {item.status === 1 && (
                             <p className="bg-green-300 bg-opacity-70 text-green-700 rounded-lg">
                               อนุมัติ
                             </p>
                           )}
-                          {item.is_apporvee === 2 && (
+                          {item.status === 2 && (
                             <p className="bg-red-300 bg-opacity-70 text-red-700 rounded-lg">
                               ปฏิเสธ
                             </p>

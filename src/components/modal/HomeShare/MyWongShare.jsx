@@ -136,7 +136,7 @@ const MyWongShare = ({ open, handleOpen, id, fetchNewDat, dataToModal }) => {
     <Dialog open={open} size="lg" handler={handleOpen}>
       <DialogHeader className="bg-gray-200 flex gap-2 rounded-lg text-lg">
         <HiOutlineChatAlt2 />{" "}
-        {dataToModal.id ? "แก้ไขวงค์แชร์ของฉัน" : "สร้างวงค์แชร์ของฉัน"}
+        {sendData?.id  ? "แก้ไขวงค์แชร์ของฉัน" : "สร้างวงค์แชร์ของฉัน"}
       </DialogHeader>
       <DialogBody className=" py-10 h-96 overflow-scroll md:h-full md:overflow-auto ">
 

@@ -5,12 +5,15 @@ import {
   Input,
   Typography,
 } from "@material-tailwind/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HiOutlineUserAdd, HiOutlineX } from "react-icons/hi";
 import MyWongHome from "./MyWongHome";
 import MyWongWong from "./MyWongWong";
 import MyWongActivity from "./MyWongActivity";
 import { FcPlus } from "react-icons/fc";
+import Login from "../Login/Login";
+import axios from "axios";
+import { Authorization } from "../../auth/Data";
 
 const TABLE_HEAD = ["บ้านแชร์", "เลือก"];
 
@@ -41,6 +44,11 @@ const TABLE_ROWS_2 = [
 const MyWong = () => {
   const [data, setData] = useState({});
   const [showComponent, setShowComponent] = useState(1);
+  const user_id = localStorage.getItem("id")
+  const [dataHomeShare , setDataHomeShare] = useState([])
+  const [search , setSearch] = useState("")
+
+
 
   const handleClick_1 = (index) => {
     setData((prev) => ({
@@ -64,6 +72,23 @@ const MyWong = () => {
     }));
   };
 
+  const fetchDataHomeShare = async()=>{
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_APP_API}/users/home_share/${user_id}?search=${search}`, {
+        headers:{
+          Authorization : Authorization
+        }
+      })
+      setDataHomeShare(res.data)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(()=>{
+    fetchDataHomeShare()
+  },[search])
+
   return (
     <div>
       <div className="flex flex-col  md:flex-row gap-4">
@@ -79,13 +104,13 @@ const MyWong = () => {
                 บ้านแชร์ (2)
               </h2>
               <div className="mt-2">
-                <Input label="ค้นหารหัส หรือ ชื่อบ้านแชร์" color="purple" />
+                <Input label="ค้นหาชื่อบ้านแชร์" color="purple" onChange={(e)=>setSearch(e.target.value)} />
               </div>
 
               <ul className="mt-3 overflow-y-scroll">
-                {TABLE_ROWS.map((item, index) => (
+                {dataHomeShare.map((item, index) => (
                   <li className=" hover:bg-gray-200 py-2 flex justify-between items-center" key={index}>
-                    {`${item.job}`}{" "}
+                    {`${item.home_share_name}`}{" "}
                     <FcPlus className=" cursor-pointer" onClick={() => handleClick_1(index)} size={23} />
                   </li>
                 ))}

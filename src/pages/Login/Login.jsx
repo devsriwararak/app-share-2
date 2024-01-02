@@ -74,13 +74,15 @@ const Login = () => {
         `${import.meta.env.VITE_APP_API}/login`,
         dataLogin
       );
-      console.log(res);
 
       if (res.status === 200) {
         toast.success(res.data.message);
         const token = res.data.token;
         const decoded = jwtDecode(token);
-        console.log(decoded);
+
+        // console.log(decoded);
+
+        localStorage.setItem('id' , decoded?.id || "" )
         localStorage.setItem("app_share_token", token);
         localStorage.setItem("name", decoded.name);
         localStorage.setItem('home_share_id' , decoded?.home_share_id || "" )
@@ -115,45 +117,7 @@ const Login = () => {
         toast.error(res.data.message);
       }
 
-      // if (res.data.error) {
-      //   toast.error(res.data.error);
-      // } else {
-      //   toast.success(res.data.result);
-
-      //   const token = res.data.token;
-      //   const decoded = jwtDecode(token);
-      //   console.log(decoded);
-      //   // updateToken(token)
-      //   localStorage.setItem("Token", token);
-      //   localStorage.setItem("id", decoded.id);
-      //   localStorage.setItem("name", decoded.f_name + " " + decoded.l_nane);
-      //   // updateValue("share_w_id", decoded?.share_w_id)
-      //   // แบ่ง navigate
-      //   if (decoded.level === "0") {
-      //     // status - 0
-      //     localStorage.setItem("status", "เจ้าของระบบ");
-      //     localStorage.setItem("Type", "main-admin");
-      //   } else if (decoded.level === "1") {
-      //     // status - 1
-      //     localStorage.setItem("status", "ผู้ดูแลระบบ");
-      //     localStorage.setItem("Type", "admin");
-      //   } else if (decoded.level === "2") {
-      //     // status - 2
-      //     localStorage.setItem("status", "ลูกค้า");
-      //     localStorage.setItem("Type", "user");
-      //   } else if (decoded.level === "3") {
-      //     // status - 3
-      //     fetchDataHome(decoded.share_w_id, decoded.level);
-      //     localStorage.setItem("Type", "home");
-      //   } else if (decoded.level === "4") {
-      //     // status - 4
-      //     fetchDataHome(decoded.share_w_id, decoded.level);
-      //     localStorage.setItem("Type", "member");
-      //   }
-      //   setTimeout(() => {
-      //     window.location.reload();
-      //   }, 1500);
-      // }
+     
     } catch (error) {
       console.log(error);
       toast.error(error.response.data.message);
