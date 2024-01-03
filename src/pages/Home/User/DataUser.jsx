@@ -15,24 +15,25 @@ const DataUser = ({ data, selectData }) => {
         </h2>
       </div>
 
+
       <div className="flex flex-col md:flex-row gap-4 mt-5">
         <div className="w-full">
-          <b>รหัส : </b> <span> {selectData.code} </span>
+          <b>รหัส : </b> <span> {selectData.user_code} </span>
         </div>
         <div className="w-full">
-          <b>ชื่อ : </b> <span> {selectData.f_name} </span>
+          <b>ชื่อ : </b> <span> {selectData.user_fname} </span>
         </div>
         <div className="w-full">
-          <b>สกุล : </b> <span>{selectData.l_nane}</span>
+          <b>สกุล : </b> <span>{selectData.user_lname}</span>
         </div>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4 mt-4">
         <div className="w-1/3">
-          <b>เบอร์โทร : </b> <span>{selectData.tel}</span>
+          <b>เบอร์โทร : </b> <span>{selectData.user_tell}</span>
         </div>
         <div className="w-2/3">
-          <b>ที่อยู่ : </b> <span>{selectData.address}</span>
+          <b>ที่อยู่ : </b> <span>{selectData.user_address}</span>
         </div>
       </div>
 

@@ -14,6 +14,7 @@ import { FcPlus } from "react-icons/fc";
 import Login from "../Login/Login";
 import axios from "axios";
 import { Authorization } from "../../auth/Data";
+import classNames from "classnames";
 
 const TABLE_HEAD = ["บ้านแชร์", "เลือก"];
 
@@ -47,14 +48,18 @@ const MyWong = () => {
   const user_id = localStorage.getItem("id")
   const [dataHomeShare , setDataHomeShare] = useState([])
   const [search , setSearch] = useState("")
+  const [indexStatus , setIndexStatus] = useState(null)
 
 
 
-  const handleClick_1 = (index) => {
-    setData((prev) => ({
-      ...prev,
-      home: index == 2 ? "" : TABLE_ROWS[index].job,
-    }));
+  const handleClick_1 = (item,index) => {
+
+    const data = {
+      item,
+      index
+    }
+    setData(data)
+    setIndexStatus(index)
   };
 
   const handleClick_2 = (index) => {
@@ -109,9 +114,9 @@ const MyWong = () => {
 
               <ul className="mt-3 overflow-y-scroll">
                 {dataHomeShare.map((item, index) => (
-                  <li className=" hover:bg-gray-200 py-2 flex justify-between items-center" key={index}>
+                  <li className={classNames(indexStatus === index && "bg-gray-300 hover:bg-gray-300"," hover:bg-gray-200 py-2 px-2 flex justify-between items-center rounded-lg")} key={index}>
                     {`${item.home_share_name}`}{" "}
-                    <FcPlus className=" cursor-pointer" onClick={() => handleClick_1(index)} size={23} />
+                    <FcPlus className=" cursor-pointer" onClick={() => handleClick_1(item,index)} size={23} />
                   </li>
                 ))}
               </ul>
@@ -191,7 +196,7 @@ const MyWong = () => {
 
               <div className="mt-8">
                 {showComponent === 1 && <MyWongHome data={data} />}
-                {showComponent === 2 && <MyWongWong data={data} />}
+                {showComponent === 2 && <MyWongWong home_share_id={data?.item?.home_share_id} />}
                 {showComponent === 3 && <MyWongActivity data={data} />}
               </div>
 

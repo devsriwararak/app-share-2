@@ -23,12 +23,13 @@ import Select from "react-select";
 import { toast } from "react-toastify";
 import classNames from "classnames";
 import axios from "axios";
+import { Authorization } from "../../../auth/Data.js";
 
 const TABLE_HEAD = ["ลำดับ", "รหัส", "ชื่อลูกแชร์", "เลือก"];
-const TABLE_HEAD_2 = ["รหัส", "ชื่อลูกแชร์", "วงแชร์", "สถานะ", "เลือก"];
+const TABLE_HEAD_2 = ["ชื่อลูกแชร์", "วงแชร์", "สถานะ", "เลือก"];
 
 const selectStatus = [
-  { value: "0", label: "รออนุญาติ" },
+  { value: "0", label: "รอตรวจสอบ" },
   { value: "1", label: "อนุญาติ" },
   { value: "2", label: "ปฏิเสธ" },
 ];
@@ -43,18 +44,18 @@ const AddUserToHome = ({ handleOpen, open }) => {
   const [sendDataWongShare, setSendDataWongShare] = useState({});
   const [updateStatusUser, setUpdateStatusUser] = useState({});
   const [message, setMessage] = useState({});
+  const home_share_id = localStorage.getItem("home_share_id");
 
   const fetchDataUser = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/u-search?name=${searchUser}`,
+        `${import.meta.env.VITE_APP_API}/users?search=${searchUser}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
-      console.log(res.data);
       setDataUser(res.data);
     } catch (error) {
       console.log(error);
@@ -65,24 +66,24 @@ const AddUserToHome = ({ handleOpen, open }) => {
     setSendDataUser((prev) => ({
       ...prev,
       id: item.id,
-      f_name: item.f_name,
+      fname: item.fname,
+      user_id: item.id,
     }));
   };
 
   const fetchDataWongShare = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/sharehouse/w-details`,
+        `${import.meta.env.VITE_APP_API}/wong_share/home/${home_share_id}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
-      console.log(res.data);
       const setNewData = res.data.map((item, index) => ({
         value: item.id,
-        label: item.p_share_name,
+        label: item.name,
       }));
       setDataMyWingShare(setNewData);
     } catch (error) {
@@ -93,49 +94,54 @@ const AddUserToHome = ({ handleOpen, open }) => {
   const handleAddUser = async () => {
     try {
       const data = {
-        share_id: Number(localStorage.getItem("share_w_id")) || "",
-        user_id: sendDataUser.id || "",
-        share_v_id: sendDataUser.share_v_id || "",
-        is_apporvee: 1,
+        user_id: sendDataUser.user_id || "",
+        home_share_id: home_share_id,
+        wong_share_id: sendDataUser.wong_share_id || "",
+        status: 1,
       };
 
       console.log(data);
-
       const res = await axios.post(
-        `${import.meta.env.VITE_APP_API}/sharehouse/addsharehouse`,
+        `${import.meta.env.VITE_APP_API}/home_share/users`,
         data,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
+
       console.log(res.data);
-      fetchDataMyUser();
-      toast.success("บันทึกสำเร็จ");
+      if (res.status === 200) {
+        fetchDataMyUser();
+        toast.success(res.data.message);
+        setSendDataUser({})
+        
+      } else {
+        toast.error("บันทึกไม่สำเร็จ");
+      }
+
     } catch (error) {
-      console.log(error);
       toast.error("บันทึกไม่สำเร็จ");
-      setMessage((prev) => ({
-        ...prev,
-        message_1: "ผู้ใช้งานนี้ถูกเพิ่มเข้าวงแชร์นี้ไปแล้ว !",
-      }));
+      // console.log(error);
+      // toast.error("บันทึกไม่สำเร็จ");
+      // setMessage((prev) => ({
+      //   ...prev,
+      //   message_1: "ผู้ใช้งานนี้ถูกเพิ่มเข้าวงแชร์นี้ไปแล้ว !",
+      // }));
     }
   };
 
   const fetchDataMyUser = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/sharehouse/user-details?search_term=${
-          sendDataWongShare?.share_v_id || ""
-        }`,
+        `${import.meta.env.VITE_APP_API}/home_share/users/${home_share_id}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
-
       setDataMyUser(res.data);
     } catch (error) {
       console.log(error);
@@ -143,35 +149,41 @@ const AddUserToHome = ({ handleOpen, open }) => {
   };
 
   const handleSelectMyUser = (item) => {
-    console.log(item);
     setUpdateStatusUser((prev) => ({
       ...prev,
       id: item.id,
-      username: item.username,
+      user_fname: item.user_fname,
+      user_lname: item.user_lname,
+      wong_share_name: item.wong_share_name,
     }));
   };
 
   const handleUpdateMyUser = async () => {
     const data = {
       id: updateStatusUser.id,
-      is_apporvee: updateStatusUser.is_apporvee,
+      status: updateStatusUser.status,
     };
 
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_APP_API}/sharehouse/edit`,
+        `${import.meta.env.VITE_APP_API}/home_share/users`,
         data,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization,
           },
         }
       );
-      console.log(res.data);
-      fetchDataMyUser();
-      setUpdateStatusUser({});
+      if (res.status === 200) {
+        fetchDataMyUser();
+        setUpdateStatusUser({});
+        toast.success(res.data.message);
+      } else {
+        toast.error("ทำรายการไม่สำเร็จ");
+      }
     } catch (error) {
       console.log(error);
+      toast.error("ทำรายการไม่สำเร็จ");
     }
   };
 
@@ -179,7 +191,7 @@ const AddUserToHome = ({ handleOpen, open }) => {
     fetchDataUser();
     fetchDataWongShare();
     fetchDataMyUser();
-    setMessage({})
+    setMessage({});
   }, [searchUser, sendDataWongShare.share_v_id]);
   return (
     <div>
@@ -190,7 +202,6 @@ const AddUserToHome = ({ handleOpen, open }) => {
           เพิ่มลูกแชร์เข้าบ้านตัวเอง
         </DialogHeader>
         <DialogBody className="overflow-y-scroll h-[500px] md:h-full">
-
           <div className="flex flex-col md:flex-row gap-4">
             <Card className="w-full md:w-1/2 ring-2 ring-gray-300/20">
               <CardBody>
@@ -258,7 +269,7 @@ const AddUserToHome = ({ handleOpen, open }) => {
                               color="blue-gray"
                               className="font-normal"
                             >
-                              {item.f_name}
+                              {item.fname} {item.lname}
                             </Typography>
                           </td>
                           <td className="p-2 flex justify-center">
@@ -274,19 +285,28 @@ const AddUserToHome = ({ handleOpen, open }) => {
                   </table>
                 </Card>
 
-                <div className="flex flex-col md:flex-row gap-4 mt-5 items-center">
-                  <div className="w-full">
-                    <b className="font-bold text-black">ลูกแชร์ : </b>
-                    <span>{sendDataUser.f_name}</span>
+                <div className="flex flex-col  md:flex-row gap-4 mt-5 items-center">
+                  <div className="w-full ">
+                    <div>
+                      <b className="font-bold text-black">ลูกแชร์ : </b>{" "}
+                      <span>{sendDataUser?.fname}</span>
+                    </div>
+                    <div>
+                      <b className="font-bold text-black">วงแชร์ : </b>{" "}
+                      <span>{sendDataUser?.wong_share_name}</span>
+                    </div>
                   </div>
+
                   <Select
                     className="w-full"
                     options={dataMyWongShare}
                     placeholder="เลือกวงแชร์"
+                    isDisabled={!sendDataUser.fname}
                     onChange={(e) =>
                       setSendDataUser((prev) => ({
                         ...prev,
-                        share_v_id: e.value,
+                        wong_share_id: e.value,
+                        wong_share_name: e.label,
                       }))
                     }
                   />
@@ -301,10 +321,9 @@ const AddUserToHome = ({ handleOpen, open }) => {
                     size="sm"
                     className="text-sm"
                     onClick={handleAddUser}
-                    // disabled={
-                    //   sendDataUser?.id === undefined && sendDataUser?.share_v_id === undefined
-
-                    // }
+                    disabled={
+                      !sendDataUser.fname || !sendDataUser.wong_share_name
+                    }
                   >
                     บันทึก
                   </Button>
@@ -314,13 +333,13 @@ const AddUserToHome = ({ handleOpen, open }) => {
 
             <Card className="w-full md:w-1/2 ring-2 ring-gray-300/20 ">
               <CardBody>
-                <div className="flex flex-col md:flex-row justify-between items-center">
+                <div className="flex flex-col md:flex-row justify-between items-center mt-2">
                   <h2 className="text-black font-bold flex items-center gap-2 w-full">
                     {" "}
                     <HiOutlineHome size={24} />
                     ลูกแชร์ในบ้าน
                   </h2>
-
+{/* 
                   <Select
                     className="w-full"
                     options={dataMyWongShare}
@@ -343,7 +362,7 @@ const AddUserToHome = ({ handleOpen, open }) => {
                     }
                   >
                     ทั้งหมด
-                  </Button>
+                  </Button> */}
                 </div>
 
                 <Card>
@@ -373,7 +392,7 @@ const AddUserToHome = ({ handleOpen, open }) => {
                             key={index}
                             className="even:bg-blue-gray-50/50 hover:bg-gray-200"
                           >
-                            <td className="p-2">
+                            {/* <td className="p-2">
                               <Typography
                                 variant="small"
                                 color="blue-gray"
@@ -381,7 +400,7 @@ const AddUserToHome = ({ handleOpen, open }) => {
                               >
                                 {item.code}
                               </Typography>
-                            </td>
+                            </td> */}
 
                             <td className="p-2">
                               <Typography
@@ -389,7 +408,7 @@ const AddUserToHome = ({ handleOpen, open }) => {
                                 color="blue-gray"
                                 className="font-normal"
                               >
-                                {item.username}
+                                {item?.user_fname} {item?.user_lname}
                               </Typography>
                             </td>
 
@@ -399,22 +418,22 @@ const AddUserToHome = ({ handleOpen, open }) => {
                                 color="blue-gray"
                                 className="font-normal"
                               >
-                                {item.p_share_name}
+                                {item.wong_share_name}
                               </Typography>
                             </td>
 
                             <td className="p-2">
-                              {item.is_apporvee === 0 && (
+                              {item.status === 0 && (
                                 <p className="bg-yellow-300 bg-opacity-50 text-orange-700 rounded-lg ">
-                                  รออนุมัติ
+                                  รอตรวจสอบ
                                 </p>
                               )}
-                              {item.is_apporvee === 1 && (
+                              {item.status === 1 && (
                                 <p className="bg-green-300 bg-opacity-50 text-green-700 rounded-lg">
                                   อนุมัติ
                                 </p>
                               )}
-                              {item.is_apporvee === 2 && (
+                              {item.status === 2 && (
                                 <p className="bg-red-300 bg-opacity-50 text-red-700 rounded-lg">
                                   ปฏิเสธ
                                 </p>
@@ -439,17 +458,27 @@ const AddUserToHome = ({ handleOpen, open }) => {
 
                 <div className="flex flex-col md:flex-row gap-4 mt-5 items-center">
                   <div className="w-full">
-                    <b className="font-bold text-black">ชื่อลูกแชร์ : </b>{" "}
-                    <span>{updateStatusUser?.username}</span>
+                    <div>
+                      <b className="font-bold text-black">ชื่อลูกแชร์ : </b>{" "}
+                      <span>
+                        {updateStatusUser?.user_fname}{" "}
+                        {updateStatusUser?.user_lname}
+                      </span>
+                    </div>
+                    <div>
+                      <b className="font-bold text-black">วงแชร์ : </b>{" "}
+                      <span>{updateStatusUser?.wong_share_name}</span>
+                    </div>
                   </div>
                   <Select
                     className="w-full"
                     options={selectStatus}
                     placeholder="เลือกสถานะใหม่"
+                    isDisabled={!updateStatusUser?.user_fname}
                     onChange={(e) =>
                       setUpdateStatusUser((prev) => ({
                         ...prev,
-                        is_apporvee: e.value,
+                        status: e.value,
                       }))
                     }
                   />
@@ -462,6 +491,9 @@ const AddUserToHome = ({ handleOpen, open }) => {
                     size="sm"
                     className="text-sm"
                     onClick={handleUpdateMyUser}
+                    disabled={
+                      !updateStatusUser.user_fname || !updateStatusUser.status
+                    }
                   >
                     อัพเดท
                   </Button>

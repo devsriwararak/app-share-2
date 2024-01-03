@@ -1,16 +1,82 @@
-import React, { useEffect } from 'react'
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Authorization } from "../../auth/Data";
+import { Card, CardBody } from "@material-tailwind/react";
 
-const MyWongHome = ({data}) => {
-//   useEffect(()=>{
-// console.log(data);
-//   },[data])
+const MyWongHome = ({ data }) => {
+  const id = data?.item?.home_share_id || "";
+  const [dataHomeShare, setDataHomeShare] = useState({});
+
+  const fetchData = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_APP_API}/home_share/${id}`,
+        {
+          headers: {
+            Authorization: Authorization,
+          },
+        }
+      );
+      // console.log(res.data);
+      setDataHomeShare(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [data]);
+
   return (
     <div>
-      <h1 className='text-lg text-black'>ข้อมูลบ้านแชร์  {data.home}</h1>
-      <p className='text-lg text-gray-700 mt-3'>ข้อมูลบ้านแชร์ จะดำเนินการในงวดที่ 3/3 ครับ</p>
+      <Card>
+        <CardBody>
+
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="w-full">
+              <b>รหัสบ้านแชร์ : </b>
+              <span>{dataHomeShare?.code}</span>
+            </div>
+
+            <div className="w-full">
+              <b>ชื่อบ้านแชร์ : </b>
+              <span>{dataHomeShare?.name}</span>
+            </div>
+
+            <div className="w-full">
+              <b>สถานะ : </b>
+              <span>
+                {dataHomeShare?.status_own === 1 ? "Online" : "Offline"}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-4 mt-4">
+            <div className="w-full">
+              <b>ธนาคาร : </b>
+              <span>{dataHomeShare?.bank}</span>
+            </div>
+
+            <div className="w-full">
+              <b>เลขบัญชี : </b>
+              <span>{dataHomeShare?.account_number}</span>
+            </div>
+
+            <div className="w-full">
+              <b>ชื่อบัญชี : </b>
+              <span>
+                {dataHomeShare?.account_name }
+              </span>
+            </div>
+          </div>
+
+
+        </CardBody>
+      </Card>
      
     </div>
-  )
-}
+  );
+};
 
-export default MyWongHome
+export default MyWongHome;

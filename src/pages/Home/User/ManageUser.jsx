@@ -20,6 +20,7 @@ import DataActivity from "./DataActivity";
 import AddUserToHome from "../../../components/modal/User/AddUserToHome";
 import axios from "axios";
 import classNames from "classnames";
+import { Authorization } from "../../../auth/Data";
 
 const TABLE_HEAD = ["ลำดับ", "รหัส", "ชื่อ", "เลือก"];
 
@@ -49,6 +50,9 @@ const ManageUser = () => {
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(!open);
+  const home_share_id = localStorage.getItem("home_share_id");
+  const [search , setSearch] = useState("")
+
 
   const handleBtnPage = (number) => {
     setStatusBtn(number);
@@ -57,14 +61,13 @@ const ManageUser = () => {
   const fetchDataMyUser = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/sharehouse/usere-search`,
+        `${import.meta.env.VITE_APP_API}/home_share/users/${home_share_id}?search=${search}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("Token")}`,
+            Authorization: Authorization
           },
         }
       );
-      console.log(res.data);
       setData(res.data);
     } catch (error) {
       console.log(error);
@@ -78,7 +81,7 @@ const ManageUser = () => {
 
   useEffect(() => {
     fetchDataMyUser();
-  }, []);
+  }, [search]);
 
   return (
     <div>
@@ -108,6 +111,7 @@ const ManageUser = () => {
                 className=""
                 label="ค้นหา รหัส หรือ ชื่อลูกค้า"
                 color="purple"
+                onChange={(e)=>setSearch(e.target.value)}
               />
             </div>
 
@@ -121,7 +125,7 @@ const ManageUser = () => {
                   )}
                   key={index}
                 >
-                  {`${index + 1}.  ${item.f_name} (${item.code})`}
+                  {`${index + 1}.  ${item.user_fname} (${item.user_code})`}
                   <FcPlus
                     className=" cursor-pointer"
                     onClick={() => handleSelect(item, index)}
