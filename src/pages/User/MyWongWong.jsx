@@ -3,13 +3,13 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Authorization } from "../../auth/Data";
 import classNames from "classnames";
+import { HiMiniArrowRightCircle } from "react-icons/hi2";
 
 const MyWongWong = ({ home_share_id }) => {
   const user_id = localStorage.getItem("id");
-  const [wongShare , setWongShare] = useState([])
+  const [wongShare, setWongShare] = useState([]);
   const [dataWongShare, setDataWongShare] = useState({});
-  const [indexStatus , setIndexStatus] = useState(null)
-
+  const [indexStatus, setIndexStatus] = useState(null);
 
   const fetchData = async () => {
     try {
@@ -30,12 +30,11 @@ const MyWongWong = ({ home_share_id }) => {
     }
   };
 
-  const selectWongShare = (id, index)=>{
-    const data = wongShare.find((obj)=>obj.id === id)
-    setDataWongShare(data)
-    setIndexStatus(index)
-
-  }
+  const selectWongShare = (id, index) => {
+    const data = wongShare.find((obj) => obj.id === id);
+    setDataWongShare(data);
+    setIndexStatus(index);
+  };
   useEffect(() => {
     fetchData();
   }, [home_share_id]);
@@ -45,70 +44,71 @@ const MyWongWong = ({ home_share_id }) => {
       <div className="flex flex-col lg:flex-row gap-4 mt-2 ">
         <Card className="w-full lg:w-2/6">
           <CardBody>
-            <ul className="">
-              {wongShare.map((item, index) => (
-                <div key={item.id}>
-                  <li  onClick={()=>selectWongShare(item.wong_share_id, index)}  className={classNames(indexStatus === index && "bg-gray-300 hover:bg-gray-300","flex justify-between items-center  hover:bg-gray-200 rounded-lg py-1 px-2 cursor-pointer ")}>
-                    {`${item.name}`}
-                    <span className="text-xs bg-purple-400 text-white rounded-full px-1 py-1">
-                      เลือก
-                    </span>
-                  </li>
-                  <hr className="mt-1" />
-                </div>
-              ))}
-            </ul>
+            {wongShare.length > 0 ? (
+              <ul className="">
+                {wongShare.map((item, index) => (
+                  <div key={item.id}>
+                    <li
+                      onClick={() => selectWongShare(item.wong_share_id, index)}
+                      className={classNames(
+                        indexStatus === index &&
+                          "bg-gray-300 hover:bg-gray-300",
+                        "flex justify-between items-center  hover:bg-gray-200 rounded-md py-1 px-2 cursor-pointer "
+                      )}
+                    >
+                      {`${item.name}`}
+                      <HiMiniArrowRightCircle color="purple" size={25} />
+                    </li>
+                    <hr className="mt-1" />
+                  </div>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-center text-base text-red-500">กรุณาเลือกบ้านแชร์ !</p>
+            )}
           </CardBody>
         </Card>
 
         <div className="w-full lg:w-4/6 px-5">
           <div className="flex flex-col md:flex-row gap-4 mt-4 text-gray-800">
-
-          <div className="w-full">
+            <div className="w-full">
               <b>บ้านแชร์ :</b> <span>{dataWongShare?.home_share_name}</span>
             </div>
 
             <div className="w-full">
               <b>รหัสวงค์แชร์ :</b> <span>{dataWongShare?.code}</span>
             </div>
-           
-          
           </div>
 
           <div className="flex flex-col md:flex-row gap-4 mt-4 text-gray-800">
-
-          <div className="w-full">
+            <div className="w-full">
               <b>ชื่อวงค์แชร์ :</b> <span>{dataWongShare?.name}</span>
             </div>
 
             <div className="w-full">
-              <b>รูปแบบวงค์แชร์ :</b> <span>{dataWongShare?.type_wong_name}</span>
+              <b>รูปแบบวงค์แชร์ :</b>{" "}
+              <span>{dataWongShare?.type_wong_name}</span>
             </div>
-            
           </div>
 
           <div className="flex flex-col md:flex-row gap-4 mt-4 text-gray-800">
-
-          <div className="w-full">
+            <div className="w-full">
               <b>จำนวนเงินต้น :</b> <span>{dataWongShare?.price} บาท</span>
             </div>
 
             <div className="w-full ">
               <b>จำนวนมือ :</b> <span>{dataWongShare?.count} คน</span>
             </div>
-
-           
           </div>
 
           <div className="flex flex-col md:flex-rowgap-4 mt-2 text-gray-800">
-
-          <div className="w-full">
-              <b>ค่าดูแลวงค์ :</b> <span>{dataWongShare?.pay_for_wong} บาท</span>
+            <div className="w-full">
+              <b>ค่าดูแลวงค์ :</b>{" "}
+              <span>{dataWongShare?.pay_for_wong} บาท</span>
             </div>
 
             <div className="w-full md:w-8/12 whitespace-nowrap overflow-hidden mt-2">
-              <b>หมายเหตุ :</b>{" "}
-              <span>{dataWongShare?.note}</span>
+              <b>หมายเหตุ :</b> <span>{dataWongShare?.note}</span>
             </div>
           </div>
         </div>

@@ -45,6 +45,8 @@ const AddUserToHome = ({ handleOpen, open }) => {
   const [updateStatusUser, setUpdateStatusUser] = useState({});
   const [message, setMessage] = useState({});
   const home_share_id = localStorage.getItem("home_share_id");
+  const [indexStatus_1 , setIndexStatus_1] = useState(null)
+  const [indexStatus_2 , setIndexStatus_2] = useState(null)
 
   const fetchDataUser = async () => {
     try {
@@ -62,13 +64,14 @@ const AddUserToHome = ({ handleOpen, open }) => {
     }
   };
 
-  const handleChangeUser = (item) => {
+  const handleChangeUser = (item, index) => {
     setSendDataUser((prev) => ({
       ...prev,
       id: item.id,
       fname: item.fname,
       user_id: item.id,
     }));
+    setIndexStatus_1(index)
   };
 
   const fetchDataWongShare = async () => {
@@ -148,7 +151,7 @@ const AddUserToHome = ({ handleOpen, open }) => {
     }
   };
 
-  const handleSelectMyUser = (item) => {
+  const handleSelectMyUser = (item, index) => {
     setUpdateStatusUser((prev) => ({
       ...prev,
       id: item.id,
@@ -156,6 +159,7 @@ const AddUserToHome = ({ handleOpen, open }) => {
       user_lname: item.user_lname,
       wong_share_name: item.wong_share_name,
     }));
+    setIndexStatus_2(index)
   };
 
   const handleUpdateMyUser = async () => {
@@ -243,7 +247,7 @@ const AddUserToHome = ({ handleOpen, open }) => {
                       {dataUser.map((item, index) => (
                         <tr
                           key={item.id}
-                          className="even:bg-blue-gray-50/50 hover:bg-gray-200"
+                          className={classNames( indexStatus_1 === index ? "bg-gray-300" : "even:bg-blue-gray-50/50"," hover:bg-gray-200 ") }
                         >
                           <td className="p-2">
                             <Typography
@@ -275,7 +279,7 @@ const AddUserToHome = ({ handleOpen, open }) => {
                           <td className="p-2 flex justify-center">
                             <FcPlus
                               className="cursor-pointer"
-                              onClick={() => handleChangeUser(item)}
+                              onClick={() => handleChangeUser(item, index)}
                               size={26}
                             />
                           </td>
@@ -288,11 +292,11 @@ const AddUserToHome = ({ handleOpen, open }) => {
                 <div className="flex flex-col  md:flex-row gap-4 mt-5 items-center">
                   <div className="w-full ">
                     <div>
-                      <b className="font-bold text-black">ลูกแชร์ : </b>{" "}
+                      <b className="font-bold text-gray-900 text-base">ลูกแชร์ : </b>{" "}
                       <span>{sendDataUser?.fname}</span>
                     </div>
                     <div>
-                      <b className="font-bold text-black">วงแชร์ : </b>{" "}
+                      <b className="font-bold text-gray-900 text-base">วงแชร์ : </b>{" "}
                       <span>{sendDataUser?.wong_share_name}</span>
                     </div>
                   </div>
@@ -390,8 +394,8 @@ const AddUserToHome = ({ handleOpen, open }) => {
                         {dataMyUser.map((item, index) => (
                           <tr
                             key={index}
-                            className="even:bg-blue-gray-50/50 hover:bg-gray-200"
-                          >
+                            className={classNames( indexStatus_2 === index ? "bg-gray-300" : "even:bg-blue-gray-50/50"," hover:bg-gray-200 ") }
+                            >
                             {/* <td className="p-2">
                               <Typography
                                 variant="small"
@@ -445,7 +449,7 @@ const AddUserToHome = ({ handleOpen, open }) => {
                                   className="cursor-pointer"
                                   color="black"
                                   size={20}
-                                  onClick={(e) => handleSelectMyUser(item)}
+                                  onClick={(e) => handleSelectMyUser(item, index)}
                                 />
                               </div>
                             </td>
