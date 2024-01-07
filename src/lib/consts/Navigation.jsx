@@ -70,12 +70,12 @@ export const DASHBOARD_SIDEBAR_LINKS =
           path: "/user",
           icon: <HiOutlineViewGrid />,
         },
-        {
-          key: "addToWongShare",
-          label: "ขอเข้าวงแชร์",
-          path: "/user/add-to-wong-share",
-          icon: <HiOutlineUserAdd />,
-        },
+        // {
+        //   key: "addToWongShare",
+        //   label: "ขอเข้าวงแชร์",
+        //   path: "/user/add-to-wong-share",
+        //   icon: <HiOutlineUserAdd />,
+        // },
         {
           key: "myHomeShare",
           label: "บ้านแชร์ของฉัน (ง3/3)",

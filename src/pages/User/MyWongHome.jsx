@@ -7,25 +7,25 @@ const MyWongHome = ({ data }) => {
   const id = data?.item?.home_share_id || "";
   const [dataHomeShare, setDataHomeShare] = useState({});
 
-  const fetchData = async () => {
-    try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/home_share/${id}`,
-        {
-          headers: {
-            Authorization: Authorization,
-          },
-        }
-      );
-      // console.log(res.data);
-      setDataHomeShare(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const fetchData = async () => {
+  //   try {
+  //     const res = await axios.get(
+  //       `${import.meta.env.VITE_APP_API}/home_share/${id}`,
+  //       {
+  //         headers: {
+  //           Authorization: Authorization,
+  //         },
+  //       }
+  //     );
+  //     // console.log(res.data);
+  //     // setDataHomeShare(res.data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   useEffect(() => {
-    fetchData();
+    // fetchData();
   }, [data]);
 
   return (
@@ -33,21 +33,23 @@ const MyWongHome = ({ data }) => {
       <Card>
         <CardBody>
 
+          {/* {JSON.stringify(data)} */}
+
           <div className="flex flex-col md:flex-row gap-4">
             <div className="w-full">
               <b>รหัสบ้านแชร์ : </b>
-              <span>{dataHomeShare?.code}</span>
+              <span>{data?.home_share_code}</span>
             </div>
 
             <div className="w-full">
               <b>ชื่อบ้านแชร์ : </b>
-              <span>{dataHomeShare?.name}</span>
+              <span>{data?.home_share_name}</span>
             </div>
 
             <div className="w-full">
               <b>สถานะ : </b>
               <span>
-                {dataHomeShare?.status_own === 1 ? "Online" : "Offline"}
+                {data?.status_own === 1 ? "Online" : "Offline"}
               </span>
             </div>
           </div>

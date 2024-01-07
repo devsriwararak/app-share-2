@@ -18,7 +18,7 @@ import { Authorization } from "../../../auth/Data";
 const AddUserToHome = ({ open, handleOpen, fetchDataMyUser, dataToModal }) => {
   const [sendData, setSendData] = useState({});
   const [message, setMessage] = useState("");
-  const home_share_id = localStorage.getItem('home_share_id')
+  const home_share_id = localStorage.getItem("home_share_id");
 
   const handleChange = (e) => {
     setSendData((prev) => ({
@@ -30,13 +30,11 @@ const AddUserToHome = ({ open, handleOpen, fetchDataMyUser, dataToModal }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
-      home_share_id : home_share_id ,
-      username: sendData?.username || "",
-      password: sendData?.password || "",
+      home_share_id: home_share_id,
+      tell: sendData?.tell || "",
       fname: sendData?.fname || "",
       lname: sendData?.lname || "",
       address: sendData?.address || "",
-      tell: sendData?.tell || "",
     };
     // console.log(data);
     try {
@@ -62,6 +60,8 @@ const AddUserToHome = ({ open, handleOpen, fetchDataMyUser, dataToModal }) => {
       }
     } catch (error) {
       console.log(error);
+      setMessage("มีผู้ใช้งานนี้ในระบบแล้ว กรุณาลองใหม่อีกครั้ง !");
+
     }
   };
 
@@ -78,7 +78,7 @@ const AddUserToHome = ({ open, handleOpen, fetchDataMyUser, dataToModal }) => {
     console.log(data);
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_APP_API}/users`,
+        `${import.meta.env.VITE_APP_API}/home_share/users`,
         data,
         {
           headers: {
@@ -96,7 +96,6 @@ const AddUserToHome = ({ open, handleOpen, fetchDataMyUser, dataToModal }) => {
         toast.error("ไม่สามารถดำเนินการได้");
         setMessage("มีผู้ใช้งานนี้ในระบบแล้ว กรุณาลองใหม่อีกครั้ง !");
       }
- 
     } catch (error) {
       console.log(error);
       toast.error("ไม่สามารถดำเนินการได้");
@@ -121,36 +120,23 @@ const AddUserToHome = ({ open, handleOpen, fetchDataMyUser, dataToModal }) => {
         {" "}
         <HiOutlineShoppingCart />
         {dataToModal?.id
-          ? "แก้ไขลูกค้า" + " " + dataToModal.code
-          : "เพิ่มลูกค้า"}
+          ? "แก้ไขลูกแชร์" + " " + dataToModal.code
+          : "เพิ่มลูกแชร์"}
       </DialogHeader>
       <DialogBody className=" py-5 h-96 overflow-y-scroll md:h-full md:overflow-auto   ">
         {/* {JSON.stringify(sendData)} */}
 
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-flow-row md:grid-cols-2 gap-4   mt-3  ">
-            <Input
-              color="red"
-              label="Username"
-              error
-              required
+
+        <Input
+              color="purple"
+              label="เบอร์โทร"
+              name="tell"
               className="w-full"
-              name="username"
               onChange={(e) => handleChange(e)}
-              value={sendData?.username || ""}
-            />
-            <Input
-              color="red"
-              label="password"
-              error
+              value={sendData?.tell || ""}
               required
-              className="w-full"
-              type="password"
-              name="password"
-              onChange={(e) => handleChange(e)}
-              value={sendData?.password || ""}
             />
-          </div>
 
           <div className="flex flex-col md:flex-row gap-4  justify-center mt-3">
             <Input
@@ -173,17 +159,6 @@ const AddUserToHome = ({ open, handleOpen, fetchDataMyUser, dataToModal }) => {
             />
           </div>
 
-          <div className="flex flex-col md:flex-row gap-4 justify-center mt-3">
-            <Input
-              color="purple"
-              label="เบอร์โทร"
-              name="tell"
-              onChange={(e) => handleChange(e)}
-              value={sendData?.tell || ""}
-              required
-            />
-          </div>
-
           <div className="flex flex-col md:flex-row gap-2  justify-center mt-3">
             <Textarea
               color="purple"
@@ -196,7 +171,7 @@ const AddUserToHome = ({ open, handleOpen, fetchDataMyUser, dataToModal }) => {
           </div>
 
           <div className="flex justify-end mt-5">
-            <h4 className="text-lg mx-4 text-red-500">{message}</h4>
+            <h4 className="text-sm mx-4 text-red-500">{message}</h4>
 
             <Button
               variant="gradient"
@@ -236,5 +211,3 @@ const AddUserToHome = ({ open, handleOpen, fetchDataMyUser, dataToModal }) => {
 };
 
 export default AddUserToHome;
-
-

@@ -46,6 +46,7 @@ const MyWong = () => {
   const [data, setData] = useState({});
   const [showComponent, setShowComponent] = useState(1);
   const user_id = localStorage.getItem("id");
+  const tell = localStorage.getItem("tell");
   const [dataHomeShare, setDataHomeShare] = useState([]);
   const [search, setSearch] = useState("");
   const [indexStatus, setIndexStatus] = useState(null);
@@ -55,7 +56,7 @@ const MyWong = () => {
       item,
       index,
     };
-    setData(data);
+    setData(item);
     setIndexStatus(index);
   };
 
@@ -79,13 +80,14 @@ const MyWong = () => {
       const res = await axios.get(
         `${
           import.meta.env.VITE_APP_API
-        }/users/home_share/${user_id}?search=${search}`,
+        }/users/home_share/${tell}?search=${search}`,
         {
           headers: {
             Authorization: Authorization,
           },
         }
       );
+      console.log(res.data);
       setDataHomeShare(res.data);
     } catch (error) {
       console.log(error);
@@ -102,9 +104,9 @@ const MyWong = () => {
         <div className="w-full md:w-3/12 ">
           <Card className="ring-1 ring-gray-200 ">
             <CardBody>
-              <h2 className="text-lg font-bold text-black flex items-center gap-2">
+              <h2 className="text-base font-bold text-black flex items-center gap-2">
                 <HiOutlineUserAdd
-                  size={35}
+                  size={32}
                   className="bg-purple-700/5 rounded-full px-1 py-1.5 text-purple-300"
                 />
                 บ้านแชร์ (2)
@@ -118,11 +120,11 @@ const MyWong = () => {
               </div>
 
               <ul className="mt-3 overflow-y-scroll">
-                {dataHomeShare.map((item, index) => (
+                {dataHomeShare?.map((item, index) => (
                   <li
                     onClick={() => handleClick_1(item, index)}
                     className={classNames(
-                      indexStatus === index && "bg-gray-300 hover:bg-gray-300",
+                      indexStatus === index && "bg-gray-200 hover:bg-gray-300",
                       " hover:bg-gray-200 py-2 px-2 flex justify-between items-center rounded-lg cursor-pointer"
                     )}
                     key={index}

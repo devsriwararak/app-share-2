@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 
 const DataUser = ({ selectData, fetchDataMyUser }) => {
   const [sendData, setSendData] = useState({});
+  const home_share_id = localStorage.getItem("home_share_id");
 
   const handleChange = (e) => {
     setSendData((prev) => ({
@@ -25,15 +26,14 @@ const DataUser = ({ selectData, fetchDataMyUser }) => {
     try {
       const data = {
         id: sendData?.id,
-        username: sendData?.username || "",
-        password: sendData?.password || "",
+        home_share_id ,
         fname: sendData?.fname || "",
         lname: sendData?.lname || "",
         address: sendData?.address || "",
         tell: sendData?.tell || "",
       };
 
-      const res = await axios.put(`${import.meta.env.VITE_APP_API}/users`,data, {
+      const res = await axios.put(`${import.meta.env.VITE_APP_API}/home_share/users`,data, {
         headers:{
           Authorization : Authorization
         }
@@ -54,12 +54,12 @@ const DataUser = ({ selectData, fetchDataMyUser }) => {
   return (
     <>
       <div className="flex justify-between">
-        <h2 className="text-lg text-black font-bold flex items-center gap-3">
+        <h2 className="text-base text-black font-bold flex items-center gap-3">
           <HiOutlineHome
             size={30}
             className="bg-purple-700/5 rounded-full px-1 py-1.5 text-purple-300"
           />
-          ลูกแชร์ ( {selectData.code} )
+          ลูกแชร์ 
         </h2>
 
         <Button size="sm" color="purple" onClick={handleUpdate}>
@@ -138,7 +138,7 @@ const DataUser = ({ selectData, fetchDataMyUser }) => {
           </CardBody>
         </Card>
 
-        {selectData?.code && (
+        {selectData?.id && (
           <div className="w-full md:w-1/3">
             {/* Green Report */}
             <div className="bg-green-500 p-2 mt-4 rounded-md px-4">

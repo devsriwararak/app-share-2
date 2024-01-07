@@ -90,6 +90,8 @@ const Login = () => {
         localStorage.setItem("app_share_token", token);
         localStorage.setItem("name", decoded.name);
         localStorage.setItem('home_share_id' , decoded?.home_share_id || "" )
+        localStorage.setItem('tell' , decoded?.tell || "" )
+
 
         let typePage = "";
         let statusPage = "";

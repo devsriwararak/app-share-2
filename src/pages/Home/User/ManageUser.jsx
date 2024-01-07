@@ -74,9 +74,9 @@ const ManageUser = () => {
         <Card className="ring-2 ring-gray-800/5 w-full h-full md:w-1/4">
           <CardBody>
             <div className="flex flex-col md:flex-row   md:justify-between">
-              <h2 className="text-lg text-black font-bold flex items-center gap-1">
+              <h2 className="text-base text-black font-bold flex items-center gap-1">
        
-                ลูกแชร์ (3)
+                ลูกแชร์ ({data?.length})
               </h2>
               <Button
                 className="text-[14px] flex items-center gap-1 mt-2 md:mt-0  text-sm  "
@@ -92,7 +92,7 @@ const ManageUser = () => {
             <div className="mt-3">
               <Input
                 className=""
-                label="ค้นหา รหัส หรือ ชื่อลูกค้า"
+                label="ค้นหา ชื่อลูกค้า"
                 color="purple"
                 onChange={(e)=>setSearch(e.target.value)}
               />

@@ -61,7 +61,6 @@ const User = () => {
           Authorization : Authorization
         }
       })
-      console.log(res);
       setData(res.data);
     } catch (error) {
       console.log(error);
@@ -105,7 +104,6 @@ const User = () => {
   };
 
   const handleDataToModal = (item) => {
-    console.log(item);
     setDataToModal(item);
     handleOpen();
   };
