@@ -22,25 +22,7 @@ import axios from "axios";
 import classNames from "classnames";
 import { Authorization } from "../../../auth/Data";
 
-const TABLE_HEAD = ["ลำดับ", "รหัส", "ชื่อ", "เลือก"];
 
-const TABLE_ROWS = [
-  {
-    name: "1",
-    job: "U00001",
-    date: "User-01",
-  },
-  {
-    name: "2",
-    job: "U00002",
-    date: "User-02",
-  },
-  {
-    name: "3",
-    job: "U00003",
-    date: "User-03",
-  },
-];
 
 const ManageUser = () => {
   const [statusBtn, setStatusBtn] = useState(1);
@@ -68,6 +50,7 @@ const ManageUser = () => {
           },
         }
       );
+      console.log(res.data);
       setData(res.data);
     } catch (error) {
       console.log(error);
@@ -85,7 +68,7 @@ const ManageUser = () => {
 
   return (
     <div>
-      <AddUserToHome handleOpen={handleOpen} open={open} />
+      <AddUserToHome handleOpen={handleOpen} open={open} fetchDataMyUser={fetchDataMyUser}  />
 
       <div className="flex flex-col md:flex-row gap-4">
         <Card className="ring-2 ring-gray-800/5 w-full h-full md:w-1/4">
@@ -120,12 +103,12 @@ const ManageUser = () => {
                 <li
                   onClick={() => handleSelect(item, index)}
                   className={classNames(
-                    activeItem === index && "bg-gray-800/20",
-                    "hover:bg-gray-200 py-2 flex justify-between items-center px-2 cursor-pointer"
+                    activeItem === index && "bg-gray-300",
+                    "hover:bg-gray-200 py-2 text-sm flex justify-between items-center px-2 cursor-pointer rounded-lg"
                   )}
                   key={index}
                 >
-                  {`${index + 1}.  ${item.user_fname} (${item.user_code})`}
+                  {`${index + 1}.  ${item.user_fname || item.fname} (${item.user_code || item.lname})`}
                   <FcPlus
                     className=" cursor-pointer"
                     onClick={() => handleSelect(item, index)}
@@ -161,8 +144,8 @@ const ManageUser = () => {
           <Card className="ring-2  ring-gray-800/5 mt-6 ">
             <CardBody>
               <div>
-                {statusBtn === 1 && (
-                  <DataUser data={data} selectData={selectData} />
+                {statusBtn === 1 && selectData?.id && (
+                  <DataUser data={data} selectData={selectData} fetchDataMyUser={fetchDataMyUser} />
                 )}
                 {statusBtn === 2 && <DataActivity />}
               </div>

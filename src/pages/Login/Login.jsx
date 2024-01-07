@@ -70,9 +70,13 @@ const Login = () => {
     // SERVER
 
     try {
+      const data = {
+        tell : dataLogin.tell,
+        password : dataLogin.password
+      }
       const res = await axios.post(
         `${import.meta.env.VITE_APP_API}/login`,
-        dataLogin
+        data
       );
 
       if (res.status === 200) {
@@ -166,8 +170,8 @@ const Login = () => {
             <form onSubmit={handleSubmit} className="flex flex-col gap-2 mt-5">
               <div className="bg-white rounded-lg">
                 <Input
-                  name="username"
-                  label="username"
+                  name="tell"
+                  label="เบอร์โทรศัพท์"
                   color="purple"
                   type="text"
                   onChange={(e) => handleChange(e)}

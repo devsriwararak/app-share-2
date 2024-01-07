@@ -19,20 +19,28 @@ const Register = () => {
   const sendDataToAPI = async (e) => {
     e.preventDefault();
     try {
+      const data = {
+        username : "",
+        password : sendData.password,
+        tell : sendData.tell,
+        fname : sendData.fname,
+        lname : sendData.lname,
+        address : sendData.address
+      }
+      // console.log(data);
       const res = await axios.post(
         `${import.meta.env.VITE_APP_API}/register`,
-        sendData
+        data
       );
       if (res.status === 200) {
         toast.success(res.data.message);
         setSendData({});
-          setTimeout(() => {
-            navigate("/login");
-          }, 2000);
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
       } else {
         toast.success(res.data.message);
       }
-
     } catch (error) {
       console.log(error);
       toast.error(error.response.data.message);
@@ -65,8 +73,8 @@ const Register = () => {
 
                 <div className="bg-white rounded-lg">
                   <Input
-                    name="username"
-                    label="username"
+                    name="tell"
+                    label="เบอร์โทรศัพท์"
                     color="purple"
                     type="text"
                     onChange={(e) => handleChange(e)}
@@ -146,16 +154,6 @@ const Register = () => {
                 placeholder="เบอร์โทรศัพท์"
                 onChange={(e) => handleChange(e)}
               /> */}
-
-              <div className="bg-white rounded-lg">
-                <Input
-                  name="tell"
-                  label="เบอร์โทรศัพท์"
-                  color="purple"
-                  type="text"
-                  onChange={(e) => handleChange(e)}
-                />
-              </div>
 
               {/* <input
                 className="p-2 mt-2  rounded-xl border focus:ring-gray-200"

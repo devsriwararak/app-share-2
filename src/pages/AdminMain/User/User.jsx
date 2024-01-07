@@ -53,22 +53,20 @@ const User = () => {
     itemsPerPage
   );
 
-  const fetchData = async () => {
+
+  const fetchData = async()=>{
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/users?search=${search}`,
-        {
-          headers: {
-            Authorization: Authorization,
-          },
+      const res = await axios.get(`${import.meta.env.VITE_APP_API}/users?search=${search}`, {
+        headers: {
+          Authorization : Authorization
         }
-      );
-      console.log(res.data);
+      })
+      console.log(res);
       setData(res.data);
     } catch (error) {
       console.log(error);
     }
-  };
+  }
 
   const handleDelete = (id) => {
     Swal.fire({
@@ -131,13 +129,14 @@ const User = () => {
         dataToModal={dataToModal}
       />
 
+
       <div className="flex flex-col md:flex-row    items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <HiOutlineShoppingCart
             size={35}
             className="bg-purple-700/5 rounded-full px-1 py-1.5 text-purple-300"
           />
-          <span className="text-lg text-black font-bold">
+          <span className="text-base text-black font-bold">
             จัดการข้อมูลลูกแชร์
           </span>
         </div>
@@ -151,19 +150,19 @@ const User = () => {
         <Card className="w-full md:w-1/4">
           <CardBody>
             <div className="flex flex-col md:flex-row justify-between items-center">
-              <p className="w-2/5">
+              <p className="w-2/5 text-sm">
                 <b>จำนวน ({data.length})</b>
               </p>
-              <Button
+              {/* <Button
                 variant="outlined"
-                className="w-3/5 flex items-center gap-1 text-sm "
+                className="w-3/5 flex  items-center  gap-1 text-sm "
                 size="sm"
                 color="purple"
                 onClick={() => (handleOpen(), setDataToModal({}))}
               >
                 <HiOutlinePlusSm size={20} />
                 เพิ่มลูกค้า
-              </Button>
+              </Button> */}
             </div>
 
             <div className="mt-3">
@@ -175,7 +174,7 @@ const User = () => {
             </div>
 
             <ul className="mt-4 overflow-y-scroll">
-              {data.map((item, index) => (
+              {data?.map((item, index) => (
                 <li
                   key={item.id}
                   className={classNames(indexStatus == index && "bg-gray-200"  ,"flex  justify-between hover:bg-gray-200 py-1.5 px-2 cursor-pointer")}

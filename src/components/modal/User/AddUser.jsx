@@ -18,6 +18,30 @@ import { Authorization } from "../../../auth/Data";
 const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
   const [sendData, setSendData] = useState({});
   const [message, setMessage] = useState("");
+  const [dataHome, setDataHome] = useState([]);
+
+  const fetchHomeShare = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_APP_API}/home_share`,
+        {
+          headers: {
+            Authorization: Authorization,
+          },
+        }
+      );
+
+      const rename = res.data.map((item, index) => ({
+        value: item.id,
+        label: item.name,
+      }));
+      setDataHome(rename);
+
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleChange = (e) => {
     setSendData((prev) => ({
@@ -26,11 +50,13 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
     }));
   };
 
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
-      username: sendData?.username || "",
-      password: sendData?.password || "",
+      // username: sendData?.username || "",
+      // password: sendData?.password || "",
       fname: sendData?.fname || "",
       lname: sendData?.lname || "",
       address: sendData?.address || "",
@@ -39,7 +65,7 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
     // console.log(data);
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_APP_API}/register`,
+        `${import.meta.env.VITE_APP_API}/users`,
         data,
         {
           headers: {
@@ -66,12 +92,11 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
   const handleUpdate = async () => {
     const data = {
       id: sendData?.id,
-      username: sendData?.username || "",
+      tell: sendData?.tell || "",
       password: sendData?.password || "",
       fname: sendData?.fname || "",
       lname: sendData?.lname || "",
       address: sendData?.address || "",
-      tell: sendData?.tell || "",
     };
     console.log(data);
     try {
@@ -127,16 +152,15 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-flow-row md:grid-cols-2 gap-4   mt-3  ">
-            <Input
-              color="red"
-              label="Username"
-              error
-              required
-              className="w-full"
-              name="username"
+          <Input
+              color="purple"
+              label="เบอร์โทร"
+              name="tell"
               onChange={(e) => handleChange(e)}
-              value={sendData?.username || ""}
+              value={sendData?.tell || ""}
+              required
             />
+
             <Input
               color="red"
               label="password"
@@ -171,15 +195,6 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
             />
           </div>
 
-          <div className="flex flex-col md:flex-row gap-4 justify-center mt-3">
-            <Input
-              color="purple"
-              label="เบอร์โทร"
-              name="tell"
-              onChange={(e) => handleChange(e)}
-              value={sendData?.tell || ""}
-            />
-          </div>
 
           <div className="flex flex-col md:flex-row gap-2  justify-center mt-3">
             <Textarea
