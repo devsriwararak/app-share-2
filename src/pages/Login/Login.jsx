@@ -118,7 +118,7 @@ const Login = () => {
 
         setTimeout(() => {
           window.location.reload();
-        }, 1000);
+        }, 500);
       } else {
         toast.error(res.data.message);
       }
@@ -219,7 +219,7 @@ const Login = () => {
             <ul className="mt-4 b">
               <li>- MAIN ADMIN : 000 / 000</li>
               <li>- ADMIN : 111 / 111</li>
-              <li>- ลูกค้า : 222 / 222</li>
+              <li>- ลูกค้า : 0850032649 / 1234</li>
               <li>- บ้านแชร์ A-001 : 333 / 333</li>
               <li>- พนักงานในบ้านแชร์ A-001 : 444 / 444</li>
             </ul>
