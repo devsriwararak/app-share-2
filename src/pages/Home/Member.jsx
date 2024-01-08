@@ -192,7 +192,7 @@ const Member = () => {
               </tr>
             </thead>
             <tbody>
-              {getPaginatedData().map((item, index) => {
+              {loading === false && getPaginatedData().map((item, index) => {
                 const isLast = index === data.length - 1;
                 const classes = isLast
                   ? "p-2"

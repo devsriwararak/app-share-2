@@ -218,7 +218,7 @@ const HomeWongShare = () => {
               </tr>
             </thead>
             <tbody>
-              {getPaginatedData().map((item, index) => {
+              {loading === false &&  getPaginatedData().map((item, index) => {
                 const isLast = index === getPaginatedData().length - 1;
                 const classes = isLast
                   ? "p-2"
