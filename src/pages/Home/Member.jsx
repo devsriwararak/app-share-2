@@ -175,7 +175,7 @@ const Member = () => {
           <table className=" w-full  min-w-max table-auto text-center">
             <thead>
               <tr>
-                {TABLE_HEAD.map((head) => (
+                {loading === false && TABLE_HEAD.map((head) => (
                   <th
                     key={head}
                     className="border-y border-blue-gray-100 bg-blue-gray-50 p-4"
@@ -192,7 +192,7 @@ const Member = () => {
               </tr>
             </thead>
             <tbody>
-              {loading === false && getPaginatedData().map((item, index) => {
+              { getPaginatedData().map((item, index) => {
                 const isLast = index === data.length - 1;
                 const classes = isLast
                   ? "p-2"
