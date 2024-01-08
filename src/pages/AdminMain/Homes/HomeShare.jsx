@@ -7,6 +7,7 @@ import {
   Button,
   Input,
   IconButton,
+  Spinner,
 } from "@material-tailwind/react";
 import Select from "react-select";
 import HomeAdminModal from "../../../components/modal/HomeShare/HomeAdminModal";
@@ -30,6 +31,7 @@ const HomeShare = () => {
   const [dataToModal, setDataToModal] = useState({});
   const [dataToModalMember, setDataToModalMember] = useState({});
   const [indexStatus, setIndexStatus] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Footer Table 1
   const [currentPage, setCurrentPage] = useState(1);
@@ -62,6 +64,7 @@ const HomeShare = () => {
       );
       // console.log(res);
       setDataHome(res.data);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -84,8 +87,6 @@ const HomeShare = () => {
     }
   };
 
-
-
   const handleDelete = (id, home_share_id) => {
     Swal.fire({
       title: `ต้องการลบ ID : ${id} `,
@@ -105,7 +106,6 @@ const HomeShare = () => {
 
   const deleteRow = async (id, home_share_id) => {
     try {
-
       const res = await axios.delete(
         `${import.meta.env.VITE_APP_API}/home_account/${id}/${home_share_id}`,
         {
@@ -145,7 +145,6 @@ const HomeShare = () => {
 
   const deleteMember = async (id, home_share_id) => {
     try {
-  
       const res = await axios.delete(
         `${import.meta.env.VITE_APP_API}/member/${id}`,
         {
@@ -158,7 +157,7 @@ const HomeShare = () => {
       if (res.status === 200) {
         toast.success(res.data.message);
 
-        fetchMemberByHomeShareId(home_share_id)
+        fetchMemberByHomeShareId(home_share_id);
       } else {
         toast.success(res.data.message);
       }
@@ -167,11 +166,12 @@ const HomeShare = () => {
     }
   };
 
-
-
   const handleDataToModal = (item, number) => {
     setDataToModal(item);
-    setDataToModalMember({...item, home_share_name :  dataToModalMember?.home_share_name })
+    setDataToModalMember({
+      ...item,
+      home_share_name: dataToModalMember?.home_share_name,
+    });
     number === 1 ? handleOpen1() : handleOpen2();
   };
 
@@ -219,7 +219,6 @@ const HomeShare = () => {
           />
           ข้อมูลบ้านแชร์และพนักงาน (ทั้งหมด)
         </Typography>
-
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 justify-items-center gap-4 ">
@@ -255,23 +254,30 @@ const HomeShare = () => {
               </div>
 
               <Card className="h-full w-full mt-6 overflow-scroll ">
+                <div className="flex justify-center">
+                  {loading === true && (
+                    <Spinner className="h-8 w-8 text-gray-900/50 " />
+                  )}
+                </div>
+
                 <table className="w-full min-w-max table-auto  text-center">
                   <thead>
                     <tr>
-                      {TABLE_HEAD.map((head) => (
-                        <th
-                          key={head}
-                          className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
-                        >
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-bold leading-none opacity-90"
+                      {loading === false &&
+                        TABLE_HEAD.map((head) => (
+                          <th
+                            key={head}
+                            className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
                           >
-                            {head}
-                          </Typography>
-                        </th>
-                      ))}
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-bold leading-none opacity-90"
+                            >
+                              {head}
+                            </Typography>
+                          </th>
+                        ))}
                     </tr>
                   </thead>
                   <tbody>
@@ -387,12 +393,13 @@ const HomeShare = () => {
                       className="bg-yellow-700 hover:bg-yellow-800 cursor-pointer px-1 rounded-lg text-black"
                       size={25}
                       onClick={() => handleDataToModal(item, 2)}
-
                     />
                     <HiTrash
                       size={25}
                       className="bg-red-700 hover:bg-red-800 cursor-pointer px-1 rounded-lg text-white"
-                      onClick={()=>handleDeleteMember(item.id, item.home_share_id)}
+                      onClick={() =>
+                        handleDeleteMember(item.id, item.home_share_id)
+                      }
                     />
                   </div>
                 </CardBody>

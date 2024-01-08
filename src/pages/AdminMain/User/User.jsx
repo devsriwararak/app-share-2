@@ -9,6 +9,7 @@ import {
   CardFooter,
   Input,
   CardHeader,
+  Spinner,
 } from "@material-tailwind/react";
 import {
   HiPencilAlt,
@@ -40,6 +41,7 @@ const User = () => {
   const [search, setSearch] = useState("");
   const [dataToModal, setDataToModal] = useState({});
   const [indexStatus , setIndexStatus] = useState(null)
+  const [loading, setLoading] = useState(true);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -62,6 +64,7 @@ const User = () => {
         }
       })
       setData(res.data);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -170,6 +173,12 @@ const User = () => {
                 onChange={(e) => (setSearch(e.target.value), setCurrentPage(1))}
               />
             </div>
+
+            <div className="flex justify-center">
+            {loading === true && (
+              <Spinner className="h-8 w-8 text-gray-900/50 " />
+            )}
+          </div>
 
             <ul className="mt-4 overflow-y-scroll">
               {data?.map((item, index) => (

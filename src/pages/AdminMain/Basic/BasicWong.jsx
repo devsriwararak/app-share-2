@@ -13,6 +13,7 @@ import {
   IconButton,
   Tooltip,
   Input,
+  Spinner,
 } from "@material-tailwind/react";
 // import HomeShareModal from "../../../components/modal/HomeShareModal";
 import {
@@ -59,6 +60,8 @@ const BasicWong = () => {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
   const [dataToModal, setDataToModal] = useState({});
+  const [loading, setLoading] = useState(true);
+
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -82,8 +85,8 @@ const BasicWong = () => {
           },
         }
       );
-      console.log(res.data);
       setData(res.data);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -192,10 +195,17 @@ const BasicWong = () => {
 
       <Card className=" h-full md:h-full  w-full mx-auto   md:w-full  mt-5 shadow-lg ">
         <CardBody className="  px-2 overflow-scroll -mt-4">
+
+        <div className="flex justify-center">
+            {loading === true && (
+              <Spinner className="h-8 w-8 text-gray-400 " />
+            )}
+          </div>
+
           <table className=" w-full  min-w-max table-auto text-center">
             <thead>
               <tr>
-                {TABLE_HEAD.map((head) => (
+                {loading === false && TABLE_HEAD.map((head) => (
                   <th
                     key={head}
                     className="border-y border-blue-gray-100 bg-blue-gray-50 p-4"

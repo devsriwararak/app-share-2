@@ -17,6 +17,7 @@ import {
   IconButton,
   Tooltip,
   Input,
+  Spinner,
 } from "@material-tailwind/react";
 import {
   HiOutlineHome,
@@ -52,6 +53,7 @@ const BasicHome = () => {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
   const [dataToModal, setDataTomodal] = useState({});
+  const [loading, setLoading] = useState(true);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -75,8 +77,8 @@ const BasicHome = () => {
           },
         }
       );
-      console.log(res.data);
       setData(res.data);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -176,23 +178,31 @@ const BasicHome = () => {
 
       <Card className=" h-full w-full m-4 mx-auto shadow-lg   md:w-full  mt-5 ">
         <CardBody className="  px-2 -mt-4 overflow-scroll">
-          <table className=" w-full  min-w-max table-auto text-center ">
+          
+          <div className="flex justify-center">
+            {loading === true && (
+              <Spinner className="h-8 w-8 text-gray-900/50 " />
+            )}
+          </div>
+
+          <table className=" w-full  min-w-max table-auto text-center  ">
             <thead className="  ">
               <tr>
-                {TABLE_HEAD.map((head) => (
-                  <th
-                    key={head}
-                    className="border-y  border-blue-gray-100  bg-blue-gray-50 p-4"
-                  >
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-bold leading-none opacity-90"
+                {loading === false &&
+                  TABLE_HEAD.map((head) => (
+                    <th
+                      key={head}
+                      className="border-y  border-blue-gray-100  bg-blue-gray-50 p-4"
                     >
-                      {head}
-                    </Typography>
-                  </th>
-                ))}
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-bold leading-none opacity-90"
+                      >
+                        {head}
+                      </Typography>
+                    </th>
+                  ))}
               </tr>
             </thead>
             <tbody>
