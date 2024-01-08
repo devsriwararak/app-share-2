@@ -3,6 +3,7 @@ import {
   Card,
   CardBody,
   Input,
+  Spinner,
   Typography,
 } from "@material-tailwind/react";
 import React, { useEffect, useState } from "react";
@@ -22,8 +23,6 @@ import axios from "axios";
 import classNames from "classnames";
 import { Authorization } from "../../../auth/Data";
 
-
-
 const ManageUser = () => {
   const [statusBtn, setStatusBtn] = useState(1);
   const [data, setData] = useState([]);
@@ -33,8 +32,8 @@ const ManageUser = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(!open);
   const home_share_id = localStorage.getItem("home_share_id");
-  const [search , setSearch] = useState("")
-
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const handleBtnPage = (number) => {
     setStatusBtn(number);
@@ -43,15 +42,17 @@ const ManageUser = () => {
   const fetchDataMyUser = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/home_share/users/${home_share_id}?search=${search}`,
+        `${
+          import.meta.env.VITE_APP_API
+        }/home_share/users/${home_share_id}?search=${search}`,
         {
           headers: {
-            Authorization: Authorization
+            Authorization: Authorization,
           },
         }
       );
-      console.log(res.data);
       setData(res.data);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -68,14 +69,17 @@ const ManageUser = () => {
 
   return (
     <div>
-      <AddUserToHome handleOpen={handleOpen} open={open} fetchDataMyUser={fetchDataMyUser}  />
+      <AddUserToHome
+        handleOpen={handleOpen}
+        open={open}
+        fetchDataMyUser={fetchDataMyUser}
+      />
 
       <div className="flex flex-col md:flex-row gap-4">
         <Card className="ring-2 ring-gray-800/5 w-full h-full md:w-1/4">
           <CardBody>
             <div className="flex flex-col md:flex-row   md:justify-between">
               <h2 className="text-base text-black font-bold flex items-center gap-1">
-       
                 ลูกแชร์ ({data?.length})
               </h2>
               <Button
@@ -94,11 +98,17 @@ const ManageUser = () => {
                 className=""
                 label="ค้นหา ชื่อลูกค้า"
                 color="purple"
-                onChange={(e)=>setSearch(e.target.value)}
+                onChange={(e) => setSearch(e.target.value)}
               />
             </div>
 
             <ul className="mt-5 overflow-y-scroll ">
+              <div className="flex justify-center">
+                {loading === true && (
+                  <Spinner className="h-8 w-8 text-gray-900/50 " />
+                )}
+              </div>
+
               {data.map((item, index) => (
                 <li
                   onClick={() => handleSelect(item, index)}
@@ -108,7 +118,9 @@ const ManageUser = () => {
                   )}
                   key={index}
                 >
-                  {`${index + 1}.  ${item.user_fname || item.fname} (${item.user_code || item.lname})`}
+                  {`${index + 1}.  ${item.user_fname || item.fname} (${
+                    item.user_code || item.lname
+                  })`}
                   <FcPlus
                     className=" cursor-pointer"
                     onClick={() => handleSelect(item, index)}
@@ -145,7 +157,11 @@ const ManageUser = () => {
             <CardBody>
               <div>
                 {statusBtn === 1 && selectData?.id && (
-                  <DataUser data={data} selectData={selectData} fetchDataMyUser={fetchDataMyUser} />
+                  <DataUser
+                    data={data}
+                    selectData={selectData}
+                    fetchDataMyUser={fetchDataMyUser}
+                  />
                 )}
                 {statusBtn === 2 && <DataActivity />}
               </div>

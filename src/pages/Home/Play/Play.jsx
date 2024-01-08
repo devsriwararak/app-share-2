@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, Input } from "@material-tailwind/react";
+import { Button, Card, CardBody, Input, Spinner } from "@material-tailwind/react";
 import React, { useEffect, useState } from "react";
 import {
   HiOutlineCash,
@@ -31,6 +31,7 @@ const Play = () => {
   const [activeItem, setActiveItem] = useState();
   const home_share_id = localStorage.getItem('home_share_id')
   const [search , setSearch] = useState("")
+  const [loading, setLoading] = useState(true);
 
 
   const [open, setOpen] = useState(false);
@@ -46,8 +47,8 @@ const Play = () => {
           },
         }
       );
-      console.log(res.data);
       setData(res.data)
+      setLoading(false)
       
     } catch (error) {
       console.log(error);
@@ -104,6 +105,13 @@ const Play = () => {
             </div>
 
             <ul className="mt-4 overflow-y-scroll">
+
+            <div className="flex justify-center">
+            {loading === true && (
+              <Spinner className="h-8 w-8 text-gray-900/50 " />
+            )}
+          </div>
+
               {data.map((item, index) => (
                 <div key={index}>
                   <li

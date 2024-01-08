@@ -3,6 +3,7 @@ import {
   Card,
   CardBody,
   Input,
+  Spinner,
   Typography,
 } from "@material-tailwind/react";
 import React, { useEffect, useState } from "react";
@@ -50,6 +51,7 @@ const MyWong = () => {
   const [dataHomeShare, setDataHomeShare] = useState([]);
   const [search, setSearch] = useState("");
   const [indexStatus, setIndexStatus] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const handleClick_1 = (item, index) => {
     const data = {
@@ -87,8 +89,8 @@ const MyWong = () => {
           },
         }
       );
-      console.log(res.data);
       setDataHomeShare(res.data);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -120,6 +122,12 @@ const MyWong = () => {
               </div>
 
               <ul className="mt-3 overflow-y-scroll">
+                <div className="flex justify-center">
+                  {loading === true && (
+                    <Spinner className="h-8 w-8 text-gray-900/50 " />
+                  )}
+                </div>
+
                 {dataHomeShare?.map((item, index) => (
                   <li
                     onClick={() => handleClick_1(item, index)}
