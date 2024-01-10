@@ -16,7 +16,7 @@ import { HiDatabase, HiPencilAlt, HiTrash } from "react-icons/hi";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { Authorization } from "../../../auth/Data.js";
+import { Authorization, checkNoToken } from "../../../auth/Data.js";
 import classNames from "classnames";
 
 const HomeShare = () => {
@@ -67,6 +67,7 @@ const HomeShare = () => {
       setLoading(false);
     } catch (error) {
       console.log(error);
+      checkNoToken(error.response.data.message)
     }
   };
 

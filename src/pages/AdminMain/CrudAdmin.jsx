@@ -28,7 +28,7 @@ import {
   calculatePagination,
 } from "../../components/pagination/PaginationUtils";
 import Pagination from "../../components/pagination/Pagination";
-import { Authorization } from "../../auth/Data.js";
+import { Authorization, checkNoToken } from "../../auth/Data.js";
 
 
 const TABLE_HEAD = [
@@ -73,6 +73,7 @@ const CrudAdmin = () => {
       setLoading(false);
     } catch (error) {
       console.log(error);
+      checkNoToken(error.response.data.message)
     }
   };
 

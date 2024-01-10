@@ -35,7 +35,7 @@ import {
   calculatePageIndices,
   calculatePagination,
 } from "../../../components/pagination/PaginationUtils";
-import { Authorization } from "../../../auth/Data";
+import { Authorization, checkNoToken } from "../../../auth/Data";
 
 const TABLE_HEAD = [
   "ลำดับ",
@@ -81,6 +81,7 @@ const BasicHome = () => {
       setLoading(false);
     } catch (error) {
       console.log(error);
+      checkNoToken(error.response.data.message)
     }
   };
 

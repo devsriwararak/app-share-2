@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Authorization } from "../../../auth/Data.js";
+import { Authorization, checkNoToken } from "../../../auth/Data.js";
 
 import {
   Card,
@@ -67,6 +67,7 @@ const User = () => {
       setLoading(false);
     } catch (error) {
       console.log(error);
+      checkNoToken(error.response.data.message)
     }
   }
 

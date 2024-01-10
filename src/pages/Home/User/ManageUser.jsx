@@ -21,7 +21,7 @@ import DataActivity from "./DataActivity";
 import AddUserToHome from "../../../components/modal/User/AddUserToHome";
 import axios from "axios";
 import classNames from "classnames";
-import { Authorization } from "../../../auth/Data";
+import { Authorization, checkNoToken } from "../../../auth/Data";
 
 const ManageUser = () => {
   const [statusBtn, setStatusBtn] = useState(1);
@@ -55,6 +55,7 @@ const ManageUser = () => {
       setLoading(false);
     } catch (error) {
       console.log(error);
+      checkNoToken(error.response.data.message)
     }
   };
 

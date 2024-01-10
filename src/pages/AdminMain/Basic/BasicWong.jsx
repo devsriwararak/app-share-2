@@ -35,7 +35,7 @@ import {
   calculatePagination,
 } from "../../../components/pagination/PaginationUtils";
 import Pagination from "../../../components/pagination/Pagination";
-import { Authorization } from "../../../auth/Data";
+import { Authorization, checkNoToken } from "../../../auth/Data";
 
 const TABLE_HEAD = [
   "ลำดับ",
@@ -89,6 +89,7 @@ const BasicWong = () => {
       setLoading(false);
     } catch (error) {
       console.log(error);
+      checkNoToken(error.response.data.message)
     }
   };
 
