@@ -23,9 +23,9 @@ const Register = () => {
         username : "",
         password : sendData.password,
         tell : sendData.tell,
-        fname : sendData.fname,
-        lname : sendData.lname,
-        address : sendData.address
+        // fname : sendData.fname,
+        // lname : sendData.lname,
+        // address : sendData.address
       }
       // console.log(data);
       const res = await axios.post(
@@ -37,7 +37,7 @@ const Register = () => {
         setSendData({});
         setTimeout(() => {
           navigate("/login");
-        }, 2000);
+        }, 500);
       } else {
         toast.success(res.data.message);
       }
@@ -61,15 +61,7 @@ const Register = () => {
 
             <form className="flex flex-col gap-4">
               <div className="flex flex-col md:flex-row gap-2 justify-center items-center mt-4 ">
-                {/* <div className="">
-                  <input
-                    className="p-2 mt-2 rounded-xl border w-full  focus:ring-gray-200 "
-                    type="text"
-                    name="username"
-                    placeholder="Username"
-                    onChange={(e) => handleChange(e)}
-                  />
-                </div> */}
+       
 
                 <div className="bg-white rounded-lg">
                   <Input
@@ -81,19 +73,6 @@ const Register = () => {
                   />
                 </div>
 
-                {/* <div className="relative ">
-                  <input
-                    className="p-2 w-full mt-2  rounded-xl border "
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    onChange={(e) => handleChange(e)}
-                  />
-                  <AiOutlineEye
-                    className="absolute top-1/2 right-3  -translate-y-35   "
-                    size={20}
-                  />
-                </div> */}
 
                 <div className="bg-white rounded-lg">
                   <Input
@@ -106,16 +85,8 @@ const Register = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col md:flex-row gap-2 justify-center items-center ">
-                {/* <div className="">
-                  <input
-                    className="p-2 mt-2 rounded-xl border w-full  focus:ring-gray-200 "
-                    type="text"
-                    name="fname"
-                    placeholder="ชื่อ"
-                    onChange={(e) => handleChange(e)}
-                  />
-                </div> */}
+              {/* <div className="flex flex-col md:flex-row gap-2 justify-center items-center ">
+  
 
                 <div className="bg-white rounded-lg">
                   <Input
@@ -127,15 +98,7 @@ const Register = () => {
                   />
                 </div>
 
-                {/* <div className="relative ">
-                  <input
-                    className="p-2 w-full mt-2  rounded-xl border "
-                    type="text"
-                    name="lnane"
-                    placeholder="สกุล"
-                    onChange={(e) => handleChange(e)}
-                  />
-                </div> */}
+  
                 <div className="bg-white rounded-lg">
                   <Input
                     name="lname"
@@ -145,24 +108,10 @@ const Register = () => {
                     onChange={(e) => handleChange(e)}
                   />
                 </div>
-              </div>
+              </div> */}
 
-              {/* <input
-                className="p-2 w-full mt-2  rounded-xl border "
-                type="text"
-                name="tell"
-                placeholder="เบอร์โทรศัพท์"
-                onChange={(e) => handleChange(e)}
-              /> */}
-
-              {/* <input
-                className="p-2 mt-2  rounded-xl border focus:ring-gray-200"
-                type="text"
-                name="address"
-                placeholder="ที่อยู่"
-                onChange={(e) => handleChange(e)}
-              /> */}
-
+ 
+{/* 
               <div className="bg-white rounded-lg">
                 <Input
                   name="address"
@@ -171,7 +120,7 @@ const Register = () => {
                   type="text"
                   onChange={(e) => handleChange(e)}
                 />
-              </div>
+              </div> */}
 
               <button
                 onClick={sendDataToAPI}
