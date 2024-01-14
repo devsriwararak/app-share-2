@@ -88,8 +88,8 @@ const Sidebar = ({ openSidebar, setOpenSideBar }) => {
 
         <div
           className={classNames(
-            "text-white cursor-pointer bg-red-500 mt-2  ",
-            "flex item-center gap-3 font-light px-3 py-2 hover:bg-red-700 hover:text-white   rounded-lg "
+            "text-white cursor-pointer bg-red-700 mt-2  ",
+            "flex item-center gap-3 font-light px-3 py-2 hover:bg-red-800 hover:text-white   rounded-lg "
           )}
           onClick={handleLogout}
         >

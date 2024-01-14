@@ -6,8 +6,9 @@ export const calculatePagination = (currentPage, itemsPerPage, data) => {
     return currentItems;
   };
 
-  export const calculatePageIndices = (currentPage, itemsPerPage) => {
-    const firstIndex = (currentPage - 1) * itemsPerPage + 1;
+  export const calculatePageIndices = (currentPage) => {
+    const  itemsPerPage = 3
+    const firstIndex = (currentPage - 1) * itemsPerPage + 1; 
     const lastIndex = firstIndex + itemsPerPage - 1;
   
     return { firstIndex, lastIndex };

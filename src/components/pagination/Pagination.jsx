@@ -1,24 +1,58 @@
 import classNames from "classnames";
 import React from "react";
+import { HiArrowLeft } from "react-icons/hi";
+import { HiArrowRight, HiArrowSmallLeft } from "react-icons/hi2";
+
 
 const Pagination = ({
-  itemsPerPage,
-  totalItems,
-  paginate,
-  currentPage,
+  // itemsPerPage,
+  // totalItems,
+  // paginate,
+  // currentPage,
   setCurrentPage,
+  currentPage,
+  totalPages,
 }) => {
-  const pageNumbers = Array.from({
-    length: Math.ceil(totalItems / itemsPerPage),
-  });
+  // const pageNumbers = Array.from({
+  //   length: Math.ceil(totalItems / itemsPerPage),
+  // });
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
+  // const handlePageChange = (page) => {
+  //   setCurrentPage(page);
+  // };
+
+  const handleNextPage = () => {
+    if (currentPage !== totalPages) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
   };
 
   return (
-    <div className="mt-4 flex gap-2  ">
-      <div className="flex items-center gap-4">
+    <div className="mt-4 flex gap-2 justify-end  items-center    ">
+     
+   
+
+
+      <div className="bg-gray-200 hover:bg-gray-300  cursor-pointer rounded-full p-1">
+     <HiArrowSmallLeft size={18}  onClick={handlePrevPage}/>
+     </div>
+
+     <p className="text-sm">
+        หน้า {currentPage} ถึง {totalPages}
+      </p>
+
+     <div className="bg-gray-200 hover:bg-gray-300 cursor-pointer rounded-full p-1">
+     <HiArrowRight size={18}  onClick={handleNextPage}/>
+     </div>
+     
+
+      {/* <div className="flex items-center gap-4">
         <button
           className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-lg select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
           type="button"
@@ -82,7 +116,7 @@ const Pagination = ({
             ></path>
           </svg>
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

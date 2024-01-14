@@ -57,31 +57,28 @@ const BasicHome = () => {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const getPaginatedData = () => {
-    return calculatePagination(currentPage, itemsPerPage, data);
-  };
-  const { firstIndex, lastIndex } = calculatePageIndices(
-    currentPage,
-    itemsPerPage
-  );
+  const [totalPages, setTotalPages] = useState(1);
+  const { firstIndex, lastIndex } = calculatePageIndices(currentPage);
 
   const fetchData = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/home_share?search=${search}`,
+        `${
+          import.meta.env.VITE_APP_API
+        }/home_share?search=${search}&page=${currentPage}`,
         {
           headers: {
             Authorization: Authorization,
           },
         }
       );
-      setData(res.data);
+      setData(res.data.result);
       setLoading(false);
+      console.log(res);
+      setTotalPages(res.data.totalPages);
     } catch (error) {
       console.log(error);
-      checkNoToken(error.response.data.message)
+      checkNoToken(error.response.data.message);
     }
   };
 
@@ -130,7 +127,7 @@ const BasicHome = () => {
 
   useEffect(() => {
     fetchData();
-  }, [search]);
+  }, [search, currentPage]);
 
   return (
     <div className="">
@@ -177,9 +174,9 @@ const BasicHome = () => {
         </div>
       </div>
 
+
       <Card className=" h-full w-full m-4 mx-auto shadow-lg   md:w-full  mt-5 ">
         <CardBody className="  px-2 -mt-4 overflow-scroll">
-          
           <div className="flex justify-center">
             {loading === true && (
               <Spinner className="h-8 w-8 text-gray-900/50 " />
@@ -207,7 +204,10 @@ const BasicHome = () => {
               </tr>
             </thead>
             <tbody>
-              {getPaginatedData().map((item, index) => {
+              {data.map((item, index) => {
+                {
+                  /* {getPaginatedData().map((item, index) => { */
+                }
                 const isLast = index === data.length - 1;
                 const classes = isLast
                   ? "p-2"
@@ -221,7 +221,7 @@ const BasicHome = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {firstIndex + index}
+                        {firstIndex + index }
                       </Typography>
                     </td>
 
@@ -278,12 +278,10 @@ const BasicHome = () => {
             </tbody>
           </table>
         </CardBody>
-        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4 ">
+        <CardFooter className="p-2 px-4 ">
           <Pagination
-            itemsPerPage={itemsPerPage}
-            totalItems={data.length}
-            paginate={paginate}
             currentPage={currentPage}
+            totalPages={totalPages}
             setCurrentPage={setCurrentPage}
           />
         </CardFooter>
