@@ -24,6 +24,7 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
   const [sendData, setSendData] = useState({});
   const [dataHome, setDataHome] = useState([]);
   const [dataTypeWong, setDataTypeWong] = useState([]);
+  const [message, setMessage] = useState(null);
 
   const fetchHomeShare = async () => {
     try {
@@ -110,13 +111,14 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message);
+      setMessage(error.response.data.message);
+      setTimeout(() => {
+        setMessage(null);
+      }, 3000);
     }
   };
 
   const handleEdit = async () => {
-
-
     const sendDataToApi = {
       id: sendData.id,
       home_share_id: sendData.home_share_id || "",
@@ -132,15 +134,15 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
 
     console.log(sendDataToApi);
 
-    
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_APP_API}/wong_share`, sendDataToApi , {
-          headers:{
-            Authorization : Authorization
-          }
+        `${import.meta.env.VITE_APP_API}/wong_share`,
+        sendDataToApi,
+        {
+          headers: {
+            Authorization: Authorization,
+          },
         }
-        
       );
       console.log(res.data);
       toast.success("บันทึกสำเร็จ");
@@ -176,24 +178,22 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
         <HiOutlineChatAlt2 /> {id ? "แก้ไขวงแชร์" : "สร้างวงแชร์"}
       </DialogHeader>
       <DialogBody className=" py-10 h-96 overflow-scroll md:h-full md:overflow-auto ">
-
-      {/* SEND {JSON.stringify(sendData)}<br />
+        {/* SEND {JSON.stringify(sendData)}<br />
         DATA{JSON.stringify(dataToModal)}  */}
 
         <form onSubmit={(e) => handleSubmit(e)}>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
             <Select
-            isDisabled={sendData?.id}
-            styles={{
-              control: (baseStyles, state) => ({
-                ...baseStyles,
-                background:'#F7F9D7'
-              }),
-            }}
+              isDisabled={sendData?.id}
+              styles={{
+                control: (baseStyles, state) => ({
+                  ...baseStyles,
+                  background: "#F7F9D7",
+                }),
+              }}
               options={dataHome}
               className="w-full"
               placeholder="เลือกบ้านแชร์"
-              
               defaultValue={
                 dataToModal?.id
                   ? dataHome.find(
@@ -217,13 +217,13 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
               value={sendData?.name || ""}
             />
             <Select
-            isDisabled={sendData?.id}
-                styles={{
-                  control: (baseStyles, state) => ({
-                    ...baseStyles,
-                    background:'#F7F9D7'
-                  }),
-                }}
+              isDisabled={sendData?.id}
+              styles={{
+                control: (baseStyles, state) => ({
+                  ...baseStyles,
+                  background: "#F7F9D7",
+                }),
+              }}
               options={dataTypeWong}
               className="w-full"
               placeholder="รูปแบบวงค์แชร์"
@@ -249,10 +249,12 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
               label="ส่งต่องวด"
               name="installment"
               // value={sendData?.installment || ""}
-              value={sendData?.type_wong_id == 3 ? "" :  sendData?.installment || ""}
+              value={
+                sendData?.type_wong_id == 3 ? "" : sendData?.installment || ""
+              }
               onChange={(e) => handleChange(e)}
               required
-              disabled={sendData?.type_wong_id == 3 }
+              disabled={sendData?.type_wong_id == 3}
             />
 
             <Input
@@ -294,9 +296,9 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
               onChange={(e) => handleChange(e)}
               value={sendData?.interest || ""}
               // value={
-              //   sendData?.type_wong_id == 1 ? "" : 
-              //   sendData?.type_wong_id == 3 ? "" : 
-              //   sendData?.type_wong_id == 4 ? "" : 
+              //   sendData?.type_wong_id == 1 ? "" :
+              //   sendData?.type_wong_id == 3 ? "" :
+              //   sendData?.type_wong_id == 4 ? "" :
               //   sendData?.type_wong_id == 5 ? "" :  sendData?.interest
               // }
             />
@@ -311,6 +313,8 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
               value={sendData?.note || ""}
             />
           </div>
+
+          {message && <p className="text-red-500">{message}</p>}
 
           <div className="flex justify-end mt-5">
             <Button
