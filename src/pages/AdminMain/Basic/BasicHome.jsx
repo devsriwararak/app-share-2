@@ -73,10 +73,11 @@ const BasicHome = () => {
           },
         }
       );
-      setData(res.data.result);
-      setLoading(false);
-      console.log(res);
-      setTotalPages(res.data.totalPages);
+      if (res) {
+        setData(res.data.result);
+        setLoading(false);
+        setTotalPages(res.data.totalPages);
+      }
     } catch (error) {
       console.log(error);
       checkNoToken(error.response.data.message);
@@ -175,107 +176,115 @@ const BasicHome = () => {
         </div>
       </div>
 
-
       <Card className=" h-full w-full m-4 mx-auto shadow-lg   md:w-full  mt-5 ">
         <CardBody className="  px-2 -mt-4 overflow-scroll">
-          <div className="flex justify-center">
-            {loading === true && (
-              <Spinner className="h-8 w-8 text-gray-900/50 " />
-            )}
-          </div>
-
-          <table className=" w-full  min-w-max table-auto text-center  ">
+          <table className=" w-full min-w-max   table-auto text-center   ">
             <thead className="  ">
               <tr>
-                {loading === false &&
-                  TABLE_HEAD.map((head) => (
-                    <th
-                      key={head}
-                      className="border-y  border-blue-gray-100  bg-blue-gray-50 p-4"
+                {TABLE_HEAD.map((head) => (
+                  <th
+                    key={head}
+                    className="border-y  border-blue-gray-100  bg-blue-gray-50 p-4"
+                  >
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-bold leading-none opacity-90"
                     >
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-bold leading-none opacity-90"
-                      >
-                        {head}
-                      </Typography>
-                    </th>
-                  ))}
+                      {head}
+                    </Typography>
+                  </th>
+                ))}
               </tr>
             </thead>
+
+            {/* Loading Spinner */}
+            {loading && (
+              <tbody className="">
+                <tr>
+                  <td colSpan={TABLE_HEAD.length}>
+                    <div className="flex flex-col gap-2 items-center justify-center mt-5">
+                      <Spinner className="h-6 w-6  text-gray-900/50" />
+                      <small>กรุณารอสักครู่ !</small>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            )}
+
             <tbody>
-              {data.map((item, index) => {
-                {
-                  /* {getPaginatedData().map((item, index) => { */
-                }
-                const isLast = index === data.length - 1;
-                const classes = isLast
-                  ? "p-2"
-                  : "p-2 border-b border-blue-gray-50";
+              {loading === false &&
+                data.map((item, index) => {
+                  {
+                    /* {getPaginatedData().map((item, index) => { */
+                  }
+                  const isLast = index === data.length - 1;
+                  const classes = isLast
+                    ? "p-2"
+                    : "p-2 border-b border-blue-gray-50";
 
-                return (
-                  <tr key={index} className="hover:bg-gray-200">
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {firstIndex + index }
-                      </Typography>
-                    </td>
+                  return (
+                    <tr key={index} className="hover:bg-gray-200">
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {firstIndex + index}
+                        </Typography>
+                      </td>
 
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {item?.code}
-                      </Typography>
-                    </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {item?.code}
+                        </Typography>
+                      </td>
 
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {item?.name}
-                      </Typography>
-                    </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {item?.name}
+                        </Typography>
+                      </td>
 
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        ออนไลน์
-                      </Typography>
-                    </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          ออนไลน์
+                        </Typography>
+                      </td>
 
-                    <td className={classes}>
-                      <div className="flex justify-center  gap-2 ">
-                        <HiPencilAlt
-                          size={20}
-                          color="black"
-                          className=" cursor-pointer"
-                          onClick={() => handleOpenEdit(item.id, item)}
-                        />
+                      <td className={classes}>
+                        <div className="flex justify-center  gap-2 ">
+                          <HiPencilAlt
+                            size={20}
+                            color="black"
+                            className=" cursor-pointer"
+                            onClick={() => handleOpenEdit(item.id, item)}
+                          />
 
-                        <HiTrash
-                          size={20}
-                          color="red"
-                          className=" cursor-pointer"
-                          onClick={() => handleDelete(item.id)}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+                          <HiTrash
+                            size={20}
+                            color="red"
+                            className=" cursor-pointer"
+                            onClick={() => handleDelete(item.id)}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </CardBody>
