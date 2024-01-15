@@ -48,8 +48,8 @@ const Sidebar = ({ openSidebar, setOpenSideBar }) => {
       <div
         className={`fixed top-0  h-full  left-0   p-3  text-white shadow-sm  bg-white z-50 overflow-y-scroll md:overflow-hidden  ${
           openSidebar
-            ? "  md:block md:static  md:top-auto md:left-auto md:shadow-sm md:border-2   "
-            : " hidden md:block  md:static   md:top-auto md:left-auto md:shadow-sm md:border-2   "
+            ? "  lg:block lg:static  md:top-auto lg:left-auto lg:shadow-sm lg:border-2   "
+            : " hidden lg:block  lg:static   lg:top-auto md:left-auto lg:shadow-sm lg:border-2   "
         }`}
       >
         <div className="flex items-center gap-2 px-1  justify-start ">

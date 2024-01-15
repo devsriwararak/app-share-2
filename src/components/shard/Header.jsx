@@ -43,13 +43,13 @@ const Header = ({ openSidebar, setOpenSideBar }) => {
             <HiOutlineX
               color="black"
               size={25}
-              className="cursor-pointer md:hidden "
+              className="cursor-pointer lg:hidden "
             />
           ) : (
             <HiOutlineMenu
               color="black"
               size={25}
-              className="cursor-pointer md:hidden "
+              className="cursor-pointer lg:hidden "
             />
           )}
         </div>

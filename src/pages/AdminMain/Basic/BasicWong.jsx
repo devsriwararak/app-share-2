@@ -140,7 +140,7 @@ const BasicWong = () => {
 
   useEffect(() => {
     fetchData();
-  }, [search]);
+  },[search]);
 
   return (
     <div className="">
@@ -174,7 +174,8 @@ const BasicWong = () => {
             <Input
               variant="outlined"
               label="ค้นหาวงค์แชร์"
-              onChange={(e) => (setCurrentPage(1), setSearch(e.target.value))}
+              // onChange={(e) => (setCurrentPage(1), setSearch(e.target.value))}
+              onChange={(e) => ( setSearch(e.target.value))}
             />
           </div>
           <div className="">
