@@ -191,11 +191,10 @@ const User = () => {
                 <li
                   key={item.id}
                   className={classNames(indexStatus == index && "bg-gray-200"  ,"flex  justify-between hover:bg-gray-200 py-1.5 px-2 cursor-pointer")}
-                  onClick={()=>setIndexStatus(index)}
+                  onClick={()=>(setIndexStatus(index) , handelSendToUserData(item))}
                 >
                   <p
                     className="text-sm"
-                    onClick={() => handelSendToUserData(item)}
                   >{`${item.code} (${item.fname})`}</p>
 
                   <div className="flex flex-row gap-1">
