@@ -128,16 +128,12 @@ const CrudAdmin = () => {
 
       <Card className=" h-full w-full mx-auto   md:w-full  mt-5 shadow-lg ">
         <CardBody className="  px-2 overflow-y-scroll -mt-4">
-          <div className="flex justify-center">
-            {loading === true && (
-              <Spinner className="h-8 w-8 text-gray-900/50 " />
-            )}
-          </div>
+     
 
           <table className=" w-full  min-w-max table-auto text-center">
             <thead>
               <tr>
-                {loading === false &&
+                {
                   TABLE_HEAD.map((head) => (
                     <th
                       key={head}

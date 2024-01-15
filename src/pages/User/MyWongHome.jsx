@@ -57,11 +57,11 @@ const MyWongHome = ({ data }) => {
           <div className="flex flex-col md:flex-row gap-4 mt-4">
             <div className="w-full">
               <b>ธนาคาร : </b>
-              <span>{dataHomeShare?.bank}</span>
+              <span>{data?.home_share_bank}</span>
             </div>
 
             <div className="w-full">
-              <b>เลขบัญชี : </b>
+              <b>เลขบัญชี : (ไม่ให้ลูกค้ารู้ ??) </b>
               <span>{dataHomeShare?.account_number}</span>
             </div>
 

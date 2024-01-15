@@ -16,20 +16,9 @@ import Login from "../Login/Login";
 import axios from "axios";
 import { Authorization } from "../../auth/Data";
 import classNames from "classnames";
+import LoadingComponent from "../../components/pagination/LoadingComponent";
 
-const TABLE_HEAD = ["บ้านแชร์", "เลือก"];
 
-const TABLE_ROWS = [
-  {
-    job: "บ้านแชร์-001",
-  },
-  {
-    job: "บ้านแชร์-002",
-  },
-  {
-    job: "ไม่เลือก",
-  },
-];
 
 const TABLE_ROWS_2 = [
   {
@@ -78,6 +67,7 @@ const MyWong = () => {
   };
 
   const fetchDataHomeShare = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(
         `${
@@ -89,8 +79,10 @@ const MyWong = () => {
           },
         }
       );
+     if(res){
       setDataHomeShare(res.data);
       setLoading(false);
+     }
     } catch (error) {
       console.log(error);
     }
@@ -122,11 +114,12 @@ const MyWong = () => {
               </div>
 
               <ul className="mt-3 overflow-y-scroll">
-                <div className="flex justify-center">
-                  {loading === true && (
-                    <Spinner className="h-8 w-8 text-gray-900/50 " />
-                  )}
-                </div>
+                {/* Loading Spinner */}
+                <LoadingComponent
+              loading={loading}
+              TABLE_HEAD={null}
+            />
+
 
                 {dataHomeShare?.map((item, index) => (
                   <li
