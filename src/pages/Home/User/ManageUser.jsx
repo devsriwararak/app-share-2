@@ -22,6 +22,7 @@ import AddUserToHome from "../../../components/modal/User/AddUserToHome";
 import axios from "axios";
 import classNames from "classnames";
 import { Authorization, checkNoToken } from "../../../auth/Data";
+import LoadingComponent from "../../../components/pagination/LoadingComponent";
 
 const ManageUser = () => {
   const [statusBtn, setStatusBtn] = useState(1);
@@ -40,6 +41,7 @@ const ManageUser = () => {
   };
 
   const fetchDataMyUser = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(
         `${
@@ -51,11 +53,13 @@ const ManageUser = () => {
           },
         }
       );
-      setData(res.data);
-      setLoading(false);
+      if (res) {
+        setData(res.data);
+        setLoading(false);
+      }
     } catch (error) {
       console.log(error);
-      checkNoToken(error.response.data.message)
+      checkNoToken(error.response.data.message);
     }
   };
 
@@ -84,7 +88,7 @@ const ManageUser = () => {
                 ลูกแชร์ ({data?.length})
               </h2>
               <Button
-                className="text-[14px] flex items-center gap-1 mt-2 md:mt-0  text-sm  "
+                className="text-sm flex items-center gap-1 mt-2 md:mt-0   "
                 color="purple"
                 size="sm"
                 variant="filled"
@@ -94,9 +98,9 @@ const ManageUser = () => {
                 เพิ่มลูกแชร์ใหม่
               </Button>
             </div>
-            <div className="mt-3">
+            <div className="mt-3 w-full">
               <Input
-                className=""
+                className="test-sm"
                 label="ค้นหา ชื่อลูกค้า"
                 color="purple"
                 onChange={(e) => setSearch(e.target.value)}
@@ -104,13 +108,14 @@ const ManageUser = () => {
             </div>
 
             <ul className="mt-5 overflow-y-scroll ">
-              <div className="flex justify-center">
-                {loading === true && (
-                  <Spinner className="h-8 w-8 text-gray-900/50 " />
-                )}
-              </div>
 
-              {data.map((item, index) => (
+              {/* Loading Spinner */}
+              <LoadingComponent
+              loading={loading}
+              TABLE_HEAD={null}
+            />
+
+              {loading === false && data.map((item, index) => (
                 <li
                   onClick={() => handleSelect(item, index)}
                   className={classNames(
@@ -122,11 +127,15 @@ const ManageUser = () => {
                   {`${index + 1}.  ${item.user_fname || item.fname} (${
                     item.user_code || item.lname
                   })`}
-                  <FcPlus
-                    className=" cursor-pointer"
-                    onClick={() => handleSelect(item, index)}
-                    size={23}
-                  />
+
+                  <div>
+                    {" "}
+                    <FcPlus
+                      className=" cursor-pointer"
+                      onClick={() => handleSelect(item, index)}
+                      size={23}
+                    />
+                  </div>
                 </li>
               ))}
             </ul>

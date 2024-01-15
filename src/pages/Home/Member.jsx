@@ -28,12 +28,15 @@ import ViewWongShare from "../../components/modal/Basic/ViewWongShare";
 import AddMember from "../../components/modal/Member/AddMember";
 import axios from "axios";
 import ViewMember from "../../components/modal/Member/ViewMember";
-import { calculatePageIndices, calculatePagination } from "../../components/pagination/PaginationUtils";
+import {
+  calculatePageIndices,
+  calculatePagination,
+} from "../../components/pagination/PaginationUtils";
 import Pagination from "../../components/pagination/Pagination";
 import { Authorization } from "../../auth/Data";
+import LoadingComponent from "../../components/pagination/LoadingComponent";
 
 const TABLE_HEAD = ["ลำดับ", "รหัส", "ชื่อพนักงาน", "Username", "แก้ไข/ลบ"];
-
 
 const Member = () => {
   const [id, setId] = useState(null);
@@ -45,34 +48,30 @@ const Member = () => {
 
   // states
   const [data, setData] = useState([]);
-  const [dataToModal , setDataToModal] = useState({})
-  const [search, setSearch] = useState("")
-  const home_share_id = localStorage.getItem('home_share_id')
+  const [dataToModal, setDataToModal] = useState({});
+  const [search, setSearch] = useState("");
+  const home_share_id = localStorage.getItem("home_share_id");
   const [loading, setLoading] = useState(true);
 
 
-  // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const getPaginatedData = () => {
-    return calculatePagination(currentPage, itemsPerPage, data);
-  };
-  const { firstIndex, lastIndex } = calculatePageIndices(currentPage, itemsPerPage);
-
 
   const fetchData = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/member/home/${home_share_id}?search=${search}`,
+        `${
+          import.meta.env.VITE_APP_API
+        }/member/home/${home_share_id}?search=${search}`,
         {
           headers: {
-            Authorization: Authorization
+            Authorization: Authorization,
           },
         }
       );
-      setData(res.data);
-      setLoading(false)
+      if (res) {
+        setData(res.data);
+        setLoading(false);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -90,7 +89,8 @@ const Member = () => {
       cancelButtonText: "ยกเลิก",
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteRow(id)      }
+        deleteRow(id);
+      }
     });
   };
 
@@ -100,26 +100,25 @@ const Member = () => {
         `${import.meta.env.VITE_APP_API}/member/${id}`,
         {
           headers: {
-            Authorization: Authorization
+            Authorization: Authorization,
           },
         }
       );
       toast.success("ลบข้อมูลสำเร็จ");
-      fetchData()
+      fetchData();
       console.log(res.data);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const handleDataToModal = (item, number) => {
+    setDataToModal(item);
+    number === 1 && handleOpen(1);
+    number === 3 && handleOpenView(3);
 
-  const handleDataToModal = (item, number)=>{
-   setDataToModal(item)
-   number === 1 && handleOpen(1)
-   number === 3 && handleOpenView(3)
-   
-  //  console.log(item);
-  }
+    //  console.log(item);
+  };
 
   useEffect(() => {
     fetchData();
@@ -127,13 +126,21 @@ const Member = () => {
 
   return (
     <div className="">
-      <AddMember handleOpen={handleOpen} open={open}  fetchData={fetchData} dataToModal={dataToModal} />
-      <ViewMember handleOpen={handleOpenView} open={openView} id={id} dataToModal={dataToModal} />
+      <AddMember
+        handleOpen={handleOpen}
+        open={open}
+        fetchData={fetchData}
+        dataToModal={dataToModal}
+      />
+      <ViewMember
+        handleOpen={handleOpenView}
+        open={openView}
+        id={id}
+        dataToModal={dataToModal}
+      />
 
       <div className="flex flex-col md:flex-row   items-center  md:justify-between gap-4">
         <div className="flex gap-2">
-   
-
           <HiOutlineUserGroup
             size={35}
             className="bg-purple-700/5 rounded-full px-1 py-1.5 text-purple-300"
@@ -146,11 +153,15 @@ const Member = () => {
 
         <div className="flex gap-2 flex-col items-center   md:flex-row">
           <div className="w-72 bg-slate-50 rounded-md  bg-gray-50  ">
-            <Input variant="outlined" label="ค้นหาพนักงาน" onChange={(e)=>setSearch(e.target.value)} />
+            <Input
+              variant="outlined"
+              label="ค้นหาพนักงาน"
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
           <div className="">
             <Button
-              onClick={() => (handleOpen(null) , setDataToModal({}))}
+              onClick={() => (handleOpen(null), setDataToModal({}))}
               variant="filled"
               color="purple"
               size="sm"
@@ -164,18 +175,11 @@ const Member = () => {
       </div>
 
       <Card className=" h-full  w-full mx-auto   md:w-full  mt-8 shadow-lg ">
-        <CardBody className="  px-2 overflow-scroll -mt-4">
-
-        <div className="flex justify-center">
-            {loading === true && (
-              <Spinner className="h-8 w-8 text-gray-900/50 " />
-            )}
-          </div>
-
+        <CardBody className="  px-2 overflow-y-scroll -mt-4">
           <table className=" w-full  min-w-max table-auto text-center">
             <thead>
               <tr>
-                {loading === false && TABLE_HEAD.map((head) => (
+                {TABLE_HEAD.map((head) => (
                   <th
                     key={head}
                     className="border-y border-blue-gray-100 bg-blue-gray-50 p-4"
@@ -191,8 +195,15 @@ const Member = () => {
                 ))}
               </tr>
             </thead>
+
+            {/* Loading Spinner */}
+            <LoadingComponent
+              loading={loading}
+              TABLE_HEAD={TABLE_HEAD.length}
+            />
+
             <tbody>
-              { getPaginatedData().map((item, index) => {
+              {loading === false && data.map((item, index) => {
                 const isLast = index === data.length - 1;
                 const classes = isLast
                   ? "p-2"
@@ -206,7 +217,7 @@ const Member = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {firstIndex + index}
+                        {index + 1}
                       </Typography>
                     </td>
                     <td className={classes}>
@@ -225,7 +236,7 @@ const Member = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {item.fname}  {item.lname}
+                        {item.fname} {item.lname}
                       </Typography>
                     </td>
 
@@ -238,26 +249,22 @@ const Member = () => {
                         {item.username}
                       </Typography>
                     </td>
-            
-             
+
                     <td className={classes}>
                       <div className="flex justify-center  gap-2 ">
                         <HiOutlineDesktopComputer
-                          
                           size={20}
                           color="black"
                           className="cursor-pointer  "
-                          onClick={() => handleDataToModal(item,3)}
+                          onClick={() => handleDataToModal(item, 3)}
                         />
                         <HiPencilAlt
-                         
-                         size={20}
-                         color="black"
-                         className="cursor-pointer  "
-                          onClick={() => handleDataToModal(item,1)}
+                          size={20}
+                          color="black"
+                          className="cursor-pointer  "
+                          onClick={() => handleDataToModal(item, 1)}
                         />
                         <HiTrash
-                          
                           size={20}
                           color="red"
                           className="cursor-pointer  "
@@ -271,15 +278,7 @@ const Member = () => {
             </tbody>
           </table>
         </CardBody>
-        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Pagination
-            itemsPerPage={itemsPerPage}
-            totalItems={data.length}
-            paginate={paginate}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-          />
-        </CardFooter>
+   
       </Card>
     </div>
   );

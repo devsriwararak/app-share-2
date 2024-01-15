@@ -38,6 +38,7 @@ const Play = () => {
   const handleOpen = (number) => setOpen(!open);
 
   const fetchDataWongShare = async()=>{
+    setLoading(true)
     try {
       const res = await axios.get(
         `${import.meta.env.VITE_APP_API}/wong_share/home/${home_share_id}?search=${search}`,
@@ -47,8 +48,10 @@ const Play = () => {
           },
         }
       );
+     if(res){
       setData(res.data)
       setLoading(false)
+     }
       
     } catch (error) {
       console.log(error);
@@ -66,7 +69,7 @@ const Play = () => {
 
   useEffect(()=>{
     fetchDataWongShare()
-  },[])
+  },[search])
 
   return (
     <div className="flex flex-col md:flex-row gap-4">
@@ -112,7 +115,7 @@ const Play = () => {
             )}
           </div>
 
-              {data.map((item, index) => (
+              {loading === false && data.map((item, index) => (
                 <div key={index}>
                   <li
                     onClick={() => handleSelect(item, index)}

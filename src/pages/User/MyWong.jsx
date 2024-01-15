@@ -121,7 +121,7 @@ const MyWong = () => {
             />
 
 
-                {dataHomeShare?.map((item, index) => (
+                {loading === false &&  dataHomeShare?.map((item, index) => (
                   <li
                     onClick={() => handleClick_1(item, index)}
                     className={classNames(
