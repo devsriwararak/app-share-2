@@ -43,7 +43,6 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
       }));
       setDataHome(rename);
 
-      console.log(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -63,7 +62,6 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
       }));
       setDataTypeWong(rename);
 
-      console.log(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -90,7 +88,6 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
       note: sendData.note || "",
     };
 
-    console.log(dataToSendAPI);
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_APP_API}/wong_share`,
@@ -132,7 +129,6 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
       note: sendData.note || "",
     };
 
-    console.log(sendDataToApi);
 
     try {
       const res = await axios.put(

@@ -36,6 +36,7 @@ import {
 } from "../../../components/pagination/PaginationUtils";
 import Pagination from "../../../components/pagination/Pagination";
 import { Authorization, checkNoToken } from "../../../auth/Data";
+import LoadingComponent from "../../../components/pagination/LoadingComponent";
 
 const TABLE_HEAD = [
   "ลำดับ",
@@ -46,8 +47,6 @@ const TABLE_HEAD = [
   "เงินต้น",
   "แก้ไข/ลบ",
 ];
-
-
 
 const BasicWong = () => {
   const [id, setId] = useState(null);
@@ -62,18 +61,17 @@ const BasicWong = () => {
   const [dataToModal, setDataToModal] = useState({});
   const [loading, setLoading] = useState(true);
 
-
   // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const getPaginatedData = () => {
-    return calculatePagination(currentPage, itemsPerPage, data);
-  };
-  const { firstIndex, lastIndex } = calculatePageIndices(
-    currentPage,
-    itemsPerPage
-  );
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const itemsPerPage = 3;
+  // const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  // const getPaginatedData = () => {
+  //   return calculatePagination(currentPage, itemsPerPage, data);
+  // };
+  // const { firstIndex, lastIndex } = calculatePageIndices(
+  //   currentPage,
+  //   itemsPerPage
+  // );
 
   const fetchData = async () => {
     try {
@@ -81,7 +79,7 @@ const BasicWong = () => {
         `${import.meta.env.VITE_APP_API}/wong_share?search=${search}`,
         {
           headers: {
-            Authorization: Authorization
+            Authorization: Authorization,
           },
         }
       );
@@ -89,7 +87,7 @@ const BasicWong = () => {
       setLoading(false);
     } catch (error) {
       console.log(error);
-      checkNoToken(error.response.data.message)
+      checkNoToken(error.response.data.message);
     }
   };
 
@@ -116,7 +114,7 @@ const BasicWong = () => {
         `${import.meta.env.VITE_APP_API}/wong_share/${id}`,
         {
           headers: {
-            Authorization: Authorization
+            Authorization: Authorization,
           },
         }
       );
@@ -196,48 +194,51 @@ const BasicWong = () => {
 
       <Card className=" h-full md:h-full  w-full mx-auto   md:w-full  mt-5 shadow-lg ">
         <CardBody className="  px-2 overflow-scroll -mt-4">
-
-        <div className="flex justify-center">
-            {loading === true && (
-              <Spinner className="h-8 w-8 text-gray-400 " />
-            )}
-          </div>
+  
 
           <table className=" w-full  min-w-max table-auto text-center">
             <thead>
               <tr>
-                {loading === false && TABLE_HEAD.map((head) => (
-                  <th
-                    key={head}
-                    className="border-y border-blue-gray-100 bg-blue-gray-50 p-4"
-                  >
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-bold leading-none opacity-90"
+                {
+                  TABLE_HEAD.map((head) => (
+                    <th
+                      key={head}
+                      className="border-y border-blue-gray-100 bg-blue-gray-50 p-4"
                     >
-                      {head}
-                    </Typography>
-                  </th>
-                ))}
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-bold leading-none opacity-90"
+                      >
+                        {head}
+                      </Typography>
+                    </th>
+                  ))}
               </tr>
             </thead>
+
+            {/* Loading Spinner */}
+            <LoadingComponent
+              loading={loading}
+              TABLE_HEAD={TABLE_HEAD.length}
+            />
+
             <tbody>
-              {getPaginatedData().map((item, index) => {
+              {data.map((item, index) => {
                 const isLast = index === data.length - 1;
                 const classes = isLast
                   ? "p-2"
                   : "p-2 border-b border-blue-gray-50";
 
                 return (
-                  <tr key={index} className="hover:bg-gray-200">
+                  <tr key={item.id} className="hover:bg-gray-200">
                     <td className={classes}>
                       <Typography
                         variant="small"
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {firstIndex + index}
+                        {index + 1}
                       </Typography>
                     </td>
                     <td className={classes}>
@@ -276,7 +277,7 @@ const BasicWong = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                         {item.count}
+                        {item.count}
                       </Typography>
                     </td>
 
@@ -286,7 +287,7 @@ const BasicWong = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                         {item.price}
+                        {item.price}
                       </Typography>
                     </td>
 
@@ -318,15 +319,9 @@ const BasicWong = () => {
             </tbody>
           </table>
         </CardBody>
-        <CardFooter className="flex items-center justify-start ">
-          <Pagination
-            itemsPerPage={itemsPerPage}
-            totalItems={data.length}
-            paginate={paginate}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-          />
-        </CardFooter>
+        {/* <CardFooter className="flex items-center justify-start ">
+   
+        </CardFooter> */}
       </Card>
     </div>
   );

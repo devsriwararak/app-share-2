@@ -3,7 +3,6 @@ import React from "react";
 import { HiArrowLeft } from "react-icons/hi";
 import { HiArrowRight, HiArrowSmallLeft } from "react-icons/hi2";
 
-
 const Pagination = ({
   // itemsPerPage,
   // totalItems,
@@ -35,22 +34,23 @@ const Pagination = ({
 
   return (
     <div className="mt-4 flex gap-2 justify-end  items-center    ">
-     
-   
+      <div
+        className="bg-gray-200 hover:bg-gray-300  cursor-pointer rounded-full p-1"
+        onClick={handlePrevPage}
+      >
+        <HiArrowSmallLeft size={18} />
+      </div>
 
-
-      <div className="bg-gray-200 hover:bg-gray-300  cursor-pointer rounded-full p-1">
-     <HiArrowSmallLeft size={18}  onClick={handlePrevPage}/>
-     </div>
-
-     <p className="text-sm">
+      <p className="text-sm">
         หน้า {currentPage} ถึง {totalPages}
       </p>
 
-     <div className="bg-gray-200 hover:bg-gray-300 cursor-pointer rounded-full p-1">
-     <HiArrowRight size={18}  onClick={handleNextPage}/>
-     </div>
-     
+      <div
+        className="bg-gray-200 hover:bg-gray-300 cursor-pointer rounded-full p-1"
+        onClick={handleNextPage}
+      >
+        <HiArrowRight size={18} />
+      </div>
 
       {/* <div className="flex items-center gap-4">
         <button

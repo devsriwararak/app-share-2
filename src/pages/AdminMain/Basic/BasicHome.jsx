@@ -36,6 +36,7 @@ import {
   calculatePagination,
 } from "../../../components/pagination/PaginationUtils";
 import { Authorization, checkNoToken } from "../../../auth/Data";
+import LoadingComponent from "../../../components/pagination/LoadingComponent";
 
 const TABLE_HEAD = [
   "ลำดับ",
@@ -64,9 +65,7 @@ const BasicHome = () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${
-          import.meta.env.VITE_APP_API
-        }/home_share?search=${search}&page=${currentPage}`,
+        `${import.meta.env.VITE_APP_API}/home_share?search=${search}`,
         {
           headers: {
             Authorization: Authorization,
@@ -74,9 +73,9 @@ const BasicHome = () => {
         }
       );
       if (res) {
-        setData(res.data.result);
+        setData(res.data);
         setLoading(false);
-        setTotalPages(res.data.totalPages);
+        // setTotalPages(res.data.totalPages);
       }
     } catch (error) {
       console.log(error);
@@ -177,7 +176,7 @@ const BasicHome = () => {
       </div>
 
       <Card className=" h-full w-full m-4 mx-auto shadow-lg   md:w-full  mt-5 ">
-        <CardBody className="  px-2 -mt-4 overflow-scroll">
+        <CardBody className="  px-2 -mt-4 overflow-y-scroll">
           <table className=" w-full min-w-max   table-auto text-center   ">
             <thead className="  ">
               <tr>
@@ -199,18 +198,10 @@ const BasicHome = () => {
             </thead>
 
             {/* Loading Spinner */}
-            {loading && (
-              <tbody className="">
-                <tr>
-                  <td colSpan={TABLE_HEAD.length}>
-                    <div className="flex flex-col gap-2 items-center justify-center mt-5">
-                      <Spinner className="h-6 w-6  text-gray-900/50" />
-                      <small>กรุณารอสักครู่ !</small>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            )}
+            <LoadingComponent
+              loading={loading}
+              TABLE_HEAD={TABLE_HEAD.length}
+            />
 
             <tbody>
               {loading === false &&
@@ -288,13 +279,13 @@ const BasicHome = () => {
             </tbody>
           </table>
         </CardBody>
-        <CardFooter className="p-2 px-4 ">
+        {/* <CardFooter className="p-2 px-4 ">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
             setCurrentPage={setCurrentPage}
           />
-        </CardFooter>
+        </CardFooter> */}
       </Card>
     </div>
   );
