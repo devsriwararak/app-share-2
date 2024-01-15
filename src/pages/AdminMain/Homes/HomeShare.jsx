@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { Authorization, checkNoToken } from "../../../auth/Data.js";
 import classNames from "classnames";
+import LoadingComponent from "../../../components/pagination/LoadingComponent.jsx";
 
 const HomeShare = () => {
   const TABLE_HEAD = ["ลำดับ", "รหัส", "ชื่อ", "username", "แก้ไข/ลบ"];
@@ -34,15 +35,15 @@ const HomeShare = () => {
   const [loading, setLoading] = useState(true);
 
   // Footer Table 1
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = dataHome.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(dataHome.length / itemsPerPage);
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const itemsPerPage = 5;
+  // const indexOfLastItem = currentPage * itemsPerPage;
+  // const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  // const currentItems = dataHome.slice(indexOfFirstItem, indexOfLastItem);
+  // const totalPages = Math.ceil(dataHome.length / itemsPerPage);
+  // const handlePageChange = (page) => {
+  //   setCurrentPage(page);
+  // };
 
   // Modal
   const [open1, setOpen1] = useState(false);
@@ -67,7 +68,7 @@ const HomeShare = () => {
       setLoading(false);
     } catch (error) {
       console.log(error);
-      checkNoToken(error.response.data.message)
+      checkNoToken(error.response.data.message);
     }
   };
 
@@ -226,8 +227,8 @@ const HomeShare = () => {
         <div className="w-full">
           <Card className="mt-6 shadow-lg border border-gray-200 ">
             <CardBody>
-              <div className="flex flex-col lg:flex-row md:justify-between gap-2 items-center">
-                <div className="  ">
+              <div className="flex flex-col lg:flex-row md:justify-start gap-3 items-center">
+                {/* <div className="  ">
                   <Typography
                     variant="paragraph"
                     color="blue-gray"
@@ -235,7 +236,7 @@ const HomeShare = () => {
                   >
                     เจ้าของบ้านแชร์
                   </Typography>
-                </div>
+                </div> */}
                 <div className="   ">
                   <Input
                     label="ค้นหาเจ้าของบ้านแชร์"
@@ -254,33 +255,33 @@ const HomeShare = () => {
                 </div>
               </div>
 
-              <Card className="h-full w-full mt-6 overflow-scroll ">
-                <div className="flex justify-center">
-                  {loading === true && (
-                    <Spinner className="h-8 w-8 text-gray-900/50 " />
-                  )}
-                </div>
-
+              <Card className="h-full w-full mt-6 overflow-y-scroll ">
                 <table className="w-full min-w-max table-auto  text-center">
                   <thead>
                     <tr>
-                      {loading === false &&
-                        TABLE_HEAD.map((head) => (
-                          <th
-                            key={head}
-                            className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                      {TABLE_HEAD.map((head) => (
+                        <th
+                          key={head}
+                          className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                        >
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-bold leading-none opacity-90"
                           >
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-bold leading-none opacity-90"
-                            >
-                              {head}
-                            </Typography>
-                          </th>
-                        ))}
+                            {head}
+                          </Typography>
+                        </th>
+                      ))}
                     </tr>
                   </thead>
+
+                  {/* Loading Spinner */}
+                  <LoadingComponent
+                    loading={loading}
+                    TABLE_HEAD={TABLE_HEAD.length}
+                  />
+
                   <tbody>
                     {dataHome.map((item, index) => (
                       <tr
@@ -359,9 +360,7 @@ const HomeShare = () => {
                 </table>
               </Card>
             </CardBody>
-            {/* <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
 
-            </CardFooter> */}
           </Card>
         </div>
         <div className="w-full">

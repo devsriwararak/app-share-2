@@ -37,7 +37,7 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
       }));
       setDataHome(rename);
 
-      console.log(res.data);
+      // console.log(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -73,7 +73,7 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
           },
         }
       );
-      console.log(res.data);
+      // console.log(res.data);
       if (res.status === 200) {
         fetchData();
         toast.success("บันทึกสำเร็จ");
@@ -98,7 +98,6 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
       lname: sendData?.lname || "",
       address: sendData?.address || "",
     };
-    console.log(data);
     try {
       const res = await axios.put(
         `${import.meta.env.VITE_APP_API}/users`,
@@ -109,7 +108,6 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
           },
         }
       );
-      console.log(res.data);
       if (res.status === 200) {
         toast.success(res.data.message);
         handleOpen();

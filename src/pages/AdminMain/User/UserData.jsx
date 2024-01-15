@@ -8,7 +8,6 @@ const UserData = ({ dataToModal }) => {
   const handleOpen = () => setOpen(!open);
 
   useEffect(() => {
-    console.log(dataToModal);
   }, [dataToModal]);
   return (
     <>

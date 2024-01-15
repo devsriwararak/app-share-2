@@ -29,6 +29,7 @@ import {
 import Pagination from "../../../components/pagination/Pagination";
 import UserData from "./UserData";
 import classNames from "classnames";
+import LoadingComponent from "../../../components/pagination/LoadingComponent.jsx";
 
 
 
@@ -44,27 +45,31 @@ const User = () => {
   const [loading, setLoading] = useState(true);
 
   // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const getPaginatedData = () => {
-    return calculatePagination(currentPage, itemsPerPage, data);
-  };
-  const { firstIndex, lastIndex } = calculatePageIndices(
-    currentPage,
-    itemsPerPage
-  );
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const itemsPerPage = 3;
+  // const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  // const getPaginatedData = () => {
+  //   return calculatePagination(currentPage, itemsPerPage, data);
+  // };
+  // const { firstIndex, lastIndex } = calculatePageIndices(
+  //   currentPage,
+  //   itemsPerPage
+  // );
 
 
   const fetchData = async()=>{
+    setLoading(true)
     try {
       const res = await axios.get(`${import.meta.env.VITE_APP_API}/users?search=${search}`, {
         headers: {
           Authorization : Authorization
         }
       })
-      setData(res.data);
-      setLoading(false);
+      if(res){
+        setData(res.data);
+        setLoading(false);
+      }
+
     } catch (error) {
       console.log(error);
       checkNoToken(error.response.data.message)
@@ -171,18 +176,18 @@ const User = () => {
               <Input
                 variant="outlined"
                 label="ค้นหาชื่อ / รหัส"
-                onChange={(e) => (setSearch(e.target.value), setCurrentPage(1))}
+                onChange={(e) => (setSearch(e.target.value))}
               />
             </div>
 
-            <div className="flex justify-center">
-            {loading === true && (
-              <Spinner className="h-8 w-8 text-gray-900/50 " />
-            )}
-          </div>
+             {/* Loading Spinner */}
+             <LoadingComponent
+              loading={loading}
+              TABLE_HEAD={null}
+            />
 
             <ul className="mt-4 overflow-y-scroll">
-              {data?.map((item, index) => (
+              {loading === false && data?.map((item, index) => (
                 <li
                   key={item.id}
                   className={classNames(indexStatus == index && "bg-gray-200"  ,"flex  justify-between hover:bg-gray-200 py-1.5 px-2 cursor-pointer")}

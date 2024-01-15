@@ -146,7 +146,7 @@ const BasicHome = () => {
             size={35}
             className="bg-purple-700/5 rounded-full px-1 py-1.5 text-purple-300"
           />
-          <span className="text-xl text-black font-bold">
+          <span className="text-lg text-black font-bold">
             จัดการข้อมูลบ้านแชร์
           </span>
         </div>

@@ -29,7 +29,7 @@ import {
 } from "../../components/pagination/PaginationUtils";
 import Pagination from "../../components/pagination/Pagination";
 import { Authorization, checkNoToken } from "../../auth/Data.js";
-
+import LoadingComponent from "../../components/pagination/LoadingComponent.jsx";
 
 const TABLE_HEAD = [
   "ลำดับ",
@@ -46,34 +46,25 @@ const CrudAdmin = () => {
 
   const [data, setData] = useState([]);
   const [dataToModal, setDataToModal] = useState({});
-  const [search , setSearch] = useState("")
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
 
-  // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const getPaginatedData = () => {
-    return calculatePagination(currentPage, itemsPerPage, data);
-  };
-  const { firstIndex, lastIndex } = calculatePageIndices(
-    currentPage,
-    itemsPerPage
-  );
-
   const fetchData = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_APP_API}/admin?search=${search}`, {
-        headers:{
-          Authorization : Authorization
+      const res = await axios.get(
+        `${import.meta.env.VITE_APP_API}/admin?search=${search}`,
+        {
+          headers: {
+            Authorization: Authorization,
+          },
         }
-      });
+      );
       setData(res.data);
       setLoading(false);
     } catch (error) {
       console.log(error);
-      checkNoToken(error.response.data.message)
+      checkNoToken(error.response.data.message);
     }
   };
 
@@ -119,21 +110,25 @@ const CrudAdmin = () => {
             size={35}
             className="bg-purple-700/5 rounded-full px-1 py-1.5 text-purple-300"
           />
-          <span className="text-xl text-black font-bold">
+          <span className="text-lg text-black font-bold">
             จัดการข้อมูล ADMIN
           </span>
         </div>
 
         <div className="flex gap-2 flex-col items-center   md:flex-row">
           <div className="w-72 bg-slate-50 rounded-md bg-gray-50  ">
-            <Input variant="outlined" label="ค้นหาชื่อ / รหัส" onChange={(e)=>setSearch(e.target.value)}  />
+            <Input
+              variant="outlined"
+              label="ค้นหาชื่อ / รหัส"
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
         </div>
       </div>
 
       <Card className=" h-full w-full mx-auto   md:w-full  mt-5 shadow-lg ">
-        <CardBody className="  px-2 overflow-scroll -mt-4">
-        <div className="flex justify-center">
+        <CardBody className="  px-2 overflow-y-scroll -mt-4">
+          <div className="flex justify-center">
             {loading === true && (
               <Spinner className="h-8 w-8 text-gray-900/50 " />
             )}
@@ -142,25 +137,33 @@ const CrudAdmin = () => {
           <table className=" w-full  min-w-max table-auto text-center">
             <thead>
               <tr>
-                {loading === false && TABLE_HEAD.map((head) => (
-                  <th
-                    key={head}
-                    className="border-y border-blue-gray-100 bg-blue-gray-50 p-4"
-                  >
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-bold leading-none opacity-90"
+                {loading === false &&
+                  TABLE_HEAD.map((head) => (
+                    <th
+                      key={head}
+                      className="border-y border-blue-gray-100 bg-blue-gray-50 p-4"
                     >
-                      {head}
-                    </Typography>
-                  </th>
-                ))}
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-bold leading-none opacity-90"
+                      >
+                        {head}
+                      </Typography>
+                    </th>
+                  ))}
               </tr>
             </thead>
+
+            {/* Loading Spinner */}
+            <LoadingComponent
+              loading={loading}
+              TABLE_HEAD={TABLE_HEAD.length}
+            />
+
             <tbody>
-              {getPaginatedData().map((item, index) => {
-                const isLast = index === getPaginatedData().length - 1;
+              {data.map((item, index) => {
+                const isLast = index === data.length - 1;
                 const classes = isLast
                   ? "p-2"
                   : "p-2 border-b border-blue-gray-50";
@@ -232,15 +235,7 @@ const CrudAdmin = () => {
             </tbody>
           </table>
         </CardBody>
-        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-          <Pagination
-            itemsPerPage={itemsPerPage}
-            totalItems={data.length}
-            paginate={paginate}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-          />
-        </CardFooter>
+     
       </Card>
     </div>
   );
@@ -248,7 +243,7 @@ const CrudAdmin = () => {
 
 export default CrudAdmin;
 
-const ModalAdmin = ({ handleOpen, open, dataToModal , fetchData}) => {
+const ModalAdmin = ({ handleOpen, open, dataToModal, fetchData }) => {
   const [sendData, setSendData] = useState({});
   const [message, setMessage] = useState("");
 
@@ -267,27 +262,23 @@ const ModalAdmin = ({ handleOpen, open, dataToModal , fetchData}) => {
       fname: sendData.fname || "",
       lname: sendData.lname || "",
       tell: sendData.tell,
-
     };
 
-    console.log(data);
     try {
       const res = await axios.put(
         `${import.meta.env.VITE_APP_API}/admin`,
         data,
         {
           headers: {
-            Authorization: Authorization
+            Authorization: Authorization,
           },
         }
       );
-      console.log(res.data);
 
-         toast.success("บันทึกสำเร็จ");
-         fetchData()
-        handleOpen();
-        setMessage("");
-      
+      toast.success("บันทึกสำเร็จ");
+      fetchData();
+      handleOpen();
+      setMessage("");
 
       // if (res.data.error) {
       //   toast.error("ไม่สามารถดำเนินการได้");

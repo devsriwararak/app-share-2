@@ -33,7 +33,7 @@ const ModalDetaUser = ({ open, handleOpen, dataToModal }) => {
 
 
   useEffect(() => {
-    console.log(dataToModal);
+    // console.log(dataToModal);
   }, [dataToModal]);
   return (
     <Dialog open={open} handler={handleOpen} size="lg">

@@ -61,19 +61,9 @@ const BasicWong = () => {
   const [dataToModal, setDataToModal] = useState({});
   const [loading, setLoading] = useState(true);
 
-  // Pagination
-  // const [currentPage, setCurrentPage] = useState(1);
-  // const itemsPerPage = 3;
-  // const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  // const getPaginatedData = () => {
-  //   return calculatePagination(currentPage, itemsPerPage, data);
-  // };
-  // const { firstIndex, lastIndex } = calculatePageIndices(
-  //   currentPage,
-  //   itemsPerPage
-  // );
 
   const fetchData = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(
         `${import.meta.env.VITE_APP_API}/wong_share?search=${search}`,
@@ -83,8 +73,10 @@ const BasicWong = () => {
           },
         }
       );
-      setData(res.data);
-      setLoading(false);
+      if (res) {
+        setData(res.data);
+        setLoading(false);
+      }
     } catch (error) {
       console.log(error);
       checkNoToken(error.response.data.message);
@@ -140,7 +132,7 @@ const BasicWong = () => {
 
   useEffect(() => {
     fetchData();
-  },[search]);
+  }, [search]);
 
   return (
     <div className="">
@@ -163,7 +155,7 @@ const BasicWong = () => {
             size={35}
             className="bg-purple-700/5 rounded-full px-1 py-1.5 text-purple-300"
           />
-          <span className="text-xl text-black font-bold">
+          <span className="text-lg text-black font-bold">
             {" "}
             จัดการข้อมูลวงค์แชร์
           </span>
@@ -175,7 +167,7 @@ const BasicWong = () => {
               variant="outlined"
               label="ค้นหาวงค์แชร์"
               // onChange={(e) => (setCurrentPage(1), setSearch(e.target.value))}
-              onChange={(e) => ( setSearch(e.target.value))}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <div className="">
@@ -194,27 +186,24 @@ const BasicWong = () => {
       </div>
 
       <Card className=" h-full md:h-full  w-full mx-auto   md:w-full  mt-5 shadow-lg ">
-        <CardBody className="  px-2 overflow-scroll -mt-4">
-  
-
+        <CardBody className="  px-2 overflow-y-scroll -mt-4">
           <table className=" w-full  min-w-max table-auto text-center">
             <thead>
               <tr>
-                {
-                  TABLE_HEAD.map((head) => (
-                    <th
-                      key={head}
-                      className="border-y border-blue-gray-100 bg-blue-gray-50 p-4"
+                {TABLE_HEAD.map((head) => (
+                  <th
+                    key={head}
+                    className="border-y border-blue-gray-100 bg-blue-gray-50 p-4"
+                  >
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-bold leading-none opacity-90"
                     >
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-bold leading-none opacity-90"
-                      >
-                        {head}
-                      </Typography>
-                    </th>
-                  ))}
+                      {head}
+                    </Typography>
+                  </th>
+                ))}
               </tr>
             </thead>
 
@@ -320,9 +309,7 @@ const BasicWong = () => {
             </tbody>
           </table>
         </CardBody>
-        {/* <CardFooter className="flex items-center justify-start ">
-   
-        </CardFooter> */}
+ 
       </Card>
     </div>
   );
