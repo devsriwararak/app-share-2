@@ -68,7 +68,10 @@ const HomeMemberModal = ({
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message);
+      setMessage(error.response.data.message)
+      setTimeout(() => {
+        setMessage(null)
+      },3000);
     }
   };
 
@@ -107,7 +110,10 @@ const HomeMemberModal = ({
       }
     } catch (error) {
       console.log(error);
-      toast.error("ไม่สามารถดำเนินการได้");
+      setMessage(error.response.data.message)
+      setTimeout(() => {
+        setMessage(null)
+      },3000);
     }
   };
 

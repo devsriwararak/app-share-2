@@ -16,6 +16,7 @@ import Select from "react-select";
 
 const HomeShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
   const [sendData, setSendData] = useState({});
+  const [message, setMessage] = useState(null)
 
   const handleChange = (e) => {
     const text = e.target.value;
@@ -55,7 +56,10 @@ const HomeShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message);
+      setMessage(error.response.data.message)
+      setTimeout(() => {
+        setMessage(null)
+      },3000);
     }
   };
 
@@ -87,7 +91,10 @@ const HomeShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error("ทำรายการไม่สำเร็จ");
+      setMessage(error.response.data.message)
+      setTimeout(() => {
+        setMessage(null)
+      },3000);
     }
   };
 
@@ -175,7 +182,11 @@ const HomeShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
             />
           </div>
 
+
+
           <div className="mt-8 flex justify-end">
+          <h4 className="text-base mx-4 text-red-500">{message}</h4>
+
             <Button
               variant="gradient"
               color="red"

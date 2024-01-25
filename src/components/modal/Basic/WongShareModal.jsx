@@ -147,6 +147,10 @@ const WongShareModal = ({ open, handleOpen, id, fetchData, dataToModal }) => {
       setSendData({});
     } catch (error) {
       console.log(error);
+      setMessage(error.response.data.message)
+      setTimeout(() => {
+        setMessage(null)
+      },3000);
     }
   };
 

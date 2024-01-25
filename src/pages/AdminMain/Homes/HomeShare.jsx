@@ -189,6 +189,13 @@ const HomeShare = () => {
     }
   };
 
+  const openModalAddMember = ()=>{
+    handleOpen2()
+    setDataToModalMember({
+      home_share_name: dataToModalMember?.home_share_name,
+    });
+  }
+
   useEffect(() => {
     fetchDataHome();
   }, [search1, search2]);
@@ -372,7 +379,7 @@ const HomeShare = () => {
               color="purple"
               size="sm"
               className="text-sm rounded-full"
-              onClick={handleOpen2}
+              onClick={openModalAddMember}
               disabled={!dataToModalMember?.home_share_name}
             >
               เพิ่มพนักงานใหม่

@@ -22,6 +22,8 @@ const MyWongShare = ({ open, handleOpen, id, fetchNewDat, dataToModal }) => {
 
   const [sendData, setSendData] = useState({});
   const [dataTypeShare, setDataTypeHome] = useState([]);
+  const [message, setMessage] = useState(null);
+
 
   const fetchTypeShare = async () => {
     try {
@@ -80,6 +82,10 @@ const MyWongShare = ({ open, handleOpen, id, fetchNewDat, dataToModal }) => {
       fetchNewDat();
     } catch (error) {
       console.log(error);
+      setMessage(error.response.data.message)
+      setTimeout(() => {
+        setMessage(null)
+      },3000);
     }
   };
 
@@ -113,6 +119,10 @@ const MyWongShare = ({ open, handleOpen, id, fetchNewDat, dataToModal }) => {
       fetchNewDat();
     } catch (error) {
       console.log(error);
+      setMessage(error.response.data.message)
+      setTimeout(() => {
+        setMessage(null)
+      },3000);
     }
   };
 
@@ -236,6 +246,9 @@ const MyWongShare = ({ open, handleOpen, id, fetchNewDat, dataToModal }) => {
           </div>
 
           <div className="flex justify-end mt-5">
+
+          {message && <p className="text-red-500">{message}</p>}
+
             <Button
               variant="gradient"
               color="red"

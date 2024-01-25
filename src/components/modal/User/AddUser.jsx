@@ -120,7 +120,10 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
  
     } catch (error) {
       console.log(error);
-      toast.error("ไม่สามารถดำเนินการได้");
+      setMessage(error.response.data.message)
+      setTimeout(() => {
+        setMessage(null)
+      },3000);
     }
   };
 

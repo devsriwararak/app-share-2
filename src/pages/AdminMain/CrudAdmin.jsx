@@ -241,7 +241,7 @@ export default CrudAdmin;
 
 const ModalAdmin = ({ handleOpen, open, dataToModal, fetchData }) => {
   const [sendData, setSendData] = useState({});
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(null);
 
   const handleChange = (e) => {
     setSendData((prev) => ({
@@ -276,16 +276,12 @@ const ModalAdmin = ({ handleOpen, open, dataToModal, fetchData }) => {
       handleOpen();
       setMessage("");
 
-      // if (res.data.error) {
-      //   toast.error("ไม่สามารถดำเนินการได้");
-      //   setMessage("มีผู้ใช้งานนี้ในระบบแล้ว กรุณาลองใหม่อีกครั้ง !");
-      // } else {
-      //   toast.success("บันทึกสำเร็จ");
-      //   handleOpen();
-      //   setMessage("");
-      // }
     } catch (error) {
       console.log(error);
+      setMessage(error.response.data.message)
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000);
     }
   };
 
@@ -368,7 +364,7 @@ const ModalAdmin = ({ handleOpen, open, dataToModal, fetchData }) => {
         </div>
       </DialogBody>
       <DialogFooter>
-        <h4 className="text-lg mx-4 text-red-500">{message}</h4>
+        <h4 className="text-base mx-4 text-red-500">{message}</h4>
 
         <Button
           variant="filled"

@@ -58,7 +58,7 @@ const HomeAdminModal = ({ open, handleOpen, fetchDataHome, dataToModal }) => {
       address: sendData.address || "",
       tell: sendData.tell || "",
     };
-    console.log(data);
+    // console.log(data);
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_APP_API}/home_account`,
@@ -83,6 +83,10 @@ const HomeAdminModal = ({ open, handleOpen, fetchDataHome, dataToModal }) => {
       }
     } catch (error) {
       console.log(error);
+      setMessage(error.response.data.message)
+      setTimeout(() => {
+        setMessage(null)
+      },3000);
     }
   };
 
@@ -121,7 +125,10 @@ const HomeAdminModal = ({ open, handleOpen, fetchDataHome, dataToModal }) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error("ไม่สามารถดำเนินการได้");
+      setMessage(error.response.data.message)
+      setTimeout(() => {
+        setMessage(null)
+      },3000);
     }
   };
 

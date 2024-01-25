@@ -53,13 +53,13 @@ const AddMember = ({ handleOpen, open, fetchData, dataToModal }) => {
         handleOpen();
         setSendData({});
         setMessage("");
-      } else {
-        toast.error("ไม่สามารถลงทะเบียนได้");
-        setMessage("มีผู้ใช้งานนี้ในระบบแล้ว กรุณาลองใหม่อีกครั้ง !");
-      }
+      } 
     } catch (error) {
       console.log(error);
-      toast.error("บันทึกไม่สำเร็จ");
+      setMessage(error.response.data.message)
+      setTimeout(() => {
+        setMessage(null)
+      },3000);
     }
   };
 
@@ -99,6 +99,10 @@ const AddMember = ({ handleOpen, open, fetchData, dataToModal }) => {
    
     } catch (error) {
       console.log(error);
+      setMessage(error.response.data.message)
+      setTimeout(() => {
+        setMessage(null)
+      },3000);
     }
   };
 
@@ -191,7 +195,7 @@ const AddMember = ({ handleOpen, open, fetchData, dataToModal }) => {
           </div>
 
           <div className="flex justify-end mt-2">
-            <h4 className="text-lg mx-4 text-red-500">{message}</h4>
+            <h4 className="text-base mx-4 text-red-500">{message}</h4>
 
             <Button
               variant="filled"
