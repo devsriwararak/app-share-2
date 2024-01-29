@@ -111,6 +111,26 @@ const PlaySettingModal = ({ open, handleOpen, dataToModalSetting }) => {
     }
   };
 
+  //   const handleUpdate = async () => {
+  //   try {
+  //     const res = await axios.put(
+  //       `${import.meta.env.VITE_APP_API}/play/list`,
+  //       dataUpdate,
+  //       {
+  //         headers: {
+  //           Authorization: Authorization,
+  //         },
+  //       }
+  //     );
+  //     if(res.status === 200){
+  //       toast.success(res.data.message)
+  //       fetchDataPlayList()
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
   useEffect(() => {
     fetchDataUser();
     fetchDataMyUser();

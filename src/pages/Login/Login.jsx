@@ -115,10 +115,11 @@ const Login = () => {
 
         localStorage.setItem("Type", typePage);
         localStorage.setItem("status", statusPage);
+        window.location.reload();
 
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 500);
       } else {
         toast.error(res.data.message);
       }
