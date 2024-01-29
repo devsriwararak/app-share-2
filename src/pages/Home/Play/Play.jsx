@@ -1,4 +1,10 @@
-import { Button, Card, CardBody, Input, Spinner } from "@material-tailwind/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  Input,
+  Spinner,
+} from "@material-tailwind/react";
 import React, { useEffect, useState } from "react";
 import {
   HiOutlineCash,
@@ -27,49 +33,57 @@ import MyWongShare from "../../../components/modal/HomeShare/MyWongShare";
 const Play = () => {
   const [statusBtn, setStatusBtn] = useState(1);
   const [data, setData] = useState([]);
-  const [dataToModal, setDataToModal] = useState({})
+  const [dataToModal, setDataToModal] = useState({});
   const [activeItem, setActiveItem] = useState();
-  const home_share_id = localStorage.getItem('home_share_id')
-  const [search , setSearch] = useState("")
+  const home_share_id = localStorage.getItem("home_share_id");
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
+  // status
+  const [hiddenStatus, setHiddenStatus] = useState(false)
 
   const [open, setOpen] = useState(false);
   const handleOpen = (number) => setOpen(!open);
 
-  const fetchDataWongShare = async()=>{
-    setLoading(true)
+  const fetchDataWongShare = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_API}/wong_share/home/${home_share_id}?search=${search}`,
+        `${
+          import.meta.env.VITE_APP_API
+        }/wong_share/home/${home_share_id}?search=${search}`,
         {
           headers: {
             Authorization: Authorization,
           },
         }
       );
-     if(res){
-      setData(res.data)
-      setLoading(false)
-     }
-      
+      if (res) {
+        setData(res.data);
+        setLoading(false);
+      }
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const handleStatusBtn = (number) => {
     setStatusBtn(number);
+    if(number === 2){
+      setHiddenStatus(true)
+    }else {
+      setHiddenStatus(false)
+    }
   };
 
   const handleSelect = (data, index) => {
-    setDataToModal(data)
+    setDataToModal(data);
     setActiveItem(index);
   };
 
-  useEffect(()=>{
-    fetchDataWongShare()
-  },[search])
+  useEffect(() => {
+    fetchDataWongShare();
+  }, [search]);
 
   return (
     <div className="flex flex-col md:flex-row gap-4">
@@ -81,7 +95,7 @@ const Play = () => {
         fetchNewDat={fetchDataWongShare}
       />
 
-      <div className=" w-full md:w-1/3 ">
+      <div className=" w-full md:w-3/12 ">
         <Card className="ring-2 ring-gray-300/20">
           <CardBody>
             <div className="flex justify-between">
@@ -90,7 +104,7 @@ const Play = () => {
                   size={35}
                   className="bg-purple-700/5 rounded-full px-1 py-1.5 text-purple-300"
                 />
-                วงแชร์ (4)
+                วงแชร์ ({data.length})
               </h2>
               <Button
                 color="purple"
@@ -104,37 +118,42 @@ const Play = () => {
             </div>
 
             <div className="mt-3">
-              <Input label="ค้นหาวงแชร์ของฉัน" color="purple" onChange={(e)=>setSearch(e.target.value)} />
+              <Input
+                label="ค้นหาวงแชร์ของฉัน"
+                color="purple"
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </div>
 
-            <ul className="mt-4 overflow-y-scroll">
+            <ul className={`mt-4 overflow-y-scroll ${hiddenStatus ? "hidden" : "block"}`}>
 
-            <div className="flex justify-center">
-            {loading === true && (
-              <Spinner className="h-8 w-8 text-gray-900/50 " />
-            )}
-          </div>
+              <div className="flex justify-center">
+                {loading === true && (
+                  <Spinner className="h-8 w-8 text-gray-900/50 " />
+                )}
+              </div>
 
-              {loading === false && data.map((item, index) => (
-                <div key={index}>
-                  <li
-                    onClick={() => handleSelect(item, index)}
-                    className={classNames(
-                      activeItem === index && "bg-gray-200",
-                      "hover:bg-gray-200 text-sm py-1.5 flex justify-between items-center px-2 rounded-lg cursor-pointer"
-                    )}
-                  >
-                    {` ${index + 1}.  ${item.code}  (${item.name})`}
+              {loading === false &&
+                data.map((item, index) => (
+                  <div key={index} >
+                    <li 
+                      onClick={() => handleSelect(item, index)}
+                      className={classNames(
+                        activeItem === index && "bg-gray-200",
+                        "hover:bg-gray-200 text-sm py-1.5 flex justify-between items-center px-2 rounded-lg cursor-pointer"
+                      )}
+                    >
+                      {` ${index + 1}.  (${item.name})`}
 
-                    <FcPlus
-                      onClick={() => handleSelect(data, index)}
-                      className=" cursor-pointer"
-                      size={25}
-                    />
-                  </li>
-                  {/* <hr className="m-1.5" /> */}
-                </div>
-              ))}
+                      <FcPlus
+                        onClick={() => handleSelect(data, index)}
+                        className=" cursor-pointer"
+                        size={25}
+                      />
+                    </li>
+                    {/* <hr className="m-1.5" /> */}
+                  </div>
+                ))}
             </ul>
           </CardBody>
         </Card>
@@ -144,8 +163,7 @@ const Play = () => {
         </div>
       </div>
 
-
-      <div className="w-full md:w-2/3 ">
+      <div className="w-full md:w-9/12 ">
         <div className="flex gap-2">
           <Button
             className="flex flex-col md:flex-row gap-2 items-center text-sm"
@@ -175,8 +193,13 @@ const Play = () => {
         </div>
         <Card className="mt-4 ring-2 ring-gray-300/20">
           <CardBody>
-            {statusBtn === 1 && <PlayData dataToModal={dataToModal} fetchDataWongShare={fetchDataWongShare}  />}
-            {statusBtn === 2 && <PlaySetting />}
+            {statusBtn === 1 && (
+              <PlayData
+                dataToModal={dataToModal}
+                fetchDataWongShare={fetchDataWongShare}
+              />
+            )}
+            {statusBtn === 2 && <PlaySetting dataToModal={dataToModal} />}
             {statusBtn === 3 && <PlayMoney />}
           </CardBody>
         </Card>
