@@ -81,66 +81,66 @@ const ManageUser = () => {
       />
 
       <div className="flex flex-col md:flex-row gap-4">
-        <Card className="ring-2 ring-gray-800/5 w-full h-full md:w-1/4">
-          <CardBody>
-            <div className="flex flex-col md:flex-row   md:justify-between">
-              <h2 className="text-base text-black font-bold flex items-center gap-1">
-                ลูกแชร์ ({data?.length})
-              </h2>
-              <Button
-                className="text-sm flex items-center gap-1 mt-2 md:mt-0   "
-                color="purple"
-                size="sm"
-                variant="filled"
-                onClick={handleOpen}
-              >
-                <HiOutlinePlusSm size={20} />
-                เพิ่มลูกแชร์ใหม่
-              </Button>
-            </div>
-            <div className="mt-3 w-full">
-              <Input
-                className="test-sm"
-                label="ค้นหา ชื่อลูกค้า"
-                color="purple"
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-
-            <ul className="mt-5 overflow-y-scroll ">
-
-              {/* Loading Spinner */}
-              <LoadingComponent
-              loading={loading}
-              TABLE_HEAD={null}
-            />
-
-              {loading === false && data.map((item, index) => (
-                <li
-                  onClick={() => handleSelect(item, index)}
-                  className={classNames(
-                    activeItem === index && "bg-gray-300",
-                    "hover:bg-gray-200 py-2 text-sm flex justify-between items-center px-2 cursor-pointer rounded-lg"
-                  )}
-                  key={index}
+        <div className=" w-full h-full md:w-1/4">
+          <Card className="ring-2 ring-gray-800/5">
+            <CardBody>
+              <div className="flex flex-col md:flex-row   md:justify-between">
+                <h2 className="text-base text-black font-bold flex items-center gap-1">
+                  ลูกแชร์ ({data?.length})
+                </h2>
+                <Button
+                  className="text-sm flex items-center gap-1 mt-2 md:mt-0   "
+                  color="purple"
+                  size="sm"
+                  variant="filled"
+                  onClick={handleOpen}
                 >
-                  {`${index + 1}.  ${item.user_fname || item.fname} (${
-                    item.user_code || item.lname
-                  })`}
+                  <HiOutlinePlusSm size={20} />
+                  เพิ่มลูกแชร์ใหม่
+                </Button>
+              </div>
+              <div className="mt-3 w-full">
+                <Input
+                  className="test-sm"
+                  label="ค้นหา ชื่อลูกค้า"
+                  color="purple"
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
 
-                  <div>
-                    {" "}
-                    <FcPlus
-                      className=" cursor-pointer"
+              <ul className="mt-5 overflow-y-scroll ">
+                {/* Loading Spinner */}
+                <LoadingComponent loading={loading} TABLE_HEAD={null} />
+
+                {loading === false &&
+                  data.map((item, index) => (
+                    <li
                       onClick={() => handleSelect(item, index)}
-                      size={23}
-                    />
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </CardBody>
-        </Card>
+                      className={classNames(
+                        activeItem === index && "bg-gray-300",
+                        "hover:bg-gray-200 py-2 text-sm flex justify-between items-center px-2 cursor-pointer rounded-lg"
+                      )}
+                      key={index}
+                    >
+                      {`${index + 1}.  ${item.user_fname || item.fname} (${
+                        item.user_code || item.lname
+                      })`}
+
+                      <div>
+                        {" "}
+                        <FcPlus
+                          className=" cursor-pointer"
+                          onClick={() => handleSelect(item, index)}
+                          size={23}
+                        />
+                      </div>
+                    </li>
+                  ))}
+              </ul>
+            </CardBody>
+          </Card>
+          <p className="text-sm mt-4 text-red-500">กรณีสร้าง ท้าวประจำบ้าน ให้ใส่เบอร์โทรของเจ้าของบ้าน* สามารถ login เข้าดูข้อมูลตัวเองได้ (ส่วนตัว)</p>
+        </div>
 
         <div className="w-full md:w-3/4 ">
           <div className="flex flex-col md:flex-row gap-4 justify-center md:justify-start">

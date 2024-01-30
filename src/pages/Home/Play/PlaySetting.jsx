@@ -7,9 +7,9 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { Authorization } from "../../../auth/Data.js";
 import moment from "moment";
-import { HiMiniListBullet  } from "react-icons/hi2";
+import { HiMiniListBullet } from "react-icons/hi2";
 import PlaySettingModal from "../../../components/modal/Plays/PlaySettingModal.jsx";
-
+import LoadingComponent from "../../../components/pagination/LoadingComponent.jsx";
 
 const TABLE_HEAD = [
   "ลำดับ",
@@ -28,6 +28,8 @@ const PlaySetting = ({ dataToModal }) => {
 
   const [data, setData] = useState([]);
   const [dataToModalSetting, setDataToModalSetting] = useState({});
+  const [loading, setLoading] = useState(true);
+
 
   // modal
   const [open, setOpen] = useState(false);
@@ -59,7 +61,9 @@ const PlaySetting = ({ dataToModal }) => {
       );
       if (res.status === 200) {
         toast.success(res.data.message);
+       setTimeout(() => {
         fetchDataPlayList();
+       }, 1500);
       }
     } catch (error) {
       console.log(error);
@@ -68,6 +72,7 @@ const PlaySetting = ({ dataToModal }) => {
   };
 
   const fetchDataPlayList = async () => {
+    setLoading(true);
     try {
       const home_share_id = localStorage.getItem("home_share_id");
       const res = await axios.get(
@@ -85,6 +90,7 @@ const PlaySetting = ({ dataToModal }) => {
 
       if (res.status === 200) {
         setData(res.data);
+        setLoading(false);
       }
       console.log(res.data);
     } catch (error) {
@@ -117,31 +123,11 @@ const PlaySetting = ({ dataToModal }) => {
     }
   };
 
-  // const handleUpdate = async () => {
-  //   try {
-  //     const res = await axios.put(
-  //       `${import.meta.env.VITE_APP_API}/play/list`,
-  //       dataUpdate,
-  //       {
-  //         headers: {
-  //           Authorization: Authorization,
-  //         },
-  //       }
-  //     );
-  //     if(res.status === 200){
-  //       toast.success(res.data.message)
-  //       fetchDataPlayList()
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  const handleModal = (item)=>{
-    handleOpen()
-    setDataToModalSetting(item)
-  }
-
+  const handleModal = (item) => {
+    handleOpen();
+    setDataToModalSetting(item);
+    console.log(item);
+  };
 
   useEffect(() => {
     fetchDataPlayList();
@@ -149,7 +135,12 @@ const PlaySetting = ({ dataToModal }) => {
 
   return (
     <div>
-      <PlaySettingModal open={open}  handleOpen={handleOpen} dataToModalSetting={dataToModalSetting}   />
+      <PlaySettingModal
+        open={open}
+        handleOpen={handleOpen}
+        dataToModalSetting={dataToModalSetting}
+        fetchDataPlayList={fetchDataPlayList}
+      />
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="flex flex-col md:flex-row gap-4">
           <h2 className="text-lg text-black font-bold flex gap-2 items-center">
@@ -159,33 +150,24 @@ const PlaySetting = ({ dataToModal }) => {
             />
             รายละเอียด {`(${dataToModal?.name || ""})`}
           </h2>
-          <div className="flex gap-2 items-center ">
-            <p className=" ">เพิ่มระยะเวลา/วัน</p>
-
-            <input
-              type="number"
-              className="w-14 border-2 border-gray-400 rounded-md text-center"
-              value={sumDay}
-              onChange={(e) => setSumDay(parseInt(e.target.value))}
-            />
-
-            <FcPlus
-              onClick={addNewDay}
-              className={` cursor-pointer ${data == "" ? "hidden" : "block"}`}
-              size={27}
-            />
-          </div>
         </div>
 
-        <Button
-          disabled={data == ""}
-          className="text-sm mr-4 w-full md:w-20"
-          color="purple"
-          size="sm"
-          // onClick={handleUpdate}
-        >
-          อัพเดท
-        </Button>
+        <div className="flex gap-2 items-center ">
+          <p className=" ">เพิ่มระยะเวลา/วัน</p>
+
+          <input
+            type="number"
+            className="w-14 border-2 border-gray-400 rounded-md text-center"
+            value={sumDay}
+            onChange={(e) => setSumDay(parseInt(e.target.value))}
+          />
+
+          <FcPlus
+            onClick={addNewDay}
+            className={` cursor-pointer ${data == "" ? "hidden" : "block"}`}
+            size={27}
+          />
+        </div>
       </div>
 
       {dataToModal?.id && (
@@ -219,30 +201,43 @@ const PlaySetting = ({ dataToModal }) => {
                     ))}
                 </tr>
               </thead>
+
+                  {/* Loading Spinner */}
+            <LoadingComponent
+              loading={loading}
+              TABLE_HEAD={TABLE_HEAD.length}
+            />
+
               <tbody>
-                {data.map((item, index) => {
+                {loading === false && data.map((item, index) => {
                   const isLast = index === daysArray.length - 1;
                   const classes = isLast
                     ? "p-3"
                     : "p-3 border-b border-blue-gray-50 ";
- 
-      
 
                   return (
                     <tr key={index}>
                       <td className={classes}>{index + 1}</td>
+                      <td className={classes}>{item?.start_date || " - "}</td>
                       <td className={classes}>
-                      {item?.start_date || " - "}
+                       <ul>
+                        {item.fname.map((item_2, index)=>(
+                          <li className="text-sm text-left" key={index}>- {item_2.fname}</li>
+                        ))}
+                       </ul>
                       </td>
-                      <td className={classes}>xxx  </td>
 
-                      <td className={classes}>งวดที่เปีย</td>
-                      <td className={classes}>ดอกเบี้ย</td>
-                      <td className={classes}>ยอดรับ</td>
-                      <td className={classes}>เงินแถม</td>
+                      <td className={classes}>{item?.play_date}</td>
+                      <td className={classes}>{item?.interest}</td>
+                      <td className={classes}>{item?.received}</td>
+                      <td className={classes}>{item?.free_money}</td>
                       <td className={classes}>
                         <div className="flex justify-center hover:bg-gray-200 rounded-lg py-1 px-1">
-                        <HiMiniListBullet onClick={()=>handleModal(item)} className="text-black cursor-pointer" size={20} />
+                          <HiMiniListBullet
+                            onClick={() => handleModal(item)}
+                            className="text-black cursor-pointer"
+                            size={20}
+                          />
                         </div>
                       </td>
                     </tr>
