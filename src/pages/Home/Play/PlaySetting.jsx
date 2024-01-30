@@ -29,7 +29,7 @@ const PlaySetting = ({ dataToModal }) => {
   const [data, setData] = useState([]);
   const [dataToModalSetting, setDataToModalSetting] = useState({});
   const [loading, setLoading] = useState(true);
-
+  const [message , setMessage] = useState(null)
 
   // modal
   const [open, setOpen] = useState(false);
@@ -61,9 +61,9 @@ const PlaySetting = ({ dataToModal }) => {
       );
       if (res.status === 200) {
         toast.success(res.data.message);
-       setTimeout(() => {
-        fetchDataPlayList();
-       }, 1500);
+        setTimeout(() => {
+          fetchDataPlayList();
+        }, 1500);
       }
     } catch (error) {
       console.log(error);
@@ -91,10 +91,13 @@ const PlaySetting = ({ dataToModal }) => {
       if (res.status === 200) {
         setData(res.data);
         setLoading(false);
+        setMessage(null)
       }
       console.log(res.data);
     } catch (error) {
       console.log(error);
+      setLoading(false);
+      setMessage('กรุณาสร้างการบันทึกใหม่')
     }
   };
 
@@ -173,10 +176,11 @@ const PlaySetting = ({ dataToModal }) => {
       {dataToModal?.id && (
         <div>
           {data == "" && (
-            <div className="flex justify-center my-10">
+            <div className="flex items-center gap-4 justify-center my-10">
               <Button className="text-sm text " onClick={NewPlay}>
                 เริ่มบันทึกวงแชร์ใหม่
               </Button>
+              {message && <p className="text-sm text-red-500">{message}</p>}
             </div>
           )}
 
@@ -202,47 +206,56 @@ const PlaySetting = ({ dataToModal }) => {
                 </tr>
               </thead>
 
-                  {/* Loading Spinner */}
-            <LoadingComponent
+              {/* Loading Spinner dataToModal?.id */}
+              {/* <LoadingComponent
               loading={loading}
               TABLE_HEAD={TABLE_HEAD.length}
-            />
+            /> */}
+
+                <LoadingComponent
+                  loading={loading}
+                  TABLE_HEAD={TABLE_HEAD.length}
+                />
+        
 
               <tbody>
-                {loading === false && data.map((item, index) => {
-                  const isLast = index === daysArray.length - 1;
-                  const classes = isLast
-                    ? "p-3"
-                    : "p-3 border-b border-blue-gray-50 ";
+                {loading === false &&
+                  data.map((item, index) => {
+                    const isLast = index === daysArray.length - 1;
+                    const classes = isLast
+                      ? "p-3"
+                      : "p-3 border-b border-blue-gray-50 ";
 
-                  return (
-                    <tr key={index}>
-                      <td className={classes}>{index + 1}</td>
-                      <td className={classes}>{item?.start_date || " - "}</td>
-                      <td className={classes}>
-                       <ul>
-                        {item.fname.map((item_2, index)=>(
-                          <li className="text-sm text-left" key={index}>- {item_2.fname}</li>
-                        ))}
-                       </ul>
-                      </td>
+                    return (
+                      <tr key={index}>
+                        <td className={classes}>{index + 1}</td>
+                        <td className={classes}>{item?.start_date || " - "}</td>
+                        <td className={classes}>
+                          <ul>
+                            {item.fname.map((item_2, index) => (
+                              <li className="text-sm text-left" key={index}>
+                                - {item_2.fname}
+                              </li>
+                            ))}
+                          </ul>
+                        </td>
 
-                      <td className={classes}>{item?.play_date}</td>
-                      <td className={classes}>{item?.interest}</td>
-                      <td className={classes}>{item?.received}</td>
-                      <td className={classes}>{item?.free_money}</td>
-                      <td className={classes}>
-                        <div className="flex justify-center hover:bg-gray-200 rounded-lg py-1 px-1">
-                          <HiMiniListBullet
-                            onClick={() => handleModal(item)}
-                            className="text-black cursor-pointer"
-                            size={20}
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
+                        <td className={classes}>{item?.play_date}</td>
+                        <td className={classes}>{item?.interest}</td>
+                        <td className={classes}>{item?.received}</td>
+                        <td className={classes}>{item?.free_money}</td>
+                        <td className={classes}>
+                          <div className="flex justify-center hover:bg-gray-200 rounded-lg py-1 px-1">
+                            <HiMiniListBullet
+                              onClick={() => handleModal(item)}
+                              className="text-black cursor-pointer"
+                              size={20}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
           </div>
