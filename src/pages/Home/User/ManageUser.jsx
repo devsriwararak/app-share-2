@@ -122,9 +122,9 @@ const ManageUser = () => {
                       )}
                       key={index}
                     >
-                      {`${index + 1}.  ${item.user_fname || item.fname} (${
+                      {`${index + 1}.  ${item.user_fname || item.fname} ${
                         item.user_code || item.lname
-                      })`}
+                      }`}
 
                       <div>
                         {" "}

@@ -16,6 +16,8 @@ import { Authorization } from "../../../auth/Data";
 import { FcPlus } from "react-icons/fc";
 import { toast } from "react-toastify";
 import { HiTrash } from "react-icons/hi2";
+import Swal from "sweetalert2";
+import moment from "moment";
 
 const PlaySettingModal = ({
   open,
@@ -27,6 +29,9 @@ const PlaySettingModal = ({
   const [dataMyUsers, setDataMyUsers] = useState([]);
   const home_share_id = localStorage.getItem("home_share_id");
   const [sendData, setSendData] = useState({});
+  const [deduction, setDeduction] = useState(false);
+  const [message, setmessage] = useState(null);
+  // moment.locale("th");
 
   // Sends
   const [sendDataUser, setSendDataUser] = useState({});
@@ -121,12 +126,17 @@ const PlaySettingModal = ({
 
   const handleUpdate = async () => {
     const data = {
+      play_id: sendData.play_id,
       play_list_id: sendData.id,
-      start_date: sendData.start_date,
       play_date: sendData.play_date,
-      interest: sendData.interest,
-      received: sendData.received,
       free_money: sendData.free_money,
+      deducation_name: sendData.deducation_name,
+      deducation_price: sendData.deducation_price,
+      deducation_number: sendData.deducation_number,
+      installment: sendData.installment,
+      price: sendData.price,
+      index: sendData.index,
+      count: sendData.count,
     };
     try {
       const res = await axios.put(
@@ -145,6 +155,33 @@ const PlaySettingModal = ({
       }
     } catch (error) {
       console.log(error);
+      setmessage(error.response.data);
+      setTimeout(() => {
+        setmessage(null);
+      }, 5000);
+    }
+  };
+
+  const openDeducation = () => {
+    setDeduction(!deduction);
+  };
+
+  const handleDeducation = async (number) => {
+    alert("รายการนี้จะบันทึกทับรายการเก่า ตกลงหรือไม่ ?");
+
+    if (number === 1 || number === 2 || number === 3) {
+      let deducation_name =
+        number === 1
+          ? "หักจบวง"
+          : number === 2
+          ? "หักดอกเบี้ยจบวง"
+          : "หักท้ายท้าว";
+      setSendData((prev) => ({
+        ...prev,
+        deducation_name,
+        deducation_price: number === 1 ? 200 : number === 2 ? 300 : sendData.installment,
+        deducation_number: number,
+      }));
     }
   };
 
@@ -161,32 +198,21 @@ const PlaySettingModal = ({
           จัดการข้อมูล : {sendData.id}
         </DialogHeader>
         <DialogBody className="h-96 md:h-[500px] overflow-y-scroll">
-          <div className="flex flex-col md:flex-row gap-4">
+          {JSON.stringify(sendData)}
+          <div className="flex flex-col md:flex-row gap-3">
             <div className="w-full md:w-5/12 ">
-              <div className="border-2 border-gray-300 bg-gray-50 shadow-sm rounded-lg px-4 py-5">
-                <h2 className="text-base text-gray-900 font-semibold">ข้อมูลหน้าตาราง</h2>
+              <div className="border-2 border-gray-300 bg-gray-50 shadow-sm rounded-lg px-4 py-4">
+                <h2 className="text-base text-gray-900 font-semibold">
+                  ข้อมูลหน้าตาราง {sendData?.play_date}
+                </h2>
                 <div className=" grid grid-cols-2 md:grid-cols-2 gap-2 mt-2">
-                  <div>
-                    <label className="text-xs text-gray-700 ">วันที่</label>
-                    <input
-                      type="date"
-                      className="border-2 border-gray-400 py-1 px-2 rounded-lg "
-                      value={sendData?.start_date || ""}
-                      onChange={(e) =>
-                        setSendData((prev) => ({
-                          ...prev,
-                          start_date: e.target.value,
-                        }))
-                      }
-                    />
-                  </div>
-
                   <div>
                     <label className="text-xs text-gray-700">งวดที่เปีย</label>
                     <input
                       type="date"
                       className="border-2 border-gray-400 py-1 px-2 rounded-lg "
                       value={sendData?.play_date || ""}
+                      disabled={dataMyUsers == ""}
                       onChange={(e) =>
                         setSendData((prev) => ({
                           ...prev,
@@ -195,12 +221,11 @@ const PlaySettingModal = ({
                       }
                     />
                   </div>
-                </div>
 
-                <div className=" grid grid-cols-2 md:grid-cols-2 gap-2 mt-1">
                   <div className="w-full">
                     <label className="text-xs text-gray-700 ">ดอกเบี้ย</label>
                     <input
+                      disabled
                       type="text"
                       className="border-2 border-gray-400 py-1 px-2 rounded-lg w-full "
                       placeholder="ดอกเบี้ย"
@@ -213,10 +238,13 @@ const PlaySettingModal = ({
                       }
                     />
                   </div>
+                </div>
 
+                <div className=" grid grid-cols-2 md:grid-cols-2 gap-2 mt-1">
                   <div className="w-full">
                     <label className="text-xs text-gray-700 ">ยอดรับ</label>
                     <input
+                      disabled
                       type="text"
                       className="border-2 border-gray-400 py-1 px-2 rounded-lg w-full "
                       placeholder="ยอดรับ"
@@ -229,12 +257,11 @@ const PlaySettingModal = ({
                       }
                     />
                   </div>
-                </div>
 
-                <div className=" grid grid-cols-2 md:grid-cols-2 gap-2 mt-1">
                   <div>
                     <label className="text-xs text-gray-700 ">เงินแถม</label>
                     <input
+                      disabled
                       type="text"
                       className="border-2 border-gray-400 py-1 px-2 rounded-lg w-full "
                       placeholder="เงินแถม"
@@ -247,7 +274,9 @@ const PlaySettingModal = ({
                       }
                     />
                   </div>
+                </div>
 
+                <div className=" grid grid-cols-2 md:grid-cols-2 gap-2 mt-1">
                   <div>
                     <label className="text-xs text-gray-700 ">
                       ยกเว้นค่าดูแลวง
@@ -264,10 +293,12 @@ const PlaySettingModal = ({
 
               {/* จัดการลูกแชร์ */}
 
-              <div className="border-2 border-gray-300 bg-gray-50 shadow-sm rounded-lg px-4 py-5 mt-4  ">
-                <h2 className="text-base text-gray-900 font-semibold">จัดการลูกแชร์</h2>
+              <div className="border-2 border-gray-300 bg-gray-50 shadow-sm rounded-lg px-4 py-3 mt-3  ">
+                <h2 className="text-base text-gray-900 font-semibold">
+                  จัดการลูกแชร์
+                </h2>
 
-                <div className="flex  flex-row gap-2 items-center mt-3">
+                <div className="flex  flex-row gap-2 items-center mt-2">
                   <Select
                     options={dataUser}
                     className="w-full"
@@ -310,52 +341,94 @@ const PlaySettingModal = ({
 
             <div className="w-full md:w-7/12 ">
               <div className="border-2 border-gray-300 bg-gray-50 shadow-sm rounded-lg px-4 py-5">
-                <h2 className="text-base text-gray-900 font-semibold">รายการหักรับ</h2>
+                <h2 className="text-base text-gray-900 font-semibold">
+                  รายการหักรับ
+                </h2>
 
                 <div className="flex flex-col md:flex-row gap-2 mt-2">
-                  <Button className="text-sm" size="sm" color="purple">
+                  <Button
+                    onClick={() => handleDeducation(1)}
+                    className="text-sm"
+                    size="sm"
+                    color="purple"
+                    disabled={sendData.play_status == 1 || sendData.index === 0}
+                  >
                     หักจบวง
                   </Button>
-                  <Button className="text-sm" size="sm" color="purple">
+                  <Button
+                    onClick={() => handleDeducation(2)}
+                    className="text-sm"
+                    size="sm"
+                    color="red"
+                    disabled={
+                      sendData.play_status === 1 || sendData.index === 0
+                    }
+                  >
                     หักดอกเบี้ยจบวง
                   </Button>
-                  <Button className="text-sm" size="sm" color="purple">
+                  <Button
+                    onClick={() => handleDeducation(3)}
+                    className="text-sm"
+                    size="sm"
+                    color="purple"
+                    disabled={
+                      sendData.play_status === 1 || sendData.index === 0
+                    }
+                  >
                     หักท้ายท้าว
                   </Button>
                 </div>
 
                 {/* สร้างรายการหักรับ */}
 
-                <h2 className="text-base text-gray-900 mt-4 font-semibold">
-                  สร้างรายการหักรับ
-                </h2>
+                {/* <Checkbox
+                  className="mt-2"
+                  onClick={openDeducation}
+                  label="สร้างรายการหักรับเอง"
+                /> */}
 
-                <div className="flex flex-col md:flex-row gap-2 mt-2">
-                  <input
-                    type="text"
-                    className="border-2 border-gray-400 py-1 px-2 rounded-lg w-full "
-                    placeholder="รายละเอียด"
-                  />
+                {/* {deduction && (
+                  <div className="flex flex-col md:flex-row gap-2 mt-2">
+                    <input
+                      type="text"
+                      className="border-2 border-gray-400 py-1 px-2 rounded-lg w-full "
+                      placeholder="รายละเอียด"
+                    />
 
-                  <input
-                    type="text"
-                    className="border-2 border-gray-400 py-1 px-2 rounded-lg  w-full "
-                    placeholder="จำนวนเงิน"
-                  />
+                    <input
+                      type="text"
+                      className="border-2 border-gray-400 py-1 px-2 rounded-lg  w-full "
+                      placeholder="จำนวนเงิน"
+                    />
 
-                  <FcPlus size={35} className=" w-20 cursor-pointer" />
-                </div>
+                    <FcPlus
+                      onClick={() => handleDeducation(4)}
+                      size={35}
+                      className=" w-20 cursor-pointer"
+                    />
+                  </div>
+                )} */}
 
-                <div className="flex flex-col md:flex-row gap-4 justify-between">
+                {/* <div className="flex flex-col md:flex-row gap-4 justify-between">
                   <h2 className="text-base text-gray-900 mt-4 font-semibold">
                     รวมรายการหักรับ
                   </h2>
                   <h2 className="text-base text-red-700 mt-4">
-                    ยอดรวมหักรับ 000 บาท
+                    ยอดรวมหักรับ {sendData?.installment} บาท
+                  </h2>
+                </div> */}
+
+                <div className="flex flex-col md:flex-row gap-4 justify-between">
+                  <h2 className="text-base text-gray-900 mt-4 font-semibold">
+                    รายละเอียดการหักรับ
+                  </h2>
+                  <h2 className="text-base text-red-700 mt-4">
+                    {sendData?.deducation_name || ""}{" "}
+                    {sendData?.deducation_price || 0} บาท
                   </h2>
                 </div>
 
-                <ul className="mt-4 h-20 overflow-y-scroll">
+                {/* <ul className="mt-4 h-20 overflow-y-scroll">
                   {dataMyUsers.map((item, index) => (
                     <li
                       className="flex  justify-between p-0.5 hover:bg-gray-200"
@@ -370,12 +443,51 @@ const PlaySettingModal = ({
                       />
                     </li>
                   ))}
-                </ul>
+                </ul> */}
+
+                <h2 className="text-base text-gray-900 mt-4 font-semibold">
+                  สรุปรายการ
+                </h2>
+
+                <div className="text-sm mt-2 flex flex-row gap-4 justify-between">
+                  <div>
+                    <b className="font-semibold text-gray-700 ">วันที่</b>{" "}
+                    <span>{sendData?.start_date_th}</span>
+                  </div>
+                  <div>
+                    <b className="font-semibold text-gray-700 "> งวดที่เปีย</b>{" "}
+                    <span>{sendData?.play_date_th}</span>
+                  </div>
+                  <div>
+                    <b className="font-semibold text-gray-700 "> ดอกเบี้ย</b>{" "}
+                    <span>{sendData?.interest}</span>
+                  </div>
+                </div>
+
+                <div className="text-sm mt-2 flex flex-row gap-4 justify-between">
+                  <div>
+                    <b className="font-semibold text-gray-700 ">ยอดรับ</b>{" "}
+                    <span>{sendData?.received}</span>
+                  </div>
+                  <div>
+                    <b className="font-semibold text-gray-700 "> เงินแถม</b>{" "}
+                    <span>{sendData?.free_money}</span>
+                  </div>
+                  <div>
+                    <b className="font-semibold text-gray-700 ">
+                      {" "}
+                      ยกเว้นค่าดูแลวง
+                    </b>{" "}
+                    <span>{sendData?.cancel}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </DialogBody>
         <DialogFooter>
+
+          {message && <p className="mx-10 text-red-500">{message}</p>}
           <Button
             variant="gradient"
             color="gray"
@@ -385,7 +497,13 @@ const PlaySettingModal = ({
           >
             <span>ออก</span>
           </Button>
-          <Button variant="gradient" className="text-sm" size="sm" color="purple" onClick={handleUpdate}>
+          <Button
+            variant="gradient"
+            className="text-sm"
+            size="sm"
+            color="purple"
+            onClick={handleUpdate}
+          >
             <span>อัพเดท</span>
           </Button>
         </DialogFooter>

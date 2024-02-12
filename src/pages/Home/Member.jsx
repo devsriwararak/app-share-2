@@ -254,13 +254,13 @@ const Member = () => {
                       <div className="flex justify-center  gap-2 ">
                         <HiOutlineDesktopComputer
                           size={20}
-                          color="black"
+                          color="purple"
                           className="cursor-pointer  "
                           onClick={() => handleDataToModal(item, 3)}
                         />
                         <HiPencilAlt
                           size={20}
-                          color="black"
+                          color="purple"
                           className="cursor-pointer  "
                           onClick={() => handleDataToModal(item, 1)}
                         />

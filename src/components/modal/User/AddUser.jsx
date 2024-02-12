@@ -192,7 +192,7 @@ const AddUser = ({ open, handleOpen, fetchData, dataToModal }) => {
               name="lname"
               onChange={(e) => handleChange(e)}
               value={sendData?.lname || ""}
-              required
+              
             />
           </div>
 

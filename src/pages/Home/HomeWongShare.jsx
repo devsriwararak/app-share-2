@@ -274,13 +274,13 @@ const HomeWongShare = () => {
                       <div className="flex justify-center  gap-2 ">
                         <HiOutlineDesktopComputer
                           size={20}
-                          color="black"
+                          color="purple"
                           className="cursor-pointer  "
                           onClick={() => handleViewModal(item)}
                         />
                         <HiPencilAlt
                           size={20}
-                          color="black"
+                          color="purple"
                           className="cursor-pointer  "
                           onClick={() => handleChange(item)}
                         />

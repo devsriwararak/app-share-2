@@ -29,7 +29,7 @@ const PlaySetting = ({ dataToModal }) => {
   const [data, setData] = useState([]);
   const [dataToModalSetting, setDataToModalSetting] = useState({});
   const [loading, setLoading] = useState(true);
-  const [message , setMessage] = useState(null)
+  const [message, setMessage] = useState(null);
 
   // modal
   const [open, setOpen] = useState(false);
@@ -49,6 +49,9 @@ const PlaySetting = ({ dataToModal }) => {
         home_share_id: localStorage.getItem("home_share_id"),
         wong_share_id: dataToModal?.id,
         count: dataToModal.count,
+        // installment : dataToModal.installment,
+        // price : dataToModal.price
+        
       };
       const res = await axios.post(
         `${import.meta.env.VITE_APP_API}/play`,
@@ -91,13 +94,13 @@ const PlaySetting = ({ dataToModal }) => {
       if (res.status === 200) {
         setData(res.data);
         setLoading(false);
-        setMessage(null)
+        setMessage(null);
       }
       console.log(res.data);
     } catch (error) {
       console.log(error);
       setLoading(false);
-      setMessage('กรุณาสร้างการบันทึกใหม่')
+      setMessage("กรุณาสร้างการบันทึกใหม่");
     }
   };
 
@@ -105,9 +108,10 @@ const PlaySetting = ({ dataToModal }) => {
     try {
       const dataSend = {
         play_id: data[0]?.play_id,
-        count: sumDay,
+        day: sumDay,
+        count : dataToModal.count  
       };
-      const res = await axios.post(
+      const res = await axios.put(
         `${import.meta.env.VITE_APP_API}/play/list/new_day`,
         dataSend,
         {
@@ -126,10 +130,16 @@ const PlaySetting = ({ dataToModal }) => {
     }
   };
 
-  const handleModal = (item) => {
+  const handleModal = (item, index) => {
     handleOpen();
     setDataToModalSetting(item);
-    console.log(item);
+    setDataToModalSetting((prev) => ({
+      ...prev,
+      installment: dataToModal?.installment || 0,
+      price: dataToModal?.price || 0,
+      count: dataToModal?.count || 0,
+      index
+    }));
   };
 
   useEffect(() => {
@@ -154,6 +164,8 @@ const PlaySetting = ({ dataToModal }) => {
             รายละเอียด {`(${dataToModal?.name || ""})`}
           </h2>
         </div>
+
+        {/* {JSON.stringify(dataToModal)}  */}
 
         <div className="flex gap-2 items-center ">
           <p className=" ">เพิ่มระยะเวลา/วัน</p>
@@ -212,11 +224,10 @@ const PlaySetting = ({ dataToModal }) => {
               TABLE_HEAD={TABLE_HEAD.length}
             /> */}
 
-                <LoadingComponent
-                  loading={loading}
-                  TABLE_HEAD={TABLE_HEAD.length}
-                />
-        
+              <LoadingComponent
+                loading={loading}
+                TABLE_HEAD={TABLE_HEAD.length}
+              />
 
               <tbody>
                 {loading === false &&
@@ -224,32 +235,38 @@ const PlaySetting = ({ dataToModal }) => {
                     const isLast = index === daysArray.length - 1;
                     const classes = isLast
                       ? "p-3"
-                      : "p-3 border-b border-blue-gray-50 ";
+                      : "p-3 border-b border-blue-gray-50 text-sm ";
 
                     return (
                       <tr key={index}>
                         <td className={classes}>{index + 1}</td>
-                        <td className={classes}>{item?.start_date || " - "}</td>
+                        <td className={classes}>{item?.start_date_th || " - "}</td>
                         <td className={classes}>
-                          <ul>
+                          <ul className="bg-yellow-700 bg-opacity-30 rounded-md">
                             {item.fname.map((item_2, index) => (
-                              <li className="text-sm text-left" key={index}>
+                              <li className=" text-left   px-3  " key={index}>
                                 - {item_2.fname}
                               </li>
                             ))}
                           </ul>
+                          {item.deducation_name && (
+                            <p className="mt-2 bg-blue-100 bg-opacity-80 text-black px-1  rounded-md">
+                              {item.deducation_name} {item.deducation_price}
+                            </p>
+                          )}
                         </td>
 
-                        <td className={classes}>{item?.play_date}</td>
+                        <td className={classes}>{item?.play_date_th}</td>
                         <td className={classes}>{item?.interest}</td>
-                        <td className={classes}>{item?.received}</td>
+                        <td className={classes}><p className="font-semibold text-purple-500">{item?.received}</p></td>
                         <td className={classes}>{item?.free_money}</td>
                         <td className={classes}>
                           <div className="flex justify-center hover:bg-gray-200 rounded-lg py-1 px-1">
                             <HiMiniListBullet
-                              onClick={() => handleModal(item)}
+                              onClick={() => handleModal(item, index)}
                               className="text-black cursor-pointer"
                               size={20}
+                              color="purple"
                             />
                           </div>
                         </td>

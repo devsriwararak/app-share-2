@@ -148,6 +148,7 @@ const Play = () => {
                       <FcPlus
                         onClick={() => handleSelect(data, index)}
                         className=" cursor-pointer"
+                       
                         size={25}
                       />
                     </li>
@@ -166,6 +167,7 @@ const Play = () => {
       <div className="w-full md:w-9/12 ">
         <div className="flex gap-2">
           <Button
+           variant="filled"
             className="flex flex-col md:flex-row gap-2 items-center text-sm"
             color="blue"
             onClick={() => handleStatusBtn(1)}
@@ -174,6 +176,7 @@ const Play = () => {
             <HiOutlinePencilAlt size={22} /> ข้อมูลพื้นฐาน
           </Button>
           <Button
+          variant="filled"
             className="flex  flex-col md:flex-row gap-2 items-center  text-sm"
             color="green"
             onClick={() => handleStatusBtn(2)}
@@ -182,6 +185,7 @@ const Play = () => {
             <HiOutlinePlay size={22} /> รายละเอียดวงแชร์
           </Button>
           <Button
+           variant="filled"
             className="flex  flex-col md:flex-row gap-2 items-center  text-sm"
             color="orange"
             onClick={() => handleStatusBtn(3)}
@@ -200,7 +204,7 @@ const Play = () => {
               />
             )}
             {statusBtn === 2 && <PlaySetting dataToModal={dataToModal} />}
-            {statusBtn === 3 && <PlayMoney />}
+            {statusBtn === 3 && <PlayMoney  wong_share_id={dataToModal.id} count={dataToModal.count}/>}
           </CardBody>
         </Card>
       </div>

@@ -155,7 +155,7 @@ const AddUserToHome = ({ open, handleOpen, fetchDataMyUser, dataToModal }) => {
               name="lname"
               onChange={(e) => handleChange(e)}
               value={sendData?.lname || ""}
-              required
+              
             />
           </div>
 
