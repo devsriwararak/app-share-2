@@ -35,6 +35,8 @@ const PlaySettingModal = ({
 
   // Sends
   const [sendDataUser, setSendDataUser] = useState({});
+  // สร้างรายการหักรับเอง
+  const [deducation, setDeducation] = useState(0);
 
   const fetchDataUser = async () => {
     try {
@@ -137,6 +139,9 @@ const PlaySettingModal = ({
       price: sendData.price,
       index: sendData.index,
       count: sendData.count,
+      type_wong_id: sendData.type_wong_id,
+      interest: sendData.interest,
+      shipping : sendData.shipping
     };
     try {
       const res = await axios.put(
@@ -170,16 +175,30 @@ const PlaySettingModal = ({
     alert("รายการนี้จะบันทึกทับรายการเก่า ตกลงหรือไม่ ?");
 
     if (number === 1 || number === 2 || number === 3) {
+      setDeducation(0);
       let deducation_name =
         number === 1
           ? "หักจบวง"
           : number === 2
           ? "หักดอกเบี้ยจบวง"
           : "หักท้ายท้าว";
+          const deducation_price = 
+          number === 1 ? 200 :
+          number === 2 ? 300 :
+          // parseInt(sendData.type_wong_id == 3 ? sendData.shipping : sendData.installment) sendData.installment, 10
+          parseInt(sendData.type_wong_id == 3 ? (sendData.shipping == "" ? 0 : sendData.shipping) :  500);
+
       setSendData((prev) => ({
         ...prev,
         deducation_name,
-        deducation_price: number === 1 ? 200 : number === 2 ? 300 : sendData.installment,
+        deducation_price ,
+        deducation_number: number,
+      }));
+    } else {
+      setSendData((prev) => ({
+        ...prev,
+        deducation_name: "สร้างรายการหักรับ",
+        deducation_price: deducation,
         deducation_number: number,
       }));
     }
@@ -288,6 +307,24 @@ const PlaySettingModal = ({
                       placeholder="ยกเว้นค่าดูแลวง ยังไม่ทำ"
                     />
                   </div>
+
+                  {sendData.type_wong_id === 3 && (
+                    <div>
+                      <label className="text-xs text-gray-700 ">
+                        ยอดส่ง
+                      </label>
+                      <input
+                        onChange={(e)=>setSendData((prev=>({
+                          ...prev,
+                          shipping : e.target.value
+                        })))}
+                        type="number"
+                        value={sendData.shipping || 0}
+                        className="border-2 border-gray-400 py-1 px-2 rounded-lg w-full "
+                        placeholder="ยอดส่ง"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -340,7 +377,7 @@ const PlaySettingModal = ({
             {/* รายการหักรับ */}
 
             <div className="w-full md:w-7/12 ">
-              <div className="border-2 border-gray-300 bg-gray-50 shadow-sm rounded-lg px-4 py-5">
+              <div className="border-2 border-gray-300 bg-gray-50 shadow-sm rounded-lg px-4 py-5 mt-3">
                 <h2 className="text-base text-gray-900 font-semibold">
                   รายการหักรับ
                 </h2>
@@ -348,7 +385,7 @@ const PlaySettingModal = ({
                 <div className="flex flex-col md:flex-row gap-2 mt-2">
                   <Button
                     onClick={() => handleDeducation(1)}
-                    className="text-sm"
+                    className="text-sm w-full"
                     size="sm"
                     color="purple"
                     disabled={sendData.play_status == 1 || sendData.index === 0}
@@ -357,7 +394,7 @@ const PlaySettingModal = ({
                   </Button>
                   <Button
                     onClick={() => handleDeducation(2)}
-                    className="text-sm"
+                    className="text-sm w-full"
                     size="sm"
                     color="red"
                     disabled={
@@ -368,7 +405,7 @@ const PlaySettingModal = ({
                   </Button>
                   <Button
                     onClick={() => handleDeducation(3)}
-                    className="text-sm"
+                    className="text-sm w-full"
                     size="sm"
                     color="purple"
                     disabled={
@@ -379,44 +416,29 @@ const PlaySettingModal = ({
                   </Button>
                 </div>
 
-                {/* สร้างรายการหักรับ */}
-
-                {/* <Checkbox
-                  className="mt-2"
-                  onClick={openDeducation}
-                  label="สร้างรายการหักรับเอง"
-                /> */}
-
-                {/* {deduction && (
-                  <div className="flex flex-col md:flex-row gap-2 mt-2">
-                    <input
-                      type="text"
-                      className="border-2 border-gray-400 py-1 px-2 rounded-lg w-full "
-                      placeholder="รายละเอียด"
-                    />
-
-                    <input
-                      type="text"
-                      className="border-2 border-gray-400 py-1 px-2 rounded-lg  w-full "
-                      placeholder="จำนวนเงิน"
-                    />
-
-                    <FcPlus
-                      onClick={() => handleDeducation(4)}
-                      size={35}
-                      className=" w-20 cursor-pointer"
-                    />
-                  </div>
-                )} */}
-
-                {/* <div className="flex flex-col md:flex-row gap-4 justify-between">
-                  <h2 className="text-base text-gray-900 mt-4 font-semibold">
-                    รวมรายการหักรับ
-                  </h2>
-                  <h2 className="text-base text-red-700 mt-4">
-                    ยอดรวมหักรับ {sendData?.installment} บาท
-                  </h2>
-                </div> */}
+                {sendData.index === 1 ||
+                  (sendData.type_wong_id === 1 && (
+                    <div className="mt-4  flex flex-row items-center justify-start gap-4">
+                      <p className="w-2/3">สร้างรายการหักรับ</p>
+                      <Input
+                        onChange={(e) => setDeducation(e.target.value)}
+                        color="purple"
+                        label="สร้างรายการหักรับ"
+                        value={deducation}
+                        className="w-1/3"
+                        type="number"
+                      />
+                      <Button
+                        onClick={() => handleDeducation(4)}
+                        size="sm"
+                        className="text-sm w-1/3 "
+                        variant="outlined"
+                        color="purple"
+                      >
+                        เลือก
+                      </Button>
+                    </div>
+                  ))}
 
                 <div className="flex flex-col md:flex-row gap-4 justify-between">
                   <h2 className="text-base text-gray-900 mt-4 font-semibold">
@@ -427,23 +449,6 @@ const PlaySettingModal = ({
                     {sendData?.deducation_price || 0} บาท
                   </h2>
                 </div>
-
-                {/* <ul className="mt-4 h-20 overflow-y-scroll">
-                  {dataMyUsers.map((item, index) => (
-                    <li
-                      className="flex  justify-between p-0.5 hover:bg-gray-200"
-                      key={item.id}
-                    >
-                      {" "}
-                      {index + 1} ({item.user_fname}){" "}
-                      <HiTrash
-                        size={20}
-                        className=" cursor-pointer text-red-700"
-                        onClick={() => deleteMyUserSelected(item.id)}
-                      />
-                    </li>
-                  ))}
-                </ul> */}
 
                 <h2 className="text-base text-gray-900 mt-4 font-semibold">
                   สรุปรายการ
@@ -486,7 +491,6 @@ const PlaySettingModal = ({
           </div>
         </DialogBody>
         <DialogFooter>
-
           {message && <p className="mx-10 text-red-500">{message}</p>}
           <Button
             variant="gradient"

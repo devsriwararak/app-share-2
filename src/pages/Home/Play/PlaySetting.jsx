@@ -18,6 +18,7 @@ const TABLE_HEAD = [
   "งวดที่เปีย",
   "ดอกเบี้ย",
   "ยอดรับ",
+  "ยอดส่ง",
   "เงินแถม",
   "เลือก",
 ];
@@ -44,6 +45,7 @@ const PlaySetting = ({ dataToModal }) => {
   };
 
   const NewPlay = async () => {
+    setLoading(true)
     try {
       const data = {
         home_share_id: localStorage.getItem("home_share_id"),
@@ -63,6 +65,7 @@ const PlaySetting = ({ dataToModal }) => {
         }
       );
       if (res.status === 200) {
+        setLoading(false)
         toast.success(res.data.message);
         setTimeout(() => {
           fetchDataPlayList();
@@ -138,6 +141,8 @@ const PlaySetting = ({ dataToModal }) => {
       installment: dataToModal?.installment || 0,
       price: dataToModal?.price || 0,
       count: dataToModal?.count || 0,
+      type_wong_id : dataToModal.type_wong_id || 0,
+      interest : dataToModal.interest || 0,
       index
     }));
   };
@@ -235,7 +240,7 @@ const PlaySetting = ({ dataToModal }) => {
                     const isLast = index === daysArray.length - 1;
                     const classes = isLast
                       ? "p-3"
-                      : "p-3 border-b border-blue-gray-50 text-sm ";
+                      : "p-3 border-b border-blue-gray-50 text-[13px] ";
 
                     return (
                       <tr key={index}>
@@ -258,7 +263,8 @@ const PlaySetting = ({ dataToModal }) => {
 
                         <td className={classes}>{item?.play_date_th}</td>
                         <td className={classes}>{item?.interest}</td>
-                        <td className={classes}><p className="font-semibold text-purple-500">{item?.received}</p></td>
+                        <td className={classes}><p className="font-semibold text-green-700">{item?.received}</p></td>
+                        <td className={classes}><p className="font-semibold text-purple-500">{item?.shipping}</p></td>
                         <td className={classes}>{item?.free_money}</td>
                         <td className={classes}>
                           <div className="flex justify-center hover:bg-gray-200 rounded-lg py-1 px-1">
